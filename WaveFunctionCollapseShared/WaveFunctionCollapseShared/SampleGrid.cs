@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Utilities;
+using WaveFunctionCollapse.Shared.Utilities;
 
 
 namespace WaveFunctionCollapse.Shared
@@ -12,7 +12,7 @@ namespace WaveFunctionCollapse.Shared
     {
         public Vector3Int Dimensions { get; private set; }
         public List<List<int>> PossibleSampleGrid { get; set; } = new List<List<int>>();
-        List<List<List<T>>> _samples;
+        //List<List<List<T>>> _samples;
 
         WFC<T> _wfc;
 
@@ -80,6 +80,7 @@ namespace WaveFunctionCollapse.Shared
         public int FindLowestNonZeroEntropy()
         {
             List<int> lowestSample = PossibleSampleGrid.OrderByDescending(o => o.Count).Where(s => s.Count > 1).First();
+            SharedLogger.Log($"Lowest sample index {PossibleSampleGrid.IndexOf(lowestSample)} ");
             return PossibleSampleGrid.IndexOf(lowestSample);
         }
     }

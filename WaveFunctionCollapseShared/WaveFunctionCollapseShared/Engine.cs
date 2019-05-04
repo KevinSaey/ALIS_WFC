@@ -9,12 +9,12 @@ namespace WaveFunctionCollapse.Shared
     internal class Engine<T> where T : Sample
     {
         List<T> _sampleLibrary;
-        List<Heuristic<T>> _heuristics;
+        List<IHeuristic<T>> _heuristics;
         SampleGrid<T> _grid;
         
 
 
-        public Engine(List<T> samples, List<Heuristic<T>> heuristics, SampleGrid<T> grid)
+        public Engine(List<T> samples, List<IHeuristic<T>> heuristics, SampleGrid<T> grid)
         {
             _sampleLibrary = samples;
             _heuristics = heuristics;
@@ -23,10 +23,12 @@ namespace WaveFunctionCollapse.Shared
 
         public void Execute()
         {
-            while (!isDone())
-            {
+            //while (!isDone())
+            //{
+                SharedLogger.Log("Executing");
                 Step();
-            }
+
+            //}
 
         }
 
@@ -39,6 +41,7 @@ namespace WaveFunctionCollapse.Shared
             // One step of the algorithm:
             // a. Pick out the lowest entropy
             int lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
+            
             List<int> lowestEntropy = _grid.PossibleSampleGrid[lowestEntropyIndex];
 
             // b. Apply full list of heuristics over the sample chances (what is the starting proportion of choices?)

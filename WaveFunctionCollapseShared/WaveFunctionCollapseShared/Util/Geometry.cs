@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Utilities //Code by VS
+namespace WaveFunctionCollapse.Shared.Utilities //Code by VS
 {
     public struct Vector3
     {

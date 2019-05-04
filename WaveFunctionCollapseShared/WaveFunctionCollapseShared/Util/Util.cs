@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Utilities
+namespace WaveFunctionCollapse.Shared
 {
     static class Util
     {
@@ -13,4 +13,22 @@ namespace Utilities
             return baseList.Where(l => filterList.Contains(l)).ToList();
         }
     }
+
+    public interface ISharedLogger
+    {
+        void Log(object message);
+    }
+
+    public static class SharedLogger
+    {
+        public static ISharedLogger CurrentLogger { get; set; }
+
+        public static void Log(object message)
+        {
+            CurrentLogger.Log(message);
+        }
+    }
+
+    
+
 }

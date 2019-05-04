@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +11,10 @@ namespace WaveFunctionCollapse.Unity
     {
         public int Id { get { return _id; } }
         int _id;
-        List<int>[] _possibleNeighbours = new List<int>[6];
-        public List<int>[] PossibleNeighbours
+        List<List<int>> _possibleNeighbours = new List<List<int>>();
+        public Color Col;
+
+        public List<List<int>> PossibleNeighbours
         {
             get
             {
@@ -21,15 +22,20 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
+        //For testing purpouses
         public void SetRandomNeighbours(int NumberOfSamples)
         {
+
             for (int i = 0; i < 6; i++)
             {
+                _possibleNeighbours.Add(new List<int>());
                 for (int j = 0; j < 5; j++)
                 {
-                    System.Random rnd = new System.Random();
-                    _possibleNeighbours[i].Add(rnd.Next(0, NumberOfSamples));
+                    _possibleNeighbours[i].Add(Random.Range(0, NumberOfSamples));
                 }
+                _possibleNeighbours[i] = _possibleNeighbours[i].Distinct().ToList();
+                // Debug.Log(_possibleNeighbours[i].Count);
+                // Debug.Log(_possibleNeighbours[i][1].ToString());
             }
         }
 

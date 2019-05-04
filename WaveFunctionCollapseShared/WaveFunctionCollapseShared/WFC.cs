@@ -21,9 +21,9 @@ namespace WaveFunctionCollapse.Shared
             }
         }
 
-        List<Heuristic<T>> _heuristics;
+        List<IHeuristic<T>> _heuristics;
 
-        public List<Heuristic<T>> Heuristics
+        public List<IHeuristic<T>> Heuristics
         {
             get
             {
@@ -38,12 +38,18 @@ namespace WaveFunctionCollapse.Shared
         SampleGrid<T> _sampleGrid;
         Engine<T> _engine;
 
+        public WFC()
+        {
+            
+        }
+
         public WFC(int xDimension, int yDimension, int zDimension, List<T> samples)
         {
+            SharedLogger.Log("Instantiating WFC");
             _samples = samples;
             _sampleGrid = new SampleGrid<T>(this, xDimension, yDimension, zDimension);
             _engine = new Engine<T>(_samples, _heuristics, _sampleGrid);
-
+            SharedLogger.Log( "WFC Instantiated");
             _engine.Execute();
         }
     }

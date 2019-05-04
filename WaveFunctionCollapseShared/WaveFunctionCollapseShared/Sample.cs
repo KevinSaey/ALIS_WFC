@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Utilities;
+using WaveFunctionCollapse.Shared.Utilities;
 
 namespace WaveFunctionCollapse.Shared
 {
@@ -12,7 +12,7 @@ namespace WaveFunctionCollapse.Shared
     public abstract class Sample
     {
         public int Id { get; }
-        List<int>[] PossibleNeighbours { get; }
+        List<List<int>> PossibleNeighbours { get; }
 
         protected void Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
         {
