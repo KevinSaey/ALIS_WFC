@@ -11,7 +11,7 @@ namespace WaveFunctionCollapse.Shared
         List<T> _sampleLibrary;
         List<IHeuristic<T>> _heuristics;
         SampleGrid<T> _grid;
-        
+        int _counter = 0;
 
 
         public Engine(List<T> samples, List<IHeuristic<T>> heuristics, SampleGrid<T> grid)
@@ -23,12 +23,12 @@ namespace WaveFunctionCollapse.Shared
 
         public void Execute()
         {
-            //while (!isDone())
-            //{
+            while (!_grid.IsAllDetermined&&!_grid.HasConflict)
+            {
                 SharedLogger.Log("Executing");
                 Step();
 
-            //}
+            }
 
         }
 
@@ -36,6 +36,8 @@ namespace WaveFunctionCollapse.Shared
 
         void Step()
         {
+            _counter++;
+            SharedLogger.Log($"Sample number {_counter}");
             Random rnd = new Random();
 
             // One step of the algorithm:
@@ -47,21 +49,16 @@ namespace WaveFunctionCollapse.Shared
             // b. Apply full list of heuristics over the sample chances (what is the starting proportion of choices?)
 
 
-           /* // c. Pick one choice according to the chances supplied by heuristics
+            // c. Pick one choice according to the chances supplied by heuristics
             // for now, just select a random sample, later we'll add heuristics
             int selectedSample = lowestEntropy[rnd.Next(0, lowestEntropy.Count)];
             _grid.PossibleSampleGrid[lowestEntropyIndex] = new List<int>{selectedSample};
-            */
+            
 
+            ///FIRST THING TO DO: MAKE THE GRID A LIST OF SAMPLES!____________________________________________________________________________
 
             // d. Use the sample.propagate(grid) to apply over grid
 
-        }
-
-
-        Boolean isDone()
-        {
-            return _grid.IsAllDetermined();
         }
     }
 }

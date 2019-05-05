@@ -14,7 +14,7 @@ namespace WaveFunctionCollapse.Shared
         public int Id { get; }
         List<List<int>> PossibleNeighbours { get; }
 
-        protected void Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
+        public void Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
         {
             // Neighbours propagation here
             List<Vector3Int> neighbourIndices = new List<Vector3Int> {

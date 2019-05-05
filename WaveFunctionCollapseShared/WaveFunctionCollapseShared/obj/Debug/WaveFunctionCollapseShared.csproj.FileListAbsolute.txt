@@ -11,3 +11,9 @@ D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\Assets\WaveFunctionCollapse\P
 D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\Assets\WaveFunctionCollapse\Plugins\WaveFunctionCollapseShared.pdb
 D:\Unity\School\ALIS_WFC\WaveFunctionCollapseShared\WaveFunctionCollapseShared\bin\WaveFunctionCollapseShared.dll
 D:\Unity\School\ALIS_WFC\WaveFunctionCollapseShared\WaveFunctionCollapseShared\bin\WaveFunctionCollapseShared.pdb
+D:\Unity\School\ALIS_WFC\WaveFunctionCollapseShared\WaveFunctionCollapseShared\bin\Debug\WaveFunctionCollapseShared.deps.json
+D:\Unity\School\ALIS_WFC\WaveFunctionCollapseShared\WaveFunctionCollapseShared\bin\Debug\WaveFunctionCollapseShared.dll
+D:\Unity\School\ALIS_WFC\WaveFunctionCollapseShared\WaveFunctionCollapseShared\bin\Debug\WaveFunctionCollapseShared.pdb
+D:\Unity\School\ALIS_WFC\WaveFunctionCollapseShared\WaveFunctionCollapseShared\obj\Debug\WaveFunctionCollapseShared.AssemblyInfoInputs.cache
+D:\Unity\School\ALIS_WFC\WaveFunctionCollapseShared\WaveFunctionCollapseShared\obj\Debug\WaveFunctionCollapseShared.AssemblyInfo.cs
+D:\Unity\School\ALIS_WFC\WaveFunctionCollapseShared\WaveFunctionCollapseShared\obj\Debug\WaveFunctionCollapseShared.csprojAssemblyReference.cache

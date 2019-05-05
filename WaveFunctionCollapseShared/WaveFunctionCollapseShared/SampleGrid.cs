@@ -64,17 +64,24 @@ namespace WaveFunctionCollapse.Shared
         }
 
         
-        public Boolean IsAllDetermined() {
-            return PossibleSampleGrid.All(s => s.Count == 1);
+        public Boolean IsAllDetermined {
+            get
+            {
+                return PossibleSampleGrid.All(s => s.Count == 1);
+            }
         }
 
-        public Boolean HasConflict()
+        public Boolean HasConflict
         {
-            foreach (var sample in PossibleSampleGrid)
+            get
             {
-                if (sample.Count == 0) return true;
+                foreach (var sample in PossibleSampleGrid)
+                {
+                    SharedLogger.Log("Solution has a conflict");
+                    if (sample.Count == 0) return true;
+                }
+                return false;
             }
-            return false;
         }
 
         public int FindLowestNonZeroEntropy()
