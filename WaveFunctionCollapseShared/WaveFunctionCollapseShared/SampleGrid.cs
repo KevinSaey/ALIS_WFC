@@ -11,7 +11,7 @@ namespace WaveFunctionCollapse.Shared
 {
     public class SampleGrid<T> where T : Sample
     {
-        public Vector3Int Dimensions { get; private set; }
+        public Vector3IntShared Dimensions { get; private set; }
         public List<BitArray> PossibleSamples;
         public List<int> SelectedSamples;
         public List<Connection> Connections;
@@ -21,7 +21,7 @@ namespace WaveFunctionCollapse.Shared
         internal SampleGrid(WFC<T> wfc, int dimX, int dimY, int dimZ)
         {
             Connections = new List<Connection>();
-            Dimensions = new Vector3Int { x = dimX, y = dimY, z = dimZ };
+            Dimensions = new Vector3IntShared { x = dimX, y = dimY, z = dimZ };
             _wfc = wfc;
 
 
@@ -44,7 +44,7 @@ namespace WaveFunctionCollapse.Shared
 
         }
 
-        public Vector3Int GetIndexOfPossibleSample(int i)
+        public Vector3IntShared GetIndexOfPossibleSample(int i)
         {
             int newZ = i / (Dimensions.x * Dimensions.y);
             i %= (Dimensions.x * Dimensions.y);
@@ -52,10 +52,10 @@ namespace WaveFunctionCollapse.Shared
             i %= Dimensions.x;
             int newX = i;
 
-            return new Vector3Int { x = newX, y = newY, z = newZ };
+            return new Vector3IntShared { x = newX, y = newY, z = newZ };
         }
 
-        public int GetPossibleSampleByIndex(Vector3Int index)
+        public int GetPossibleSampleByIndex(Vector3IntShared index)
         {
             return Dimensions.x * Dimensions.y * index.z + Dimensions.x * index.y + index.x;
         }

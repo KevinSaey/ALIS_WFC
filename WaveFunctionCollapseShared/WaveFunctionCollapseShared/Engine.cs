@@ -27,7 +27,6 @@ namespace WaveFunctionCollapse.Shared
         {
             while (!_grid.IsAllDetermined && !_grid.HasConflict)
             {
-                SharedLogger.Log("Executing");
                 Step();
                 if (_grid.IsAllDetermined) SharedLogger.Log("Grid is all determined");
             }
@@ -40,7 +39,6 @@ namespace WaveFunctionCollapse.Shared
             {
                 if (!_grid.IsAllDetermined && !_grid.HasConflict)
                 {
-                    SharedLogger.Log("Executing");
                     Step();
                     if (_grid.IsAllDetermined) SharedLogger.Log("Grid is all determined");
                 }
@@ -66,14 +64,14 @@ namespace WaveFunctionCollapse.Shared
 
             // c. Pick one choice according to the chances supplied by heuristics
             // for now, just select a random sample, later we'll add heuristics
-            List<int> possibleSamples = Util.ToIntegerList(lowestEntropy);
+            List<int> possibleSamples = UtilShared.ToIntegerList(lowestEntropy);
 
-            int nextSampleIndex = rnd.Next(0, possibleSamples.Count);
+            int nextSampleIndex = rnd.Next(1, possibleSamples.Count);
             int selectedSample = possibleSamples[nextSampleIndex];
             _grid.SelectedSamples[lowestEntropyIndex] = selectedSample;
 
             SharedLogger.Log($"Sample {nextSampleIndex} assigned");
-            Util.SetFalseBut(_grid.PossibleSamples[lowestEntropyIndex], 0); //0 is always an empty connection
+            UtilShared.SetFalseBut(_grid.PossibleSamples[lowestEntropyIndex], 0); //0 is always an empty connection
 
 
 

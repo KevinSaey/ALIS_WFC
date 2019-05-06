@@ -18,24 +18,24 @@ namespace WaveFunctionCollapse.Shared
         public void Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
         {
             // Neighbours propagation here
-            List<Vector3Int> neighbourIndices = new List<Vector3Int> {
-                new Vector3Int { x=-1, y=0, z=0 },
-                new Vector3Int { x=1, y=0, z=0 },
-                new Vector3Int { x=0, y=-1, z=0 },
-                new Vector3Int { x=0, y=1, z=0 },
-                new Vector3Int { x=0, y=0, z=-1 },
-                new Vector3Int { x=0, y=0, z=1 } };
+            List<Vector3IntShared> neighbourIndices = new List<Vector3IntShared> {
+                new Vector3IntShared { x=-1, y=0, z=0 },
+                new Vector3IntShared { x=1, y=0, z=0 },
+                new Vector3IntShared { x=0, y=-1, z=0 },
+                new Vector3IntShared { x=0, y=1, z=0 },
+                new Vector3IntShared { x=0, y=0, z=-1 },
+                new Vector3IntShared { x=0, y=0, z=1 } };
 
             for (int j = 0; j < 6; j++)
             {
-                Vector3Int neighbourIndex = grid.GetIndexOfPossibleSample(currentIndex) * neighbourIndices[j];
+                Vector3IntShared neighbourIndex = grid.GetIndexOfPossibleSample(currentIndex) * neighbourIndices[j];
                 SharedLogger.Log(neighbourIndex.ToString());
-                if (Util.CheckIndex(neighbourIndex, grid.Dimensions))
+                if (UtilShared.CheckIndex(neighbourIndex, grid.Dimensions))
                 {
                     BitArray possibleNeighbours = grid.PossibleSamples[grid.GetPossibleSampleByIndex(neighbourIndex)];
 
                     //crossreference lists and change neighbour
-                    possibleNeighbours = possibleNeighbours.And(Util.ToBitArray(grid.GetConnectionSamples(PossibleConnections[j]),grid.Connections.Count));
+                    possibleNeighbours = possibleNeighbours.And(UtilShared.ToBitArray(grid.GetConnectionSamples(PossibleConnections[j]),grid.Connections.Count));
                 }
             }
         }

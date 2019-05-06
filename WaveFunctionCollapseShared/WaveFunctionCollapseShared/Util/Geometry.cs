@@ -10,13 +10,13 @@ namespace WaveFunctionCollapse.Shared //Code by VS
         public float x, y, z;
     }
 
-    public struct Vector3Int
+    public struct Vector3IntShared
     {
         public int x, y, z;
 
-        public static Vector3Int operator *(Vector3Int a, Vector3Int b)
+        public static Vector3IntShared operator *(Vector3IntShared a, Vector3IntShared b)
         {
-            return new Vector3Int { x = a.x * b.x, y = a.y * b.y, z = a.z * b.z };
+            return new Vector3IntShared { x = a.x * b.x, y = a.y * b.y, z = a.z * b.z };
         }
 
         public string ToString()
@@ -31,16 +31,16 @@ namespace WaveFunctionCollapse.Shared //Code by VS
         public float x, y;
     }
 
-    public struct Quaternion
+    /*public struct Quaternion
     {
         public float x, y, z, w;
-    }
+    }*/
 
-    public struct Pose
+    /*public struct Pose
     {
         public Vector3 position;
         public Quaternion rotation;
-    }
+    }*/
 
 
     public class Mesh

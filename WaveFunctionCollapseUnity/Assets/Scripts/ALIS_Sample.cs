@@ -34,7 +34,8 @@ namespace WaveFunctionCollapse.Unity
                     wfc.AddSampleConnection(Random.Range(1, NumberOfConnections+1),this);
                 }
                 _possibleConnections[i] = _possibleConnections[i].Distinct().ToList();
-                Col = new Color(Random.Range(0, 255), Random.Range(0, 255), Random.Range(0, 255));
+                Col = new Color(Random.Range(0, 255)/255f, Random.Range(0, 255)/255f,Random.Range(0, 255)/255f);
+                Debug.Log(Col);
                 // Debug.Log(_possibleNeighbours[i].Count);
                 // Debug.Log(_possibleNeighbours[i][1].ToString());
             }
@@ -45,12 +46,13 @@ namespace WaveFunctionCollapse.Unity
             _id = id;
         }
 
+        
         void Propagate(SampleGrid<ALIS_Sample> grid)
         {
             base.Propagate(grid, 1);
             // add propogation rules
         }
     }
-
+    
 
 }

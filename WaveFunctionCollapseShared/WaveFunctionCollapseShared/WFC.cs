@@ -87,5 +87,18 @@ namespace WaveFunctionCollapse.Shared
             //SharedLogger.Log($"connection ID: {_connections[connectionID].ID} List ID: {connectionID}");
             Connections[connectionID].SampleIDS.Add(currentSample.Id);
         }
+
+        public Vector3IntShared GetIndexOfPossibleSample(int i)
+        {
+            return _sampleGrid.GetIndexOfPossibleSample(i);
+        }
+
+        public List<int> SampleIndexGrid
+        {
+            get
+            {
+                return _sampleGrid.SelectedSamples; 
+            }
+        }
     }
 }

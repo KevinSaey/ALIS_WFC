@@ -14,8 +14,18 @@ namespace WaveFunctionCollapse.Unity
         }
     }
 
-    public static class Utlil
+    
+    public static class Util
     {
         public static Random RandomGenerator = new Random();
+
+        public static Vector3Int ToUnityVector3Int(Vector3IntShared vector3IntShared) // Ask Vicente how to do this properly
+        {
+            return new Vector3Int(vector3IntShared.x, vector3IntShared.y, vector3IntShared.z);
+        }
+
+        
     }
+
+   
 }

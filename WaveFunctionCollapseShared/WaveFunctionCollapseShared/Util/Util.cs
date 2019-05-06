@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WaveFunctionCollapse.Shared
 {
-    static class Util
+    static class UtilShared
     {
         public static List<U> CrossreferenceIncludeList<U>(List<U> baseList, List<U> filterList)
         {
@@ -50,7 +50,7 @@ namespace WaveFunctionCollapse.Shared
 
         }
 
-        public static bool CheckIndex(Vector3Int index, Vector3Int dimensions)
+        public static bool CheckIndex(Vector3IntShared index, Vector3IntShared dimensions)
         {
             if (index.x < 0 || index.x > dimensions.x - 1 || index.y > dimensions.y - 1 || index.z > dimensions.z - 1)
             {
