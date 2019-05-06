@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace WaveFunctionCollapse.Shared.Utilities //Code by VS
+namespace WaveFunctionCollapse.Shared //Code by VS
 {
     public struct Vector3
     {
@@ -17,6 +17,11 @@ namespace WaveFunctionCollapse.Shared.Utilities //Code by VS
         public static Vector3Int operator *(Vector3Int a, Vector3Int b)
         {
             return new Vector3Int { x = a.x * b.x, y = a.y * b.y, z = a.z * b.z };
+        }
+
+        public string ToString()
+        {
+            return $"Vector3Int x:{x}, y:{y}, z:{z}";
         }
     }
 
@@ -37,10 +42,6 @@ namespace WaveFunctionCollapse.Shared.Utilities //Code by VS
         public Quaternion rotation;
     }
 
-    public struct Color
-    {
-        public byte R, G, B;
-    }
 
     public class Mesh
     {

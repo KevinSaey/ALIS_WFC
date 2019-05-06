@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WaveFunctionCollapse.Shared.Utilities;
+
 
 namespace WaveFunctionCollapse.Shared
 {
@@ -11,8 +12,8 @@ namespace WaveFunctionCollapse.Shared
 
     public abstract class Sample
     {
-        public int Id { get; }
-        List<List<int>> PossibleNeighbours { get; }
+        public int Id { get; } // sample null is always an empty sample
+        List<List<int>> PossibleConnections { get; }
 
         public void Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
         {
@@ -27,11 +28,21 @@ namespace WaveFunctionCollapse.Shared
 
             for (int j = 0; j < 6; j++)
             {
-                var neighbour = grid.PossibleSampleGrid[grid.GetPossibleSampleByIndex(grid.GetIndexOfPossibleSample(currentIndex) * neighbourIndices[j])];
-                //crossreference lists and change neighbour
-                neighbour = Util.CrossreferenceIncludeList(neighbour, PossibleNeighbours[j]);
+                Vector3Int neighbourIndex = grid.GetIndexOfPossibleSample(currentIndex) * neighbourIndices[j];
+                SharedLogger.Log(neighbourIndex.ToString());
+                if (Util.CheckIndex(neighbourIndex, grid.Dimensions))
+                {
+                    BitArray possibleNeighbours = grid.PossibleSamples[grid.GetPossibleSampleByIndex(neighbourIndex)];
+
+                    //crossreference lists and change neighbour
+                    possibleNeighbours = possibleNeighbours.And(Util.ToBitArray(grid.GetConnectionSamples(PossibleConnections[j]),grid.Connections.Count));
+                }
             }
         }
+
+        
+        
+        
     }
 }
 

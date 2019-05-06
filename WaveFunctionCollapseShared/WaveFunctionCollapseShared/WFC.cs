@@ -9,6 +9,7 @@ namespace WaveFunctionCollapse.Shared
     public class WFC<T> where T : Sample
     {
         List<T> _samples;
+
         public List<T> Samples
         {
             get
@@ -18,6 +19,19 @@ namespace WaveFunctionCollapse.Shared
             set
             {
                 _samples = value;
+            }
+        }
+
+        
+        public List<Connection> Connections
+        {
+            get
+            {
+                return _sampleGrid.Connections;
+            }
+            set
+            {
+                _sampleGrid.Connections = value;
             }
         }
 
@@ -40,7 +54,7 @@ namespace WaveFunctionCollapse.Shared
 
         public WFC()
         {
-            
+
         }
 
         public WFC(int xDimension, int yDimension, int zDimension, List<T> samples)
@@ -49,8 +63,29 @@ namespace WaveFunctionCollapse.Shared
             _samples = samples;
             _sampleGrid = new SampleGrid<T>(this, xDimension, yDimension, zDimension);
             _engine = new Engine<T>(_samples, _heuristics, _sampleGrid);
-            SharedLogger.Log( "WFC Instantiated");
+            SharedLogger.Log("WFC Instantiated");
+
+        }
+
+        public void Step(int amount)
+        {
+            _engine.Step(amount);
+        }
+
+        public void Execute()
+        {
             _engine.Execute();
+        }
+
+        public void AddSampleConnection(int connectionID, Sample currentSample)
+        {
+            while (connectionID >= Connections.Count)
+            {
+                Connections.Add(new Connection(Connections.Count));
+
+            }
+            //SharedLogger.Log($"connection ID: {_connections[connectionID].ID} List ID: {connectionID}");
+            Connections[connectionID].SampleIDS.Add(currentSample.Id);
         }
     }
 }

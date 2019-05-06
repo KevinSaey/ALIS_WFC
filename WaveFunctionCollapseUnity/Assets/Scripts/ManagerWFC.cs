@@ -9,21 +9,27 @@ namespace WaveFunctionCollapse.Unity
     {
         
         List<ALIS_Sample> _samples = new List<ALIS_Sample>();
-        WFC<ALIS_Sample> _WFC;
+        WFC<ALIS_Sample> WaveFunctionCollapse;
         // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
 
             SharedLogger.CurrentLogger = new UnityLog();
-
             InitiateSamples();
             Debug.Log("Samples instantiated");
+            WaveFunctionCollapse = new WFC<ALIS_Sample>(3, 3, 3, _samples);
             SetRandomSamples();
             Debug.Log("Random samples added");
-            _WFC = new WFC<ALIS_Sample>(10, 20, 20, _samples);
         }
 
-        private void Update()
+         void Start()
+        {
+            Debug.Log("Execute WFC");
+            WaveFunctionCollapse.Execute();
+            
+        }
+
+         void Update()
         {
            // Debug.Log(Time.time);
         }
@@ -40,7 +46,7 @@ namespace WaveFunctionCollapse.Unity
         {
             for (int i = 0; i < _samples.Count; i++)
             {
-                _samples[i].SetRandomNeighbours(_samples.Count);
+                _samples[i].SetRandomNeighbours(6,WaveFunctionCollapse);
                 _samples[i].Col = new Color(Random.Range(0, 255), Random.Range(0, 255), Random.Range(0, 255));
             }
         }

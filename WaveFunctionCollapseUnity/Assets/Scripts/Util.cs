@@ -13,4 +13,9 @@ namespace WaveFunctionCollapse.Unity
             
         }
     }
+
+    public static class Utlil
+    {
+        public static Random RandomGenerator = new Random();
+    }
 }

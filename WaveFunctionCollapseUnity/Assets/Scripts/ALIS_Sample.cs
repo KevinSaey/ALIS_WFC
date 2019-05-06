@@ -11,29 +11,30 @@ namespace WaveFunctionCollapse.Unity
     {
         public int Id { get { return _id; } }
         int _id;
-        List<List<int>> _possibleNeighbours = new List<List<int>>();
+        List<List<int>> _possibleConnections = new List<List<int>>();
         public Color Col;
 
-        public List<List<int>> PossibleNeighbours
+        public List<List<int>> PossibleConnections
         {
             get
             {
-                return _possibleNeighbours;
+                return _possibleConnections;
             }
         }
 
         //For testing purpouses
-        public void SetRandomNeighbours(int NumberOfSamples)
+        public void SetRandomNeighbours(int NumberOfConnections, WFC<ALIS_Sample> wfc)
         {
-
+            Random.InitState(_id);
             for (int i = 0; i < 6; i++)
             {
-                _possibleNeighbours.Add(new List<int>());
+                _possibleConnections.Add(new List<int>());
                 for (int j = 0; j < 5; j++)
                 {
-                    _possibleNeighbours[i].Add(Random.Range(0, NumberOfSamples));
+                    wfc.AddSampleConnection(Random.Range(1, NumberOfConnections+1),this);
                 }
-                _possibleNeighbours[i] = _possibleNeighbours[i].Distinct().ToList();
+                _possibleConnections[i] = _possibleConnections[i].Distinct().ToList();
+                Col = new Color(Random.Range(0, 255), Random.Range(0, 255), Random.Range(0, 255));
                 // Debug.Log(_possibleNeighbours[i].Count);
                 // Debug.Log(_possibleNeighbours[i][1].ToString());
             }
