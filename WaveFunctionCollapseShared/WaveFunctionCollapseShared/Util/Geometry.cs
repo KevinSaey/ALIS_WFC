@@ -19,6 +19,11 @@ namespace WaveFunctionCollapse.Shared //Code by VS
             return new Vector3IntShared { x = a.x * b.x, y = a.y * b.y, z = a.z * b.z };
         }
 
+        public static Vector3IntShared operator +(Vector3IntShared a, Vector3IntShared b)
+        {
+            return new Vector3IntShared { x = a.x + b.x, y = a.y + b.y, z = a.z + b.z };
+        }
+
         public string ToString()
         {
             return $"Vector3Int x:{x}, y:{y}, z:{z}";

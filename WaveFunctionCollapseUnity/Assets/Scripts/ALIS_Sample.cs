@@ -9,50 +9,40 @@ namespace WaveFunctionCollapse.Unity
 {
     class ALIS_Sample : Sample
     {
-        public int Id { get { return _id; } }
-        int _id;
-        List<List<int>> _possibleConnections = new List<List<int>>();
         public Color Col;
 
-        public List<List<int>> PossibleConnections
-        {
-            get
-            {
-                return _possibleConnections;
-            }
-        }
+        //public List<HashSet<int>> PossibleConnections;
 
         //For testing purpouses
         public void SetRandomNeighbours(int NumberOfConnections, WFC<ALIS_Sample> wfc)
         {
-            Random.InitState(_id);
+            Random.InitState(Id);
             for (int i = 0; i < 6; i++)
             {
-                _possibleConnections.Add(new List<int>());
+                PossibleConnections.Add(new HashSet<int>());
                 for (int j = 0; j < 5; j++)
                 {
-                    wfc.AddSampleConnection(Random.Range(1, NumberOfConnections+1),this);
+                    int nextConnection = Random.Range(1, NumberOfConnections + 1);
+                    PossibleConnections[i].Add(nextConnection);
+                    wfc.AddSampleConnection(nextConnection, this);
                 }
-                _possibleConnections[i] = _possibleConnections[i].Distinct().ToList();
-                Col = new Color(Random.Range(0, 255)/255f, Random.Range(0, 255)/255f,Random.Range(0, 255)/255f);
-                Debug.Log(Col);
-                // Debug.Log(_possibleNeighbours[i].Count);
-                // Debug.Log(_possibleNeighbours[i][1].ToString());
+                Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f);
             }
         }
 
         public ALIS_Sample(int id)
         {
-            _id = id;
+            Id = id;
+            PossibleConnections = new List<HashSet<int>>();
         }
 
-        
-        void Propagate(SampleGrid<ALIS_Sample> grid)
+
+        void Propagate(SampleGrid<ALIS_Sample> grid, int index)
         {
-            base.Propagate(grid, 1);
+            base.Propagate(grid, index);
             // add propogation rules
         }
     }
-    
+
 
 }

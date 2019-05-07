@@ -8,21 +8,20 @@ namespace WaveFunctionCollapse.Shared
 {
     public class WFC<T> where T : Sample
     {
-        List<T> _samples;
 
-        public List<T> Samples
+        public List<T> SampleLibrary
         {
             get
             {
-                return _samples;
+                return _sampleGrid.SampleLibrary;
             }
             set
             {
-                _samples = value;
+                _sampleGrid.SampleLibrary = value;
             }
         }
 
-        
+
         public List<Connection> Connections
         {
             get
@@ -49,6 +48,14 @@ namespace WaveFunctionCollapse.Shared
             }
         }
 
+        public bool IsAllDetermined
+        {
+            get
+            {
+                return _sampleGrid.IsAllDetermined;
+            }
+        }
+
         SampleGrid<T> _sampleGrid;
         Engine<T> _engine;
 
@@ -60,9 +67,10 @@ namespace WaveFunctionCollapse.Shared
         public WFC(int xDimension, int yDimension, int zDimension, List<T> samples)
         {
             SharedLogger.Log("Instantiating WFC");
-            _samples = samples;
-            _sampleGrid = new SampleGrid<T>(this, xDimension, yDimension, zDimension);
-            _engine = new Engine<T>(_samples, _heuristics, _sampleGrid);
+            _sampleGrid = new SampleGrid<T>(samples, xDimension, yDimension, zDimension);
+            SampleLibrary = samples;
+            
+            _engine = new Engine<T>(SampleLibrary, _heuristics, _sampleGrid);
             SharedLogger.Log("WFC Instantiated");
 
         }
@@ -97,7 +105,7 @@ namespace WaveFunctionCollapse.Shared
         {
             get
             {
-                return _sampleGrid.SelectedSamples; 
+                return _sampleGrid.SelectedSamples;
             }
         }
     }

@@ -15,15 +15,14 @@ namespace WaveFunctionCollapse.Shared
         public List<BitArray> PossibleSamples;
         public List<int> SelectedSamples;
         public List<Connection> Connections;
+        public List<T> SampleLibrary;
 
-        WFC<T> _wfc;
 
-        internal SampleGrid(WFC<T> wfc, int dimX, int dimY, int dimZ)
+        internal SampleGrid(List<T> sampleLibrary, int dimX, int dimY, int dimZ)
         {
             Connections = new List<Connection>();
             Dimensions = new Vector3IntShared { x = dimX, y = dimY, z = dimZ };
-            _wfc = wfc;
-
+            SampleLibrary = sampleLibrary;
 
             createPossibleSampleGrid();
         }
@@ -37,7 +36,7 @@ namespace WaveFunctionCollapse.Shared
             for (int i = 0; i < Dimensions.z * Dimensions.y * Dimensions.x; i++)
             {
                 //SharedLogger.Log($"NumberOfSamples {_wfc.Samples.Count}");
-                PossibleSamples.Add(new BitArray(_wfc.Samples.Count, true));
+                PossibleSamples.Add(new BitArray(SampleLibrary.Count, true));
                 SelectedSamples.Add(0);
             }
             
@@ -54,6 +53,8 @@ namespace WaveFunctionCollapse.Shared
 
             return new Vector3IntShared { x = newX, y = newY, z = newZ };
         }
+
+        
 
         public int GetPossibleSampleByIndex(Vector3IntShared index)
         {
@@ -105,7 +106,7 @@ namespace WaveFunctionCollapse.Shared
             return PossibleSamples.IndexOf(lowestSample);
         }
 
-        public List<int> GetConnectionSamples(List<int> connectionID )
+        public List<int> GetConnectionSamples(HashSet<int> connectionID )
         {
             HashSet<Connection> selectedConnections = new HashSet<Connection>();
             foreach (var index in connectionID)

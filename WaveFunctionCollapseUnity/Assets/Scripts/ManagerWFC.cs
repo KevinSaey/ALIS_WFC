@@ -9,9 +9,10 @@ namespace WaveFunctionCollapse.Unity
     {
         [SerializeField]
 
-        List<ALIS_Sample> _samples = new List<ALIS_Sample>();
+        List<ALIS_Sample> _sampleLibrary = new List<ALIS_Sample>();
         WFC<ALIS_Sample> _waveFunctionCollapse;
         List<GameObject> goColorCubes = new List<GameObject>();
+        IEnumerator _step;
 
         void Awake()
         {
@@ -19,7 +20,7 @@ namespace WaveFunctionCollapse.Unity
             SharedLogger.CurrentLogger = new UnityLog();
             InitiateSamples();
             Debug.Log("Samples instantiated");
-            _waveFunctionCollapse = new WFC<ALIS_Sample>(5, 5, 5, _samples);
+            _waveFunctionCollapse = new WFC<ALIS_Sample>(4, 4, 6, _sampleLibrary);
             SetRandomSamples();
             Debug.Log("Random samples added");
         }
@@ -29,29 +30,48 @@ namespace WaveFunctionCollapse.Unity
             Debug.Log("Execute WFC");
             //_waveFunctionCollapse.Execute();
 
+            _step = Step(1);
+            StartCoroutine(_step);
+
         }
+
+        IEnumerator Step(float time)
+        {
+            while (true)
+            {
+                Debug.Log("Step");
+                _waveFunctionCollapse.Step(1);
+                ClearGameobjects();
+                DrawGrid();
+                if (_waveFunctionCollapse.IsAllDetermined)
+                {
+                    StopCoroutine(_step);
+                }
+                yield return new WaitForSeconds(time);
+            }
+
+        }
+
 
         void Update()
         {
-            _waveFunctionCollapse.Step(1);
-            ClearGameobjects();
-            DrawGrid();
-            // Debug.Log(Time.time);
+            
+            
         }
 
         public void InitiateSamples()
         {
             for (int i = 0; i < 21; i++)
             {
-                _samples.Add(new ALIS_Sample(i));
+                _sampleLibrary.Add(new ALIS_Sample(i));
             }
         }
 
         public void SetRandomSamples()
         {
-            for (int i = 1; i < _samples.Count; i++)
+            for (int i = 1; i < _sampleLibrary.Count; i++)
             {
-                _samples[i].SetRandomNeighbours(6, _waveFunctionCollapse);
+                _sampleLibrary[i].SetRandomNeighbours(6, _waveFunctionCollapse);
             }
         }
 
@@ -68,16 +88,14 @@ namespace WaveFunctionCollapse.Unity
         {
             for (int i = 0; i < _waveFunctionCollapse.SampleIndexGrid.Count; i++)
             {
-                var sample = _waveFunctionCollapse.Samples[_waveFunctionCollapse.SampleIndexGrid[i]];
+                var sample = _waveFunctionCollapse.SampleLibrary[_waveFunctionCollapse.SampleIndexGrid[i]];
                 if (sample.Id != 0)
                 {
                     Vector3Int index = Util.ToUnityVector3Int(_waveFunctionCollapse.GetIndexOfPossibleSample(i));
                     GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     go.transform.position = index;
-                    Debug.Log(sample.Col);
                     go.GetComponent<Renderer>().material.color = sample.Col;
                     goColorCubes.Add(go);
-                    Debug.Log(index);
                 }
             }
         }
