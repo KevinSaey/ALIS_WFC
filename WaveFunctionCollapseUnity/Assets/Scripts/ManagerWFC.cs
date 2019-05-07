@@ -19,7 +19,7 @@ namespace WaveFunctionCollapse.Unity
             SharedLogger.CurrentLogger = new UnityLog();
             InitiateSamples();
             Debug.Log("Samples instantiated");
-            _waveFunctionCollapse = new WFC<ALIS_Sample>(3, 3, 3, _samples);
+            _waveFunctionCollapse = new WFC<ALIS_Sample>(5, 5, 5, _samples);
             SetRandomSamples();
             Debug.Log("Random samples added");
         }
