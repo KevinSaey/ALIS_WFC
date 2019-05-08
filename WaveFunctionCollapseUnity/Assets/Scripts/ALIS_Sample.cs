@@ -16,17 +16,17 @@ namespace WaveFunctionCollapse.Unity
         //For testing purpouses
         public void SetRandomNeighbours(int NumberOfConnections, WFC<ALIS_Sample> wfc)
         {
-            Random.InitState(Id);
+            Random.InitState(Id * System.Guid.NewGuid().GetHashCode());
             for (int i = 0; i < 6; i++)
             {
                 PossibleConnections.Add(new HashSet<int>());
-                for (int j = 0; j < 5; j++)
+                for (int j = 0; j < 4; j++)
                 {
                     int nextConnection = Random.Range(1, NumberOfConnections + 1);
                     PossibleConnections[i].Add(nextConnection);
                     wfc.AddSampleConnection(nextConnection, this);
                 }
-                Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f);
+                Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f,0.5f);
             }
         }
 

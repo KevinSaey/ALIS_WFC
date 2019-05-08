@@ -63,15 +63,15 @@ namespace WaveFunctionCollapse.Shared
 
 
             // c. Pick one choice according to the chances supplied by heuristics
-            // for now, just select a random sample, later we'll add heuristics
+            
             List<int> possibleSamples = UtilShared.ToIntegerList(lowestEntropy);
-
+            // for now, just select a random sample, later we'll add heuristics
             int nextSampleIndex = rnd.Next(1, possibleSamples.Count);
             int selectedSample = possibleSamples[nextSampleIndex];
-            _grid.SelectedSamples[lowestEntropyIndex] = selectedSample;
 
-            SharedLogger.Log($"Sample {nextSampleIndex} assigned");
-            UtilShared.SetFalseBut(_grid.PossibleSamples[lowestEntropyIndex], 0); //0 is always an empty connection
+            _grid.SetSample(lowestEntropyIndex, selectedSample);
+            
+            
 
 
 

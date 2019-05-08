@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace WaveFunctionCollapse.Shared //Code by VS
 {
-    public struct Vector3
+    public struct Vector3Shared
     {
         public float x, y, z;
     }
@@ -50,7 +50,7 @@ namespace WaveFunctionCollapse.Shared //Code by VS
 
     public class Mesh
     {
-        public List<Vector3> Vertices { get; set; }
+        public List<Vector3Shared> Vertices { get; set; }
         public List<Vector2> TextureCoordinates { get; set; }
         public List<int> Faces { get; set; }
     }

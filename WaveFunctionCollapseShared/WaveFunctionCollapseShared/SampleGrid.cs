@@ -116,6 +116,16 @@ namespace WaveFunctionCollapse.Shared
             return PossibleSamples.IndexOf(lowestSample);*/
         }
 
+        public void SetSample(int index, int selectedSample)
+        {
+            SelectedSamples[index] = selectedSample;
+            UtilShared.SetFalseBut(PossibleSamples[index], 0); //0 is always an empty sample
+            SharedLogger.Log($"Sample {selectedSample} assigned");
+
+            SampleLibrary[selectedSample].Propagate(this, index);
+
+        }
+
         public void ShowEntropy()
         {
             for (int i = 0; i < PossibleSamples.Count; i++)

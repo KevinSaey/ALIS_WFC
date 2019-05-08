@@ -14,7 +14,7 @@ namespace WaveFunctionCollapse.Shared
             return baseList.Where(l => filterList.Contains(l)).ToList();
         }
 
-        public static List<int> ToIntegerList(BitArray bitArray)
+        /*public static List<int> ToIntegerList(BitArray bitArray)
         {
             List<int> integerList = new List<int>();
 
@@ -24,9 +24,23 @@ namespace WaveFunctionCollapse.Shared
             }
 
             return integerList;
+        }*/
+
+        public static List<int> ToIntegerList(BitArray bitArray)
+        {
+            var list = bitArray.Cast<bool>()
+                .Select((bit, index) => new { Bit = bit, Index = index });
+            return list.Where(x => x.Bit == true).Select(x => x.Index).ToList();
         }
 
-       public static BitArray ToBitArray(List<int> integerList, int length)
+        public static int GetOneTrue(BitArray bitArray)
+        {
+            var list = ToIntegerList(bitArray);
+            if (list.Count > 1) SharedLogger.Log("Error: More than 1 item is true");
+            return list.First();
+        }
+
+        public static BitArray ToBitArray(List<int> integerList, int length)
         {
             BitArray bitArray = new BitArray(length, false);
             foreach (var i in integerList)
@@ -52,9 +66,11 @@ namespace WaveFunctionCollapse.Shared
             foreach (bool bit in bitArray)
             {
                 if (bit) counter++;
-            }                        
+            }
             return counter;
         }
+
+
 
         public static void SetFalseBut(BitArray bitArray, int i)
         {
@@ -72,7 +88,7 @@ namespace WaveFunctionCollapse.Shared
 
         public static bool CheckIndex(Vector3IntShared index, Vector3IntShared dimensions)
         {
-            if (index.x < 0 || index.x > dimensions.x - 1 || index.y <0 || index.y > dimensions.y - 1 ||index.z<0|| index.z > dimensions.z - 1)
+            if (index.x < 0 || index.x > dimensions.x - 1 || index.y < 0 || index.y > dimensions.y - 1 || index.z < 0 || index.z > dimensions.z - 1)
             {
                 SharedLogger.Log("Outside of bounds");
                 return false;
@@ -96,6 +112,6 @@ namespace WaveFunctionCollapse.Shared
         }
     }
 
-    
+
 
 }

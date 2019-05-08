@@ -8,11 +8,12 @@ namespace WaveFunctionCollapse.Unity
     public class ManagerWFC : MonoBehaviour
     {
         [SerializeField]
-
+        Vector3 _voxelSize;
         List<ALIS_Sample> _sampleLibrary = new List<ALIS_Sample>();
         WFC<ALIS_Sample> _waveFunctionCollapse;
         List<GameObject> goColorCubes = new List<GameObject>();
         IEnumerator _step;
+
 
         void Awake()
         {
@@ -30,7 +31,7 @@ namespace WaveFunctionCollapse.Unity
             Debug.Log("Execute WFC");
             //_waveFunctionCollapse.Execute();
 
-            _step = Step(1);
+            _step = Step(.3f);
             StartCoroutine(_step);
 
         }
@@ -61,7 +62,7 @@ namespace WaveFunctionCollapse.Unity
 
         public void InitiateSamples()
         {
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < 11; i++)
             {
                 _sampleLibrary.Add(new ALIS_Sample(i));
             }

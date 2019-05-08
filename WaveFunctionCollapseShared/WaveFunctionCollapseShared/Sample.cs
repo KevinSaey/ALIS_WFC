@@ -32,18 +32,23 @@ namespace WaveFunctionCollapse.Shared
             {
                 Vector3IntShared neighbourIndex = grid.GetIndexOfPossibleSample(currentIndex) + neighbourIndices[j];
 
-                if (UtilShared.CheckIndex(neighbourIndex, grid.Dimensions))
+                if (UtilShared.CheckIndex(neighbourIndex, grid.Dimensions)) // check if the neighbour is out of bounds
                 {
-                    SharedLogger.Log(neighbourIndex.ToString());
-
                     BitArray possibleNeighbours = grid.PossibleSamples[grid.GetPossibleSampleByIndex(neighbourIndex)];
 
                     //crossreference lists and change neighbour
-                    if (UtilShared.CountBitarrayTrue(possibleNeighbours) != 1)
+                    if (UtilShared.CountBitarrayTrue(possibleNeighbours) != 1) // if statement becomes obsolete if we actually have working patterns
                     {
                         possibleNeighbours.And(UtilShared.ToBitArray(PossibleConnections[j], grid.SampleLibrary.Count));
                     }
-                    
+                    else
+                    {
+                        //assign sample
+                        var index = UtilShared.GetOneTrue(possibleNeighbours);
+                        if (index != 0)
+                            grid.SetSample(grid.GetPossibleSampleByIndex(neighbourIndex), index);
+                    }
+
                 }
 
             }
