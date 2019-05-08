@@ -84,6 +84,7 @@ namespace WaveFunctionCollapse.Shared
                         return true;
                     }
                 }
+
                 return false;
             }
         }
@@ -96,8 +97,32 @@ namespace WaveFunctionCollapse.Shared
 
         public int FindLowestNonZeroEntropy()
         {
+            int lowestEntropy = SampleLibrary.Count;
+            int lowestIndex = -1;
+            for (int i = 0; i < PossibleSamples.Count; i++)
+            {
+                int entropy = Entropy(PossibleSamples[i]);
+                if (entropy < lowestEntropy && entropy>1)
+                {
+                    lowestEntropy = entropy;
+                    lowestIndex = i;
+                }
+            }
+            if (lowestIndex == -1) lowestIndex = 0;
+
+            return lowestIndex;
+            /*
             BitArray lowestSample = PossibleSamples.OrderByDescending(o => Entropy(o)).Where(s => Entropy(s) > 1).First();
-            return PossibleSamples.IndexOf(lowestSample);
+            return PossibleSamples.IndexOf(lowestSample);*/
+        }
+
+        public void ShowEntropy()
+        {
+            for (int i = 0; i < PossibleSamples.Count; i++)
+            {
+                int entropy = Entropy(PossibleSamples[i]);
+                SharedLogger.Log($"Sample {GetIndexOfPossibleSample(i).ToString()} Entropy {entropy}");
+            }
         }
 
         public List<int> GetConnectionSamples(HashSet<int> connectionID)

@@ -20,7 +20,7 @@ namespace WaveFunctionCollapse.Unity
             SharedLogger.CurrentLogger = new UnityLog();
             InitiateSamples();
             Debug.Log("Samples instantiated");
-            _waveFunctionCollapse = new WFC<ALIS_Sample>(4, 3, 6, _sampleLibrary);
+            _waveFunctionCollapse = new WFC<ALIS_Sample>(10, 11,13, _sampleLibrary);
             SetRandomSamples();
             Debug.Log("Random samples added");
         }
@@ -71,7 +71,7 @@ namespace WaveFunctionCollapse.Unity
         {
             for (int i = 1; i < _sampleLibrary.Count; i++)
             {
-                _sampleLibrary[i].SetRandomNeighbours(2, _waveFunctionCollapse);
+                _sampleLibrary[i].SetRandomNeighbours(5, _waveFunctionCollapse);
             }
         }
 
