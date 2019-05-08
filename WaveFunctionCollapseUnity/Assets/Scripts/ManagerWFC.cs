@@ -62,7 +62,7 @@ namespace WaveFunctionCollapse.Unity
 
         public void InitiateSamples()
         {
-            for (int i = 0; i < 11; i++)
+            for (int i = 0; i < 21; i++)
             {
                 _sampleLibrary.Add(new ALIS_Sample(i));
             }
@@ -72,7 +72,7 @@ namespace WaveFunctionCollapse.Unity
         {
             for (int i = 1; i < _sampleLibrary.Count; i++)
             {
-                _sampleLibrary[i].SetRandomNeighbours(5, _waveFunctionCollapse);
+                _sampleLibrary[i].SetRandomNeighbours(3, _waveFunctionCollapse);
             }
         }
 

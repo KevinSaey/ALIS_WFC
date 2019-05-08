@@ -39,8 +39,6 @@ namespace WaveFunctionCollapse.Shared
                 PossibleSamples.Add(new BitArray(SampleLibrary.Count, true));
                 SelectedSamples.Add(0);
             }
-
-
         }
 
         public Vector3IntShared GetIndexOfPossibleSample(int i)
@@ -98,19 +96,28 @@ namespace WaveFunctionCollapse.Shared
         public int FindLowestNonZeroEntropy()
         {
             int lowestEntropy = SampleLibrary.Count;
-            int lowestIndex = -1;
+            List<int> lowestEntropies = new List<int>();
+            int lowestIndex = int.MinValue;
             for (int i = 0; i < PossibleSamples.Count; i++)
             {
                 int entropy = Entropy(PossibleSamples[i]);
-                if (entropy < lowestEntropy && entropy>1)
+                if (entropy < lowestEntropy && entropy > 1)
                 {
                     lowestEntropy = entropy;
                     lowestIndex = i;
+                    lowestEntropies = new List<int>();
+                    lowestEntropies.Add(entropy);
+                }
+                else if (entropy == lowestEntropy)
+                {
+                    lowestEntropies.Add(entropy);
                 }
             }
-            if (lowestIndex == -1) lowestIndex = 0;
+            if (lowestIndex == int.MinValue) lowestIndex = 0;
 
-            return lowestIndex;
+            //SharedLogger.Log("")
+
+            return lowestEntropies[UtilShared.random.Next(0, 0)];
             /*
             BitArray lowestSample = PossibleSamples.OrderByDescending(o => Entropy(o)).Where(s => Entropy(s) > 1).First();
             return PossibleSamples.IndexOf(lowestSample);*/
@@ -123,7 +130,6 @@ namespace WaveFunctionCollapse.Shared
             SharedLogger.Log($"Sample {selectedSample} assigned");
 
             SampleLibrary[selectedSample].Propagate(this, index);
-
         }
 
         public void ShowEntropy()

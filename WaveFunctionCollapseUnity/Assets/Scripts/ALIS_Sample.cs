@@ -26,7 +26,7 @@ namespace WaveFunctionCollapse.Unity
                     PossibleConnections[i].Add(nextConnection);
                     wfc.AddSampleConnection(nextConnection, this);
                 }
-                Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f,0.5f);
+                Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f);
             }
         }
 
