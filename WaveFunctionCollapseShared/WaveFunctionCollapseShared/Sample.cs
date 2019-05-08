@@ -35,14 +35,17 @@ namespace WaveFunctionCollapse.Shared
                 if (UtilShared.CheckIndex(neighbourIndex, grid.Dimensions))
                 {
                     SharedLogger.Log(neighbourIndex.ToString());
-                    SharedLogger.Log($"possibleConnection {PossibleConnections[j].Count}");
+                    SharedLogger.Log($"Samples in 1,0,0 :{UtilShared.CountBitarrayTrue(grid.PossibleSamples[1])}");
+
                     BitArray possibleNeighbours = grid.PossibleSamples[grid.GetPossibleSampleByIndex(neighbourIndex)];
                     //var t = PossibleConnections[j];
                     //grid.GetConnectionSamples(PossibleConnections[j]);
                     //crossreference lists and change neighbour
 
-                    //possibleNeighbours.And(UtilShared.ToBitArray(grid.GetConnectionSamples(PossibleConnections[j]), grid.SampleLibrary.Count));
-                    SharedLogger.Log($"{UtilShared.CountBitarrayTrue(UtilShared.ToBitArray(grid.GetConnectionSamples(PossibleConnections[j]), grid.SampleLibrary.Count))} possible neighbours");
+                    SharedLogger.Log($"possible neighbours{possibleNeighbours.Count}, possible connections{UtilShared.ToBitArray(PossibleConnections[j],grid.SampleLibrary.Count).Count}");
+                    SharedLogger.Log($"{UtilShared.CountBitarrayTrue(possibleNeighbours)} possible neighbours");
+                    possibleNeighbours.And(UtilShared.ToBitArray(PossibleConnections[j], grid.SampleLibrary.Count));
+                    SharedLogger.Log($"{UtilShared.CountBitarrayTrue( possibleNeighbours)} possible neighbours");
                 }
             }
         }

@@ -36,14 +36,23 @@ namespace WaveFunctionCollapse.Shared
             return bitArray;
         }
 
+        public static BitArray ToBitArray(HashSet<int> integerList, int length)
+        {
+            BitArray bitArray = new BitArray(length, false);
+            foreach (var i in integerList)
+            {
+                bitArray[i] = true;
+            }
+            return bitArray;
+        }
+
         public static int CountBitarrayTrue(BitArray bitArray)
         {
             int counter = 0;
-            for (int i = 0; i < bitArray.Count; i++)
+            foreach (bool bit in bitArray)
             {
-                if (bitArray[i]) counter++;
-            }
-               
+                if (bit) counter++;
+            }                        
             return counter;
         }
 
@@ -63,7 +72,6 @@ namespace WaveFunctionCollapse.Shared
 
         public static bool CheckIndex(Vector3IntShared index, Vector3IntShared dimensions)
         {
-            SharedLogger.Log(index.ToString());
             if (index.x < 0 || index.x > dimensions.x - 1 || index.y <0 || index.y > dimensions.y - 1 ||index.z<0|| index.z > dimensions.z - 1)
             {
                 SharedLogger.Log("Outside of bounds");

@@ -27,7 +27,7 @@ namespace WaveFunctionCollapse.Shared
             createPossibleSampleGrid();
         }
 
-        
+
 
         void createPossibleSampleGrid()
         {
@@ -39,7 +39,7 @@ namespace WaveFunctionCollapse.Shared
                 PossibleSamples.Add(new BitArray(SampleLibrary.Count, true));
                 SelectedSamples.Add(0);
             }
-            
+
 
         }
 
@@ -54,7 +54,7 @@ namespace WaveFunctionCollapse.Shared
             return new Vector3IntShared { x = newX, y = newY, z = newZ };
         }
 
-        
+
 
         public int GetPossibleSampleByIndex(Vector3IntShared index)
         {
@@ -70,7 +70,7 @@ namespace WaveFunctionCollapse.Shared
             }
         }
 
-        
+
 
         public Boolean HasConflict
         {
@@ -91,29 +91,23 @@ namespace WaveFunctionCollapse.Shared
 
         int Entropy(BitArray sample)
         {
-            int count = 0;
-            foreach (bool bln in sample)
-            {
-                if (bln == true) count++;
-            }
-            return count;
+            return UtilShared.CountBitarrayTrue(sample);
         }
 
         public int FindLowestNonZeroEntropy()
         {
             BitArray lowestSample = PossibleSamples.OrderByDescending(o => Entropy(o)).Where(s => Entropy(s) > 1).First();
-            //SharedLogger.Log($"Lowest sample index {PossibleSampleGrid.IndexOf(lowestSample)} ");
             return PossibleSamples.IndexOf(lowestSample);
         }
 
-        public List<int> GetConnectionSamples(HashSet<int> connectionID )
+        public List<int> GetConnectionSamples(HashSet<int> connectionID)
         {
             HashSet<Connection> selectedConnections = new HashSet<Connection>();
             foreach (var index in connectionID)
             {
                 selectedConnections.Add(Connections[index]);
             }
-            
+
             return selectedConnections.Select(s => s.SampleIDS).SelectMany(s => s).ToList();
         }
     }
