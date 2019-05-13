@@ -95,7 +95,16 @@ namespace WaveFunctionCollapse.Unity
                     Vector3Int index = Util.ToUnityVector3Int(_waveFunctionCollapse.GetIndexOfPossibleSample(i));
                     GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     go.transform.position = index;
-                    go.GetComponent<Renderer>().material.color = sample.Col;
+                    Material mat = go.GetComponent<Renderer>().material;
+                    mat.color = sample.Col;
+                    mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    mat.SetInt("_ZWrite", 0);
+                    mat.DisableKeyword("_ALPHATEST_ON");
+                    mat.DisableKeyword("_ALPHABLEND_ON");
+                    mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                    mat.renderQueue = 3000;
+
                     goColorCubes.Add(go);
                 }
             }
