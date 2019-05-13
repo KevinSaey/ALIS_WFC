@@ -9,6 +9,8 @@ namespace WaveFunctionCollapse.Unity
     {
         [SerializeField]
         Vector3 _voxelSize;
+        [SerializeField]
+        Vector3Int _tileSize;
         List<ALIS_Sample> _sampleLibrary = new List<ALIS_Sample>();
         WFC<ALIS_Sample> _waveFunctionCollapse;
         List<GameObject> goColorCubes = new List<GameObject>();
@@ -94,7 +96,8 @@ namespace WaveFunctionCollapse.Unity
                 {
                     Vector3Int index = Util.ToUnityVector3Int(_waveFunctionCollapse.GetIndexOfPossibleSample(i));
                     GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    go.transform.position = index;
+                    go.transform.localScale = Vector3.Scale(_voxelSize, _tileSize);
+                    go.transform.position = Vector3.Scale(index, go.transform.localScale);
                     Material mat = go.GetComponent<Renderer>().material;
                     mat.color = sample.Col;
                     mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
