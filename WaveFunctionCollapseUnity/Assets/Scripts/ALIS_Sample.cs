@@ -7,11 +7,25 @@ using UnityEngine;
 
 namespace WaveFunctionCollapse.Unity
 {
-    class ALIS_Sample : Sample
+    public class ALIS_Sample : Sample
     {
         public Color Col;
+        public int Density;
+        public int Type;
 
-        //public List<HashSet<int>> PossibleConnections;
+        public ALIS_Sample(int id)
+        {
+            Id = id;
+            PossibleConnections = new List<HashSet<int>>();
+        }
+
+        public ALIS_Sample(int id,int density, int type,List<HashSet<int>> possibleConnecitons )
+        {
+            Id = id;
+            Density = density;
+            Type = type;
+            PossibleConnections = new List<HashSet<int>>();
+        }
 
         //For testing purpouses
         public void SetRandomNeighbours(int NumberOfConnections, WFC<ALIS_Sample> wfc)
@@ -30,12 +44,7 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        public ALIS_Sample(int id)
-        {
-            Id = id;
-            PossibleConnections = new List<HashSet<int>>();
-        }
-
+        
 
         void Propagate(SampleGrid<ALIS_Sample> grid, int index)
         {
