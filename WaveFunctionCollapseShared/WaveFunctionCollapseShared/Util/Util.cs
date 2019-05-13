@@ -9,6 +9,8 @@ namespace WaveFunctionCollapse.Shared
 {
     static class UtilShared
     {
+        public static Random RandomNR = new Random();
+
         public static List<U> CrossreferenceIncludeList<U>(List<U> baseList, List<U> filterList)
         {
             return baseList.Where(l => filterList.Contains(l)).ToList();

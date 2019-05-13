@@ -51,7 +51,6 @@ namespace WaveFunctionCollapse.Shared
         {
             _counter++;
             //SharedLogger.Log($"Step number {_counter}");
-            Random rnd = new Random(Guid.NewGuid().GetHashCode());
 
             // One step of the algorithm:
             // a. Pick out the lowest entropy
@@ -66,8 +65,9 @@ namespace WaveFunctionCollapse.Shared
             
             List<int> possibleSamples = UtilShared.ToIntegerList(lowestEntropy);
             // for now, just select a random sample, later we'll add heuristics
-            int nextSampleIndex = rnd.Next(1, possibleSamples.Count);
-            int selectedSample = possibleSamples[nextSampleIndex];
+
+            //int selectedSample = SelectRandom(possibleSamples);
+            int selectedSample = SelectLeastUsed(possibleSamples, _grid.SelectedSamples);
 
             _grid.SetSample(lowestEntropyIndex, selectedSample);
             
@@ -78,6 +78,32 @@ namespace WaveFunctionCollapse.Shared
             // d. Use the sample.propagate(grid) to apply over grid
             _sampleLibrary[selectedSample].Propagate(_grid, lowestEntropyIndex);
 
+        }
+
+        int SelectLeastUsed(List<int> possibleSamples, List<int> selectedSamples)
+        {
+            int smallesAmount = int.MaxValue;
+            int leastUsed = int.MinValue;
+            foreach (var sample in possibleSamples)
+            {
+                int amount = selectedSamples.Count(s => s == sample);
+                if (amount < smallesAmount)
+                {
+                    smallesAmount = amount;
+                    leastUsed = sample;
+                }
+            }
+
+            return leastUsed;
+        }
+
+        int SelectRandom(List<int> possibleSamples)
+        {
+            Random rnd = new Random();
+            int nextSampleIndex = rnd.Next(1, possibleSamples.Count);
+            int selectedSample = possibleSamples[nextSampleIndex];
+
+            return selectedSample;
         }
     }
 }
