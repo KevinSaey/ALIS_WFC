@@ -50,11 +50,34 @@ namespace WaveFunctionCollapse.Shared
         void Step()
         {
             _counter++;
+            int lowestEntropyIndex;
+            if (_counter == 1)
+            {
+                //start from a random sample
+                lowestEntropyIndex = UtilShared.RandomNR.Next(0, _grid.PossibleSamples.Count - 1);
+            }
+            else
+            {
+                lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
+            }
             //SharedLogger.Log($"Step number {_counter}");
 
             // One step of the algorithm:
             // a. Pick out the lowest entropy
-            int lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
+
+            /*------------------------------------------------- RANDOM SAMPLE WITH LOWEST ENTROPY, Causes conflicts
+            List<int> lowestSamples = new List<int>();
+            for (int i = 0; i < _grid.PossibleSamples.Count; i++)
+            {
+                if (_grid.Entropy(_grid.PossibleSamples[i]) == _grid.Entropy(_grid.PossibleSamples[lowestEntropyIndex]))
+                {
+                    lowestSamples.Add(i);
+                }
+            }
+
+            BitArray lowestEntropy = _grid.PossibleSamples[UtilShared.RandomNR.Next(0, lowestSamples.Count - 1)];
+            */
+
             BitArray lowestEntropy = _grid.PossibleSamples[lowestEntropyIndex];
 
 
@@ -62,18 +85,22 @@ namespace WaveFunctionCollapse.Shared
 
 
             // c. Pick one choice according to the chances supplied by heuristics
-            
+
             List<int> possibleSamples = UtilShared.ToIntegerList(lowestEntropy);
             // for now, just select a random sample, later we'll add heuristics
 
-            //int selectedSample = SelectRandom(possibleSamples);
-            int selectedSample = SelectLeastUsed(possibleSamples, _grid.SelectedSamples);
+            int heuristicSelection = UtilShared.RandomNR.Next(2);
+            int selectedSample = 0;
+            if (heuristicSelection == 0)
+            {
+                selectedSample = SelectRandom(possibleSamples);
+            }
+            else if (heuristicSelection == 1)
+            {
+                selectedSample = SelectLeastUsed(possibleSamples, _grid.SelectedSamples);
+            }
 
             _grid.SetSample(lowestEntropyIndex, selectedSample);
-            
-            
-
-
 
             // d. Use the sample.propagate(grid) to apply over grid
             _sampleLibrary[selectedSample].Propagate(_grid, lowestEntropyIndex);

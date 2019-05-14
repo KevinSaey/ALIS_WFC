@@ -48,7 +48,7 @@ namespace WaveFunctionCollapse.Shared
             
             foreach (var i in integerList)
             {
-                SharedLogger.Log($"length: {length} index {i}");
+                //SharedLogger.Log($"length: {length} index {i}");
                 if(i>length)
                 {
                     SharedLogger.Log($"length: {length} index {i}: Index is bigger than the length of the list. -function ToBitArray.-");
@@ -61,17 +61,8 @@ namespace WaveFunctionCollapse.Shared
 
         public static BitArray ToBitArray(HashSet<int> integerList, int length)
         {
-            BitArray bitArray = new BitArray(length, false);
-            foreach (var i in integerList)
-            {
-                if (i > length)
-                {
-                    SharedLogger.Log($"length: {length} index {i}: Index is bigger than the length of the list. -function ToBitArray.-");
-                    return null;
-                }
-                bitArray[i] = true;
-            }
-            return bitArray;
+            List<int> list = new List<int>(integerList);
+            return ToBitArray(list, length);
         }
 
         public static int CountBitarrayTrue(BitArray bitArray)

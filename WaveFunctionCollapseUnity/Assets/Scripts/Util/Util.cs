@@ -5,6 +5,7 @@ using WaveFunctionCollapse.Shared;
 
 namespace WaveFunctionCollapse.Unity
 {
+    public enum Axis { X, Y, Z }; 
     public class UnityLog : ISharedLogger
     {
         public void Log(object message)
@@ -13,6 +14,8 @@ namespace WaveFunctionCollapse.Unity
             
         }
     }
+
+
 
     
     public static class Util
@@ -24,7 +27,13 @@ namespace WaveFunctionCollapse.Unity
             return new Vector3Int(vector3IntShared.x, vector3IntShared.y, vector3IntShared.z);
         }
 
-        
+        public static Vector3Int ToVector3Int(this Vector3 v)
+        {
+            int x = Mathf.RoundToInt(v.x);
+            int y = Mathf.RoundToInt(v.y);
+            int z = Mathf.RoundToInt(v.z);
+            return new Vector3Int(x, y, z);
+        }
     }
 
    

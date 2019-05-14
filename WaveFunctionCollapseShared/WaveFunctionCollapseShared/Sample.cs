@@ -31,20 +31,24 @@ namespace WaveFunctionCollapse.Shared
             for (int j = 0; j < 6; j++)
             {
                 Vector3IntShared neighbourIndex = grid.GetIndexOfPossibleSample(currentIndex) + neighbourIndices[j];
+                SharedLogger.Log(neighbourIndex.ToString());
 
                 if (UtilShared.CheckIndex(neighbourIndex, grid.Dimensions)) // check if the neighbour is out of bounds
                 {
-                    BitArray possibleNeighbours = grid.PossibleSamples[grid.GetPossibleSampleByIndex(neighbourIndex)];
+                    BitArray NeighbourSamples = grid.PossibleSamples[grid.GetPossibleSampleByIndex(neighbourIndex)];
 
                     //crossreference lists and change neighbour
-                    if (UtilShared.CountBitarrayTrue(possibleNeighbours) != 1) // if statement becomes obsolete if we actually have working patterns
+                    if (UtilShared.CountBitarrayTrue(NeighbourSamples) != 1) // if statement becomes obsolete if we actually have working patterns
                     {
-                        possibleNeighbours.And(UtilShared.ToBitArray(PossibleConnections[j], grid.SampleLibrary.Count));
+                        List<int> samplesToMatch = new List<int>();
+                        foreach (var connection in PossibleConnections[j]) samplesToMatch.AddRange(grid.Connections[connection].SampleIDS);
+                        
+                        NeighbourSamples.And(UtilShared.ToBitArray(samplesToMatch.Distinct().ToList(), grid.SampleLibrary.Count));
                     }
                     else
                     {
                         //assign sample
-                        var index = UtilShared.GetOneTrue(possibleNeighbours);
+                        var index = UtilShared.GetOneTrue(NeighbourSamples);
                         if (index != 0)
                             grid.SetSample(grid.GetPossibleSampleByIndex(neighbourIndex), index);
                     }

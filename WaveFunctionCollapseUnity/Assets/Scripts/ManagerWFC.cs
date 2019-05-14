@@ -22,7 +22,8 @@ namespace WaveFunctionCollapse.Unity
         {
             SharedLogger.CurrentLogger = new UnityLog();
 
-            RandomAwake();
+            //RandomAwake();
+            RhinoAwake();
         }
 
         void RandomAwake()
@@ -30,7 +31,7 @@ namespace WaveFunctionCollapse.Unity
             InitialiseRandomSamples();
             Debug.Log($"{_sampleLibrary.Count} samples added");
 
-            _waveFunctionCollapse = new WFC<ALIS_Sample>(5, 5, 5, _sampleLibrary);
+            _waveFunctionCollapse = new WFC<ALIS_Sample>(5,10,7, _sampleLibrary);
 
             SetRandomSamples();
         }
@@ -41,7 +42,7 @@ namespace WaveFunctionCollapse.Unity
             _sampleLibrary = _rhinoImporter.Samples;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 
-            _waveFunctionCollapse = new WFC<ALIS_Sample>(5, 5, 5, _sampleLibrary);
+            _waveFunctionCollapse = new WFC<ALIS_Sample>(5, 10, 7, _sampleLibrary);
 
             //Add the samples connections to the wfc grid
             foreach (var sample in _sampleLibrary) sample.AddConnectionsToWFC(_waveFunctionCollapse);
@@ -88,7 +89,7 @@ namespace WaveFunctionCollapse.Unity
 
         public void InitialiseRandomSamples()
         {
-            for (int i = 0; i < 11; i++)
+            for (int i = 0; i < 20; i++)
             {
                 _sampleLibrary.Add(new ALIS_Sample(i));
             }
@@ -98,7 +99,7 @@ namespace WaveFunctionCollapse.Unity
         {
             for (int i = 1; i < _sampleLibrary.Count; i++)
             {
-                _sampleLibrary[i].SetRandomNeighbours(2, _waveFunctionCollapse);
+                _sampleLibrary[i].SetRandomNeighbours(10, _waveFunctionCollapse);
             }
         }
 

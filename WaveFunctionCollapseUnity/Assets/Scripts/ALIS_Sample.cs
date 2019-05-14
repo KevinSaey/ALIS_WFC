@@ -18,6 +18,7 @@ namespace WaveFunctionCollapse.Unity
         {
             Id = id;
             PossibleConnections = new List<HashSet<int>>();
+            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.8f);
         }
 
         public ALIS_Sample(int id, int density, int type, List<HashSet<int>> possibleConnecitons, List<Instance> instances)
@@ -45,13 +46,12 @@ namespace WaveFunctionCollapse.Unity
             for (int i = 0; i < 6; i++)
             {
                 PossibleConnections.Add(new HashSet<int>());
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < 2; j++)
                 {
                     int nextConnection = Random.Range(1, NumberOfConnections + 1);
                     PossibleConnections[i].Add(nextConnection);
                     wfc.AddSampleConnection(nextConnection, this);
                 }
-                Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.5f);
             }
         }
 

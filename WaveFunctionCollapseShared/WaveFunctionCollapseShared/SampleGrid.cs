@@ -90,7 +90,7 @@ namespace WaveFunctionCollapse.Shared
         }
 
 
-        int Entropy(BitArray sample)
+        public int Entropy(BitArray sample)
         {
             return UtilShared.CountBitarrayTrue(sample);
         }
