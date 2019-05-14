@@ -15,17 +15,36 @@ namespace WaveFunctionCollapse.Unity
         WFC<ALIS_Sample> _waveFunctionCollapse;
         List<GameObject> goColorCubes = new List<GameObject>();
         IEnumerator _step;
+        RhinoImporter _rhinoImporter;
 
 
         void Awake()
         {
-
             SharedLogger.CurrentLogger = new UnityLog();
-            InitiateSamples();
-            Debug.Log("Samples instantiated");
-            _waveFunctionCollapse = new WFC<ALIS_Sample>(10, 11,13, _sampleLibrary);
+
+            RandomAwake();
+        }
+
+        void RandomAwake()
+        {
+            InitialiseRandomSamples();
+            Debug.Log($"{_sampleLibrary.Count} samples added");
+
+            _waveFunctionCollapse = new WFC<ALIS_Sample>(5, 5, 5, _sampleLibrary);
+
             SetRandomSamples();
-            Debug.Log("Random samples added");
+        }
+
+        void RhinoAwake()
+        {
+            _rhinoImporter = new RhinoImporter();
+            _sampleLibrary = _rhinoImporter.Samples;
+            Debug.Log($"{_sampleLibrary.Count} samples loaded");
+
+            _waveFunctionCollapse = new WFC<ALIS_Sample>(5, 5, 5, _sampleLibrary);
+
+            //Add the samples connections to the wfc grid
+            foreach (var sample in _sampleLibrary) sample.AddConnectionsToWFC(_waveFunctionCollapse);
         }
 
         void Start()
@@ -58,11 +77,16 @@ namespace WaveFunctionCollapse.Unity
 
         void Update()
         {
-            
-            
+
+
         }
 
-        public void InitiateSamples()
+        public void InitialiseSamles()
+        {
+
+        }
+
+        public void InitialiseRandomSamples()
         {
             for (int i = 0; i < 11; i++)
             {
@@ -74,7 +98,7 @@ namespace WaveFunctionCollapse.Unity
         {
             for (int i = 1; i < _sampleLibrary.Count; i++)
             {
-                _sampleLibrary[i].SetRandomNeighbours(5, _waveFunctionCollapse);
+                _sampleLibrary[i].SetRandomNeighbours(2, _waveFunctionCollapse);
             }
         }
 

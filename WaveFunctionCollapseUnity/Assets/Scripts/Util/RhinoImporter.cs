@@ -14,20 +14,20 @@ namespace WaveFunctionCollapse.Unity
     /// </summary>
     public class RhinoImporter//based on Vicente's code
     {
-
-        string _path = @"D:\Unity\School\ALIS_Aggregation\RhinoExporter\";
+        public List<ALIS_Sample> Samples = new List<ALIS_Sample>();
+        string _path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
         //Grid3D _grid;
 
         public RhinoImporter(/*Grid3D grid*/)
         {
             var files = LoadFiles();
-            Debug.Log(files);
+            Debug.Log($"{files.Count()} ALIS_samples loaded");
             //_grid = grid;
-            List<RhinoSample> assemblies = new List<RhinoSample>();
+            
 
             for (int i = 0; i < files.Count; i++)
             {
-                assemblies.Add(RhinoSample.Import(files[i]));
+                Samples.Add(Assembly.Import(files[i]).ToALIS_Sample());
             }
 
             //Assembly.Import(_path).Generate(_grid);
@@ -44,7 +44,7 @@ namespace WaveFunctionCollapse.Unity
     /// <summary>
     /// Assembly pattern existing of blocks 
     /// </summary>
-    public class RhinoSample //VS
+    public class Assembly //VS
     {
         public List<Instance> Instances { get; set; }
         public List<Neighbour> Neighbours { get; set; }
@@ -52,12 +52,12 @@ namespace WaveFunctionCollapse.Unity
         public int Density;
         public int Type;
 
-        public static RhinoSample Import(string fileName)
+        public static Assembly Import(string fileName)
         {
-            var serializer = new XmlSerializer(typeof(RhinoSample));
+            var serializer = new XmlSerializer(typeof(Assembly));
             using (var reader = XmlReader.Create(fileName))
             {
-                return serializer.Deserialize(reader) as RhinoSample;
+                return serializer.Deserialize(reader) as Assembly;
             }
 
         }
@@ -70,7 +70,7 @@ namespace WaveFunctionCollapse.Unity
                 possibleNeighbours.Add(new HashSet<int>(Neighbours[i].Neighbours));
             }
 
-            ALIS_Sample alis_Sample = new ALIS_Sample(Id,Density,Type,possibleNeighbours);
+            ALIS_Sample alis_Sample = new ALIS_Sample(Id,Density,Type,possibleNeighbours,Instances);
             return alis_Sample;
         }
         /*

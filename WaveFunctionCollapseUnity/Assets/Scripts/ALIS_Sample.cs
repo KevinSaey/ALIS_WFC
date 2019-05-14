@@ -12,6 +12,7 @@ namespace WaveFunctionCollapse.Unity
         public Color Col;
         public int Density;
         public int Type;
+        public List<Instance> Instances;
 
         public ALIS_Sample(int id)
         {
@@ -19,18 +20,28 @@ namespace WaveFunctionCollapse.Unity
             PossibleConnections = new List<HashSet<int>>();
         }
 
-        public ALIS_Sample(int id,int density, int type,List<HashSet<int>> possibleConnecitons )
+        public ALIS_Sample(int id, int density, int type, List<HashSet<int>> possibleConnecitons, List<Instance> instances)
         {
             Id = id;
             Density = density;
             Type = type;
-            PossibleConnections = new List<HashSet<int>>();
+            PossibleConnections = possibleConnecitons;
+            Instances = instances;
+            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.8f);
+
+        }
+
+        public void AddConnectionsToWFC(WFC<ALIS_Sample> wfc)
+        {
+            foreach (var connection in PossibleConnections.SelectMany(s => s).Distinct())
+            {
+                wfc.AddSampleConnection(connection, this);
+            }
         }
 
         //For testing purpouses
         public void SetRandomNeighbours(int NumberOfConnections, WFC<ALIS_Sample> wfc)
         {
-            Random.InitState(Id * System.Guid.NewGuid().GetHashCode());
             for (int i = 0; i < 6; i++)
             {
                 PossibleConnections.Add(new HashSet<int>());
@@ -40,11 +51,11 @@ namespace WaveFunctionCollapse.Unity
                     PossibleConnections[i].Add(nextConnection);
                     wfc.AddSampleConnection(nextConnection, this);
                 }
-                Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f,0.5f);
+                Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.5f);
             }
         }
 
-        
+
 
         void Propagate(SampleGrid<ALIS_Sample> grid, int index)
         {

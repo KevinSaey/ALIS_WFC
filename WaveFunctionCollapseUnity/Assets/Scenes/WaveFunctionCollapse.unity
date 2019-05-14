@@ -194,7 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _voxelSize: {x: 0.4, y: 0.4, z: 0.4}
-  _tileSize: {x: 9, y: 13, z: 9}
+  _tileSize: {x: 24, y: 13, z: 24}
 --- !u!4 &573255905
 Transform:
   m_ObjectHideFlags: 0

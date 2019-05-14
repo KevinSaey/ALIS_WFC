@@ -38,15 +38,22 @@ namespace WaveFunctionCollapse.Shared
         public static int GetOneTrue(BitArray bitArray)
         {
             var list = ToIntegerList(bitArray);
-            if (list.Count > 1) SharedLogger.Log("Error: More than 1 item is true");
+            if (list.Count > 1) SharedLogger.Log("Error: More than 1 item is true. -function GetOneTrue.-");
             return list.First();
         }
 
         public static BitArray ToBitArray(List<int> integerList, int length)
         {
             BitArray bitArray = new BitArray(length, false);
+            
             foreach (var i in integerList)
             {
+                SharedLogger.Log($"length: {length} index {i}");
+                if(i>length)
+                {
+                    SharedLogger.Log($"length: {length} index {i}: Index is bigger than the length of the list. -function ToBitArray.-");
+                    return null;
+                }
                 bitArray[i] = true;
             }
             return bitArray;
@@ -57,6 +64,11 @@ namespace WaveFunctionCollapse.Shared
             BitArray bitArray = new BitArray(length, false);
             foreach (var i in integerList)
             {
+                if (i > length)
+                {
+                    SharedLogger.Log($"length: {length} index {i}: Index is bigger than the length of the list. -function ToBitArray.-");
+                    return null;
+                }
                 bitArray[i] = true;
             }
             return bitArray;
@@ -78,7 +90,7 @@ namespace WaveFunctionCollapse.Shared
         {
             if (i > bitArray.Count)
             {
-                SharedLogger.Log($"Index {i} bigger than BitArray size {bitArray.Count}");
+                SharedLogger.Log($"Index {i} bigger than BitArray size {bitArray.Count}. -function SetFalseBut.-");
             }
             else
             {
@@ -92,7 +104,7 @@ namespace WaveFunctionCollapse.Shared
         {
             if (index.x < 0 || index.x > dimensions.x - 1 || index.y < 0 || index.y > dimensions.y - 1 || index.z < 0 || index.z > dimensions.z - 1)
             {
-                SharedLogger.Log("Outside of bounds");
+                SharedLogger.Log("Outside of bounds. -function CheckIndex.-");
                 return false;
             }
             return true;
