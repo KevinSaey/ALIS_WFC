@@ -144,11 +144,11 @@ namespace WaveFunctionCollapse.Unity
             switch (Direction)
             {
                 case Axis.X:
-                    return new Vector3(x, y + 0.5f, z + 0.5f) * Controller.VoxelSize;
+                    return new Vector3(x, y + 0.5f, z + 0.5f) * GridController.VoxelSize;
                 case Axis.Y:
-                    return new Vector3(x + 0.5f, y, z + 0.5f) * Controller.VoxelSize;
+                    return new Vector3(x + 0.5f, y, z + 0.5f) * GridController.VoxelSize;
                 case Axis.Z:
-                    return new Vector3(x + 0.5f, y + 0.5f, z) * Controller.VoxelSize;
+                    return new Vector3(x + 0.5f, y + 0.5f, z) * GridController.VoxelSize;
                 default:
                     throw new Exception("Wrong direction, Bitch!");
             }

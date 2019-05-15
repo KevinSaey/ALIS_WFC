@@ -31,7 +31,7 @@ namespace WaveFunctionCollapse.Unity
                     Voxels.Add(new Voxel(x, y, 0, VoxelType.Block, PatternOrientation, this, walkableFaces));
                 }
 
-            var conVox = new List<Voxel>();
+           /* var conVox = new List<Voxel>(); // Connection voxels not needed
             foreach (var voxel in Voxels.Where(s => s.Type == VoxelType.Block && s.Index.y != 2 && s.Index.y != 3))
             {
 
@@ -55,7 +55,7 @@ namespace WaveFunctionCollapse.Unity
                     Voxels.Add(new Voxel(-2, i, 0, VoxelType.Connection, Vector3Int.zero, this));
                     Voxels.Add(new Voxel(2, i, 0, VoxelType.Connection, Vector3Int.zero, this));
                 }
-            }
+            }*/
         }
 
         public void ShiftPattern(Vector3Int vecShift)

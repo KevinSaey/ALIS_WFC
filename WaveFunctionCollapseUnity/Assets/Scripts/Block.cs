@@ -162,20 +162,28 @@ namespace WaveFunctionCollapse.Unity
         /// Instantiate or switch the blockvoxels gameobjects to their new state
         /// </summary>
         /// <param name="grid">The global grid</param>
-        public void DrawBlock(Grid3D grid)
+        public void DrawBlock(Grid3D grid, float voxelSize)
         {
             InstantiateGoParrentBlock();
             foreach (var vox in BlockVoxels)
             {
-                if (!(vox.Index.x < 0 || vox.Index.y < 0 || vox.Index.z < 0 ||
-                    vox.Index.x >= Controller.Size.x || vox.Index.y >= Controller.Size.y || vox.Index.z >= Controller.Size.z))
+                if (!(vox.Index.x < 0 ||
+                    vox.Index.y < 0 ||
+                    vox.Index.z < 0 ||
+                    vox.Index.x >= GridController.Size.x ||
+                    vox.Index.y >= GridController.Size.y ||
+                    vox.Index.z >= GridController.Size.z))
                 {
                     var gridVox = grid.GetVoxelAt(vox.Index);
                     if ((vox.Type == VoxelType.Block || vox.Type == VoxelType.Connection) && gridVox.Type != VoxelType.Block)
                     {
                         if (gridVox.Go == null)
                         {
-                            gridVox.Go = GameObject.Instantiate(Controller.GoVoxel, vox.Index, Quaternion.identity, vox.ParentBlock.goBlockParent.transform);
+                            gridVox.Go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            gridVox.Go.transform.position = new Vector3 (voxelSize * vox.Index.x, voxelSize * vox.Index.y, voxelSize * vox.Index.z);
+                            gridVox.Go.transform.localScale = voxelSize * Vector3.one*0.98f;
+                            gridVox.Go.transform.localRotation = Quaternion.identity;
+                            gridVox.Go.transform.SetParent(vox.ParentBlock.goBlockParent.transform,true);
                             gridVox.Go.name = vox.Name;
                         }
 
@@ -184,14 +192,14 @@ namespace WaveFunctionCollapse.Unity
                             GameObject go = gridVox.Go;
                             var rend = go.GetComponentInChildren<Renderer>();
                             go.transform.SetParent(vox.ParentBlock.goBlockParent.transform);
-                            rend.material = Controller.MatConnection;
+                            //rend.material = Controller.MatConnection;
                         }
                         else if (vox.Type == VoxelType.Block)
                         {
                             GameObject go = gridVox.Go;
                             var rend = go.GetComponentInChildren<Renderer>();
                             go.transform.SetParent(vox.ParentBlock.goBlockParent.transform);
-                            rend.material = Controller.MatBlock;
+                            //rend.material = Controller.MatBlock;
                         }
                     }
                 }

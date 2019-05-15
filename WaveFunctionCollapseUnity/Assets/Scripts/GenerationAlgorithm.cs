@@ -80,7 +80,7 @@ namespace WaveFunctionCollapse.Unity
             IEnumerable<Vector3Int> connPoints = GetConnectionPoints(grid).Select(pt => pt.Index);
             IEnumerable<Vector3Int> blocks = block.BlockVoxels.Where(vx => vx.Type == VoxelType.Block).Select(pt => pt.Index);
 
-            return connPoints.Intersect(blocks).Count() >= Controller.MinCon;
+            return connPoints.Intersect(blocks).Count() >= GridController.MinCon;
         }
 
         /// <summary>

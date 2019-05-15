@@ -12,6 +12,7 @@ namespace WaveFunctionCollapse.Unity
     {
         public Voxel[,,] Voxels;
         public Vector3Int Size;
+        float _voxelSize;
         public List<Block> Blocks = new List<Block>();           // The algorithm will try to approach this point
         IGenerationAlgorithm gen;
 
@@ -28,12 +29,11 @@ namespace WaveFunctionCollapse.Unity
         /// Initialise a voxel grid
         /// </summary>
         /// <param name="size">The number of voxels in x,y,z</param>
-        public Grid3D(Vector3Int size)
+        public Grid3D(Vector3Int size, float voxelSize)
         {
-            gen = new GenerationAlgorithm(Controller.GoTarget.transform.position.ToVector3Int());
             Size = size;
             Corner = Vector3Int.zero;
-
+            _voxelSize = voxelSize;
             MakeVoxels();
             MakeCorners();
             MakeFaces();
@@ -167,7 +167,7 @@ namespace WaveFunctionCollapse.Unity
         public void AddBlockToGrid(Block block)
         {
             Blocks.Add(block);
-            block.DrawBlock(this);
+            block.DrawBlock(this,_voxelSize);
             foreach (var vox in block.BlockVoxels)
             {
                 if (!(vox.Index.x < 0 || vox.Index.y < 0 || vox.Index.z < 0 ||
@@ -180,6 +180,8 @@ namespace WaveFunctionCollapse.Unity
 
             Debug.Log($"{GetClimableFaces().Count()} Climable faces");
         }
+
+
 
         /// <summary>
         /// Check if a given block can exist within the voxel grid

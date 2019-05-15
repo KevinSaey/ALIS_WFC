@@ -108,7 +108,7 @@ namespace WaveFunctionCollapse.Unity
                 for (int z = 0; z <= 1; z++)
                     for (int x = 0; x <= 1; x++)
                     {
-                        yield return Controller.Grid.Corners[Index.x + x, Index.y + y, Index.z + z];
+                        yield return GridController._grid.Corners[Index.x + x, Index.y + y, Index.z + z];
                     }
         }
 
