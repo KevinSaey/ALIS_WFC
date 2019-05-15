@@ -22,12 +22,12 @@ namespace WaveFunctionCollapse.Unity
         float _tempDisplacement = 10f;
 
 
-        public GridController(Vector3Int size, float voxelSize)
+        public GridController(Vector3Int size, float voxelSize, Vector3Int wfcSize)
         {
             Size = size;
             VoxelSize = voxelSize;
 
-            _grid = new Grid3D(Size,VoxelSize);
+            _grid = new Grid3D(Size*wfcSize,VoxelSize);
 
             var pattern = new PatternA();
             //startBlock = new Block(pattern, new Vector3Int(Size.x / 2, 1, Size.y / 2), new Vector3Int(0, 180, 0), _grid);

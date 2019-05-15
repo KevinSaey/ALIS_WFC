@@ -53,14 +53,14 @@ namespace WaveFunctionCollapse.Unity
             //Add the samples connections to the wfc grid
             foreach (var sample in _sampleLibrary) sample.AddConnectionsToWFC(_waveFunctionCollapse);
 
-            _gridController = new GridController(_tileSize, _voxelSize);
+            _gridController = new GridController(_tileSize, _voxelSize,_WFCSize);
         }
 
         void Start()
         {
             Debug.Log("Execute WFC");
-            _waveFunctionCollapse.Execute();
-            DrawGrid();
+           _waveFunctionCollapse.Execute();
+           DrawGrid();
 
             _step = Step(.3f);
             //StartCoroutine(_step);

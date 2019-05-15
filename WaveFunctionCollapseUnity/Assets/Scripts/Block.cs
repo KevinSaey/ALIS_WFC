@@ -151,10 +151,12 @@ namespace WaveFunctionCollapse.Unity
         /// <summary>
         /// Create the parrent gameobject of the block
         /// </summary>
-        public void InstantiateGoParrentBlock()
+        public void InstantiateGoParrentBlock(float voxelSize)
         {
-            goBlockParent = new GameObject($"Block {ZeroIndex}");
-            goBlockParent.transform.position = ZeroIndex;
+            goBlockParent = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            goBlockParent.name = $"Block {ZeroIndex}";
+            goBlockParent.transform.localScale = new Vector3(voxelSize * 3, voxelSize * 6, voxelSize * 1);
+            goBlockParent.transform.position = (Vector3)ZeroIndex * voxelSize;
             goBlockParent.transform.rotation = Quaternion.Euler(_rotation);
         }
 
@@ -164,8 +166,8 @@ namespace WaveFunctionCollapse.Unity
         /// <param name="grid">The global grid</param>
         public void DrawBlock(Grid3D grid, float voxelSize)
         {
-            InstantiateGoParrentBlock();
-            foreach (var vox in BlockVoxels)
+            InstantiateGoParrentBlock(voxelSize);
+            /*foreach (var vox in BlockVoxels)
             {
                 if (!(vox.Index.x < 0 ||
                     vox.Index.y < 0 ||
@@ -203,7 +205,7 @@ namespace WaveFunctionCollapse.Unity
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 }

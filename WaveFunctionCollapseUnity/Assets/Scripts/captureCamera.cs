@@ -12,7 +12,7 @@ public class captureCamera : MonoBehaviour // stolen from Vicente
     
     void Start()
     {
-        Time.captureFramerate = 25;
+        Time.captureFramerate = 2;
     }
     
     void Update()
@@ -24,7 +24,7 @@ public class captureCamera : MonoBehaviour // stolen from Vicente
     
     IEnumerator Capture()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(1f);
 
         string filename = $@"{folder}\image_{Time.frameCount:00000}.png";
 

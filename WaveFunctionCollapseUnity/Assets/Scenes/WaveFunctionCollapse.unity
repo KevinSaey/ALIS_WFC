@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c62a5600b1eab347aa11341d9858a15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnableCapture: 0
+  EnableCapture: 1
 --- !u!4 &295298315
 Transform:
   m_ObjectHideFlags: 0
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
   _tileSize: {x: 24, y: 13, z: 24}
-  _WFCSize: {x: 4, y: 2, z: 3}
+  _WFCSize: {x: 3, y: 4, z: 5}
   _rhino: 1
 --- !u!4 &573255905
 Transform:
@@ -353,7 +353,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 44
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -379,7 +379,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.11088953, y: 0.8522325, z: -0.31739724, w: 0.40082717}
-  m_LocalPosition: {x: -306, y: 439, z: 507}
+  m_LocalPosition: {x: -44.8, y: 100.3, z: 145.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
