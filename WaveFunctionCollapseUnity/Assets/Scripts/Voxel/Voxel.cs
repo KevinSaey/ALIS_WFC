@@ -25,6 +25,7 @@ namespace WaveFunctionCollapse.Unity
         public List<Vector3Int> WalkableFaces = new List<Vector3Int>();
         public List<Face> Faces = new List<Face>(6);
         public float Value;
+        public Vector3 Center;
 
         /// <summary>
         /// Instantiate an empty voxel
@@ -63,6 +64,7 @@ namespace WaveFunctionCollapse.Unity
             Orientation = orientation;
             ParentPattern = parentPattern;
             Name = $"x {x}, y {y}, z {z}";
+            
         }
 
         /// <summary>

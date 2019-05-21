@@ -42,7 +42,7 @@ namespace WaveFunctionCollapse.Unity
 
             model.Nodes.Add(nodes);
             model.Elements.Add(elements);
-
+            
             model.Solve();
 
             // analysis results

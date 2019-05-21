@@ -13,7 +13,7 @@ namespace WaveFunctionCollapse.Unity
         {
             _grid = grid;
             Index = index;
-            Position = _grid.Corner + new Vector3(index.x, index.y, index.z);
+            Position = _grid.Corner + new Vector3(index.x, index.y, index.z)*grid.VoxelSize;
         }
 
         public Corner(Corner corner) : this(corner.Index, corner._grid)
