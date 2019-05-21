@@ -32,7 +32,6 @@ namespace WaveFunctionCollapse.Unity
             var pattern = new PatternA();
 
             _grid.IniPathFindingStrucutralAnalysis();
-
         }
 
         public void OnGUI() //Vicente
@@ -49,7 +48,7 @@ namespace WaveFunctionCollapse.Unity
                 _showBlocks = true;
                 _grid.SwitchBlockVisibility(_showBlocks);
             }
-            if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Structural Analysis")) //DO NOT USE! Not working yet
+            if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Structural Analysis")) 
             {
                 if (_iniSA == true)
                 {

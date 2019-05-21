@@ -12,7 +12,7 @@ namespace WaveFunctionCollapse.Unity
     {
         public Voxel[,,] Voxels;
         public Vector3Int Size;
-        float _voxelSize;
+        public float VoxelSize;
         public List<Block> Blocks = new List<Block>();           // The algorithm will try to approach this point
         IGenerationAlgorithm gen;
 
@@ -33,7 +33,7 @@ namespace WaveFunctionCollapse.Unity
         {
             Size = size;
             Corner = Vector3Int.zero;
-            _voxelSize = voxelSize;
+            VoxelSize = voxelSize;
             MakeVoxels();
             MakeCorners();
             MakeFaces();
@@ -155,7 +155,7 @@ namespace WaveFunctionCollapse.Unity
         public void AddBlockToGrid(Block block, Transform parrent)
         {
             Blocks.Add(block);
-            block.DrawBlock(this,_voxelSize,parrent);
+            block.DrawBlock(this,VoxelSize,parrent);
             foreach (var vox in block.BlockVoxels)
             {
                 if (!(vox.Index.x < 0 || vox.Index.y < 0 || vox.Index.z < 0 ||
