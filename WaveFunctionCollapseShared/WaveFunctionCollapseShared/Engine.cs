@@ -33,22 +33,24 @@ namespace WaveFunctionCollapse.Shared
 
         }
 
-        public void Step(int amount)
+        public List<int> Step(int amount)
         {
+            List<int> setSamples = new List<int>();
             for (int i = 0; i < amount; i++)
             {
                 if (!_grid.IsAllDetermined && !_grid.HasConflict)
                 {
-                    Step();
+                    setSamples.AddRange(Step());
                     if (_grid.IsAllDetermined) SharedLogger.Log("Grid is all determined");
                 }
             }
-
+            return setSamples;
         }
 
 
-        void Step()
+        List<int>  Step()
         {
+            List<int> setSamples = new List<int>();
             _counter++;
             int lowestEntropyIndex;
             if (_counter == 1)
@@ -101,10 +103,12 @@ namespace WaveFunctionCollapse.Shared
             }
 
             _grid.SetSample(lowestEntropyIndex, selectedSample);
+            setSamples.Add(lowestEntropyIndex);
 
             // d. Use the sample.propagate(grid) to apply over grid
             _sampleLibrary[selectedSample].Propagate(_grid, lowestEntropyIndex);
 
+            return setSamples;
         }
 
         int SelectLeastUsed(List<int> possibleSamples, List<int> selectedSamples)

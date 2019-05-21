@@ -10,7 +10,8 @@ namespace WaveFunctionCollapse.Unity
     {
         public void Log(object message)
         {
-            Debug.Log(message);
+
+            //Debug.Log(message);
             
         }
     }

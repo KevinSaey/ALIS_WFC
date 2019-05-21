@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c62a5600b1eab347aa11341d9858a15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnableCapture: 1
+  EnableCapture: 0
 --- !u!4 &295298315
 Transform:
   m_ObjectHideFlags: 0
@@ -194,8 +194,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
-  _tileSize: {x: 24, y: 13, z: 24}
-  _WFCSize: {x: 3, y: 4, z: 5}
+  _tileSize: {x: 12, y: 13, z: 12}
+  _WFCSize: {x: 5, y: 5, z: 5}
   _rhino: 1
 --- !u!4 &573255905
 Transform:

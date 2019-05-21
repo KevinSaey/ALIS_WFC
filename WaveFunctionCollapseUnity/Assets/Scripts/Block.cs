@@ -151,23 +151,25 @@ namespace WaveFunctionCollapse.Unity
         /// <summary>
         /// Create the parrent gameobject of the block
         /// </summary>
-        public void InstantiateGoParrentBlock(float voxelSize)
+        public void InstantiateGoParrentBlock(float voxelSize, Transform parrent)
         {
-            goBlockParent = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            goBlockParent = new GameObject();//GameObject.CreatePrimitive(PrimitiveType.Cube);
+            
             goBlockParent.name = $"Block {ZeroIndex}";
             goBlockParent.transform.localScale = new Vector3(voxelSize * 3, voxelSize * 6, voxelSize * 1);
             goBlockParent.transform.position = (Vector3)ZeroIndex * voxelSize;
             goBlockParent.transform.rotation = Quaternion.Euler(_rotation);
+            goBlockParent.transform.SetParent(parrent, true);
         }
 
         /// <summary>
         /// Instantiate or switch the blockvoxels gameobjects to their new state
         /// </summary>
         /// <param name="grid">The global grid</param>
-        public void DrawBlock(Grid3D grid, float voxelSize)
+        public void DrawBlock(Grid3D grid, float voxelSize, Transform parrent)
         {
-            InstantiateGoParrentBlock(voxelSize);
-            /*foreach (var vox in BlockVoxels)
+            InstantiateGoParrentBlock(voxelSize,parrent);
+            foreach (var vox in BlockVoxels)
             {
                 if (!(vox.Index.x < 0 ||
                     vox.Index.y < 0 ||
@@ -205,7 +207,7 @@ namespace WaveFunctionCollapse.Unity
                         }
                     }
                 }
-            }*/
+            }
         }
     }
 }

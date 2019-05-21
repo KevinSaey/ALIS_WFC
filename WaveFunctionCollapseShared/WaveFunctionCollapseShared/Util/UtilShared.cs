@@ -68,9 +68,9 @@ namespace WaveFunctionCollapse.Shared
         public static int CountBitarrayTrue(BitArray bitArray)
         {
             int counter = 0;
-            foreach (bool bit in bitArray)
+            for (int i = 0; i < bitArray.Count; i++)
             {
-                if (bit) counter++;
+                if (bitArray[i]) counter++;
             }
             return counter;
         }

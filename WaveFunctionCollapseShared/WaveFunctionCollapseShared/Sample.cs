@@ -15,8 +15,9 @@ namespace WaveFunctionCollapse.Shared
         public int Id { get; set; } // sample null is always an empty sample
         public List<HashSet<int>> PossibleConnections;
 
-        public void Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
+        public List<int> Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
         {
+            List<int> setSamples = new List<int>();
             SharedLogger.Log("Propogating");
             // Neighbours propagation here
             List<Vector3IntShared> neighbourIndices = new List<Vector3IntShared> {
@@ -50,13 +51,19 @@ namespace WaveFunctionCollapse.Shared
                         //assign sample
                         var index = UtilShared.GetOneTrue(NeighbourSamples);
                         if (index != 0)
-                            grid.SetSample(grid.GetPossibleSampleByIndex(neighbourIndex), index);
+                        {
+                            var sampleIndex = grid.GetPossibleSampleByIndex(neighbourIndex);
+                            grid.SetSample(sampleIndex, index);
+                            setSamples.Add(sampleIndex);
+                        }
+
                     }
 
                 }
 
             }
             //grid.ShowEntropy();
+            return setSamples;
         }
 
 

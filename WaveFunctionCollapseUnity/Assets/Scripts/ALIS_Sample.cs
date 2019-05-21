@@ -18,7 +18,7 @@ namespace WaveFunctionCollapse.Unity
         {
             Id = id;
             PossibleConnections = new List<HashSet<int>>();
-            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.8f);
+            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.2f);
         }
 
         public ALIS_Sample(int id, int density, int type, List<HashSet<int>> possibleConnecitons, List<Instance> instances)
@@ -28,7 +28,7 @@ namespace WaveFunctionCollapse.Unity
             Type = type;
             PossibleConnections = possibleConnecitons;
             Instances = instances;
-            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.8f);
+            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.2f);
 
         }
 
@@ -57,10 +57,9 @@ namespace WaveFunctionCollapse.Unity
 
 
 
-        void Propagate(SampleGrid<ALIS_Sample> grid, int index)
+        List<int> Propagate(SampleGrid<ALIS_Sample> grid, int index)
         {
-            base.Propagate(grid, index);
-            // add propogation rules
+            return base.Propagate(grid, index);
         }
     }
 

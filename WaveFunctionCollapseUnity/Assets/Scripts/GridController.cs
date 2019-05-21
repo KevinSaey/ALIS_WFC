@@ -22,20 +22,17 @@ namespace WaveFunctionCollapse.Unity
         float _tempDisplacement = 10f;
 
 
-        public GridController(Vector3Int size, float voxelSize, Vector3Int wfcSize)
+        public GridController(Vector3Int tileSize, float voxelSize, Vector3Int wfcSize)
         {
-            Size = size;
+            Size = tileSize*wfcSize;
             VoxelSize = voxelSize;
 
-            _grid = new Grid3D(Size*wfcSize,VoxelSize);
+            _grid = new Grid3D(Size,VoxelSize);
 
             var pattern = new PatternA();
-            //startBlock = new Block(pattern, new Vector3Int(Size.x / 2, 1, Size.y / 2), new Vector3Int(0, 180, 0), _grid);
 
-            //_grid.AddBlockToGrid(startBlock);
             _grid.IniPathFindingStrucutralAnalysis();
 
-            //StartCoroutine(NextBlockOverTime()); //To generate blocks over time
         }
 
         public void OnGUI() //Vicente
@@ -92,20 +89,15 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        public void Generate(ALIS_Sample sample, Vector3Int tileIndex, Vector3Int tileSize)
+        public void Generate(ALIS_Sample sample, Vector3Int tileIndex, Vector3Int tileSize, Transform parrent)
         {
             var pattern = new PatternC();
             foreach (var instance in sample.Instances)
             {
                 var rotation = instance.Pose.rotation.eulerAngles.ToVector3Int();
-                /*Debug.Log("imported rotation " + rotation);
-                if (rotation.x == -90) rotation.x = 270;
-                if (rotation.y == -90) rotation.x = 270;
-                if (rotation.z == -90) rotation.x = 270;
-                Debug.Log("adjusted rotation " + rotation);*/
-
+                
                 var block = new Block(pattern, instance.Pose.position.ToVector3Int() + tileIndex * tileSize, rotation, _grid);
-                _grid.AddBlockToGrid(block);
+                _grid.AddBlockToGrid(block,parrent);
             }
         }
 

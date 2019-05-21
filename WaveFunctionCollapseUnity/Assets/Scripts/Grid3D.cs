@@ -146,28 +146,16 @@ namespace WaveFunctionCollapse.Unity
                     }
         }
 
-        /// <summary>
-        /// Generate the next possible block
-        /// </summary>
-        /// <returns>the next possible block (outside global grid)</returns>
-        public Block GenerateNextBlock()
-        {
-            Block newBlock = gen.GetNextBlock(this);
-            if (newBlock != null)
-                AddBlockToGrid(newBlock);
-            else
-                Debug.Log("No next block found");
-            return newBlock;
-        }
+
 
         /// <summary>
         /// Add the generated Block to the grid
         /// </summary>
         /// <param name="block">the Block to add</param>
-        public void AddBlockToGrid(Block block)
+        public void AddBlockToGrid(Block block, Transform parrent)
         {
             Blocks.Add(block);
-            block.DrawBlock(this,_voxelSize);
+            block.DrawBlock(this,_voxelSize,parrent);
             foreach (var vox in block.BlockVoxels)
             {
                 if (!(vox.Index.x < 0 || vox.Index.y < 0 || vox.Index.z < 0 ||
@@ -177,8 +165,6 @@ namespace WaveFunctionCollapse.Unity
                     AddVoxel(vox);
                 }
             }
-
-            Debug.Log($"{GetClimableFaces().Count()} Climable faces");
         }
 
 

@@ -72,12 +72,11 @@ namespace WaveFunctionCollapse.Shared
             
             _engine = new Engine<T>(SampleLibrary, _heuristics, _sampleGrid);
             SharedLogger.Log("WFC Instantiated");
-
         }
 
-        public void Step(int amount)
+        public List<int> Step(int amount)
         {
-            _engine.Step(amount);
+            return _engine.Step(amount);
         }
 
         public void Execute()
