@@ -18,24 +18,57 @@ namespace WaveFunctionCollapse.Unity
         string _path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
         //Grid3D _grid;
 
-        public RhinoImporter(/*Grid3D grid*/)
+        public RhinoImporter(Vector3Int tileSize)
         {
             var files = LoadFiles();
             Debug.Log($"{files.Count()} ALIS_samples loaded");
-            //_grid = grid;
-            
+
 
             for (int i = 0; i < files.Count; i++)
             {
                 Samples.Add(Assembly.Import(files[i]).ToALIS_Sample());
             }
 
+            var nrOfSamples = Samples.Count;
+            for (int i = 1; i < nrOfSamples; i++)
+            {
+                Samples.Add(RotateALISSample(Samples[i], Samples.Count, ((Vector3)tileSize-Vector3.one) / 2));
+                for (int j = 0; j < 2; j++)
+                {
+                    Samples.Add(RotateALISSample(Samples.Last(), Samples.Count, ((Vector3)tileSize - Vector3.one) / 2));
+                }
+            }
             //Assembly.Import(_path).Generate(_grid);
         }
 
         public List<string> LoadFiles()
         {
             return Directory.GetFiles(_path, "*.xml").ToList();
+        }
+
+        public ALIS_Sample RotateALISSample(ALIS_Sample sample, int id, Vector3 anchor)
+        {
+
+            var conn = sample.PossibleConnections;
+            var newConn = new List<HashSet<int>> { conn[3], conn[2], conn[0], conn[1], conn[4], conn[5] }; // check this for lefthand rotation
+            List<Instance> newInstances = new List<Instance>();
+            for (int i = 0; i < sample.Instances.Count; i++)
+            {
+                var oldInstance = sample.Instances[i];
+
+                var oldPos = oldInstance.Pose.position;
+                Util.OrientIndex(oldPos, anchor, 90, out var newPos);
+                var oldRot = oldInstance.Pose.rotation.eulerAngles;
+                Debug.Log($"oldPos {oldPos}");
+                var newRot = Quaternion.Euler(Vector3.up * 90 + oldInstance.Pose.rotation.eulerAngles);
+                Debug.Log($"newPos {newPos}");
+                var newPose = new Pose(newPos, newRot);
+
+                newInstances.Add(new Instance { DefinitionIndex = oldInstance.DefinitionIndex, Pose = newPose });
+            }
+
+
+            return new ALIS_Sample(id, sample.Density, sample.Type, newConn, newInstances);
         }
     }
 
@@ -64,15 +97,17 @@ namespace WaveFunctionCollapse.Unity
 
         public ALIS_Sample ToALIS_Sample()
         {
-            List<HashSet<int>> possibleNeighbours = new List<HashSet<int>>();
+            List<HashSet<int>> possibleConnections = new List<HashSet<int>>();
             for (int i = 0; i < Neighbours.Count; i++)
             {
-                possibleNeighbours.Add(new HashSet<int>(Neighbours[i].Neighbours));
+                possibleConnections.Add(new HashSet<int>(Neighbours[i].Neighbours));
             }
 
-            ALIS_Sample alis_Sample = new ALIS_Sample(Id,Density,Type,possibleNeighbours,Instances);
+            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Density, Type, possibleConnections, Instances);
             return alis_Sample;
         }
+
+       
         /*
         public void Generate(Grid3D grid)
         {
@@ -102,7 +137,7 @@ namespace WaveFunctionCollapse.Unity
         }
     }
 
-    public class Instance
+    public struct Instance
     {
         public int DefinitionIndex;
         public Pose Pose;

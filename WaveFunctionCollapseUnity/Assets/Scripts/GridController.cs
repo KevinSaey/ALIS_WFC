@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using WaveFunctionCollapse.Unity;
+
 namespace WaveFunctionCollapse.Unity
 {
     public class GridController

@@ -43,7 +43,7 @@ namespace WaveFunctionCollapse.Unity
 
         void RhinoAwake()
         {
-            _rhinoImporter = new RhinoImporter();
+            _rhinoImporter = new RhinoImporter(_tileSize);
             _sampleLibrary = _rhinoImporter.Samples;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 

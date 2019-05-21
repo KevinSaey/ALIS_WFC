@@ -61,7 +61,7 @@ namespace WaveFunctionCollapse.Unity
             foreach (var voxel in Pattern.Voxels)
             {
                 var copyVox = voxel.ShallowClone();
-                TryOrientIndex(copyVox.Index, Vector3Int.zero, Quaternion.Euler(_rotation), out var rotated);
+                Util.TryOrientIndex(copyVox.Index, Vector3Int.zero, Quaternion.Euler(_rotation),_grid, out var rotated);
 
                 copyVox.Index = rotated;
 
@@ -72,25 +72,9 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        public bool TryOrientIndex(Vector3Int localIndex, Vector3Int anchor, Quaternion rotation, out Vector3Int worldIndex)
-        {
-            var rotated = rotation * localIndex;
-            worldIndex = anchor + ToInt(rotated);
-            return CheckBounds(worldIndex);
-        }
+        
 
-        Vector3Int ToInt(Vector3 v) => new Vector3Int(RoundToInt(v.x), RoundToInt(v.y), RoundToInt(v.z));
-
-        bool CheckBounds(Vector3Int index)
-        {
-            if (index.x < 0) return false;
-            if (index.y < 0) return false;
-            if (index.z < 0) return false;
-            if (index.x >= _grid.Size.x) return false;
-            if (index.y >= _grid.Size.y) return false;
-            if (index.z >= _grid.Size.z) return false;
-            return true;
-        }
+       
 
         /// <summary>
         /// Rotate a vector according the the block rotation (only works for axis aligned orientations)
