@@ -29,14 +29,18 @@ namespace WaveFunctionCollapse.Unity
                 Samples.Add(Assembly.Import(files[i]).ToALIS_Sample());
             }
 
+            //rotate samples
             var nrOfSamples = Samples.Count;
             for (int i = 1; i < nrOfSamples; i++)
             {
-                Samples.Add(RotateALISSample(Samples[i], Samples.Count, ((Vector3)tileSize-Vector3.one) / 2));
-                for (int j = 0; j < 2; j++)
-                {
-                    Samples.Add(RotateALISSample(Samples.Last(), Samples.Count, ((Vector3)tileSize - Vector3.one) / 2));
-                }
+                //if (Samples[i].Instances.Count != 0)
+                //{
+                    Samples.Add(RotateALISSample(Samples[i], Samples.Count, ((Vector3)tileSize - Vector3.one) / 2, 1, i));
+                    for (int j = 1; j < 3; j++)
+                    {
+                        Samples.Add(RotateALISSample(Samples.Last(), Samples.Count, ((Vector3)tileSize - Vector3.one) / 2, 1 + j, i));
+                    }
+                //}
             }
             //Assembly.Import(_path).Generate(_grid);
         }
@@ -46,11 +50,10 @@ namespace WaveFunctionCollapse.Unity
             return Directory.GetFiles(_path, "*.xml").ToList();
         }
 
-        public ALIS_Sample RotateALISSample(ALIS_Sample sample, int id, Vector3 anchor)
+        public ALIS_Sample RotateALISSample(ALIS_Sample sample, int id, Vector3 anchor, int timesRoated, int origSampleId)
         {
-
             var conn = sample.PossibleConnections;
-            var newConn = new List<HashSet<int>> { conn[3], conn[2], conn[0], conn[1], conn[4], conn[5] }; // check this for lefthand rotation
+            var newConn = new List<HashSet<int>> { conn[2], conn[3], conn[1], conn[0], conn[4], conn[5] }; // check this for lefthand rotation
             List<Instance> newInstances = new List<Instance>();
             for (int i = 0; i < sample.Instances.Count; i++)
             {
@@ -64,9 +67,9 @@ namespace WaveFunctionCollapse.Unity
 
                 newInstances.Add(new Instance { DefinitionIndex = oldInstance.DefinitionIndex, Pose = newPose });
             }
+            var name = $"sample {origSampleId} type {sample.Type} rot: {timesRoated * 90}";
 
-
-            return new ALIS_Sample(id, sample.Density, sample.Type, newConn, newInstances);
+            return new ALIS_Sample(id, sample.Density, sample.Type, newConn, newInstances, name);
         }
     }
 
@@ -100,12 +103,12 @@ namespace WaveFunctionCollapse.Unity
             {
                 possibleConnections.Add(new HashSet<int>(Neighbours[i].Neighbours));
             }
-
-            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Density, Type, possibleConnections, Instances);
+            var name = $"sample {Id} type {Type} rot: 0";
+            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Density, Type, possibleConnections, Instances, name);
             return alis_Sample;
         }
 
-       
+
         /*
         public void Generate(Grid3D grid)
         {

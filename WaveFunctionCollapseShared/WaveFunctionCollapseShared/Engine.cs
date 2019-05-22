@@ -144,9 +144,9 @@ namespace WaveFunctionCollapse.Shared
             return selectedSample;
         }
 
-        void SetBoundryCondition(int boundrySamle, bool minX, bool plusX, bool minY, bool plusY, bool minZ, bool plusZ)
+        void SetBoundryCondition(int boundrySample, bool minX, bool plusX, bool minY, bool plusY, bool minZ, bool plusZ)
         {
-            var boundryDomain = new Domain("Boundry", 1, new List<int> { boundrySamle });
+            var boundryDomain = new Domain("Boundry", 1, new List<int> { boundrySample });
             
             for (int i = 0; i < _grid.PossibleSamples.Count; i++)
             {

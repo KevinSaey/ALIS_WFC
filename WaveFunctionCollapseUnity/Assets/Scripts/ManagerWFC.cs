@@ -88,7 +88,7 @@ namespace WaveFunctionCollapse.Unity
 
         void Update()
         {
-            if (_rhino) _gridController.Update();
+            //if (_rhino) _gridController.Update();
         }
 
 
@@ -146,7 +146,7 @@ namespace WaveFunctionCollapse.Unity
                 GameObject goTile = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 goTile.transform.localScale = Vector3.Scale(Vector3.one * _voxelSize, _tileSize);
                 goTile.transform.position = Vector3.Scale(index, goTile.transform.localScale)+((Vector3)_tileSize-Vector3.one)*_voxelSize/2;
-                goTile.name = $"Sample {selectedSample.Id}";
+                goTile.name = selectedSample.Name;
 
                 Material mat = goTile.GetComponent<Renderer>().material;
                 mat.color = sample.Col;

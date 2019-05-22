@@ -13,22 +13,25 @@ namespace WaveFunctionCollapse.Unity
         public int Density;
         public int Type;
         public List<Instance> Instances;
+        public string Name;
+        static float transparency = 0f;
 
         public ALIS_Sample(int id)
         {
             Id = id;
             PossibleConnections = new List<HashSet<int>>();
-            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.2f);
+            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
         }
 
-        public ALIS_Sample(int id, int density, int type, List<HashSet<int>> possibleConnecitons, List<Instance> instances)
+        public ALIS_Sample(int id, int density, int type, List<HashSet<int>> possibleConnecitons, List<Instance> instances, string name)
         {
             Id = id;
             Density = density;
             Type = type;
             PossibleConnections = possibleConnecitons;
             Instances = instances;
-            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, 0.2f);
+            Name = name;
+            Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
 
         }
 

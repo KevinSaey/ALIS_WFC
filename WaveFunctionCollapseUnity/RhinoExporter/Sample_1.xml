@@ -1,1 +1,41 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Assembly xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><Id>1</Id><Density>1</Density><Type>6</Type><Instances /><Neighbours><Neighbour><Neighbours><int>1</int></Neighbours></Neighbour><Neighbour><Neighbours><int>1</int></Neighbours></Neighbour><Neighbour><Neighbours><int>5</int></Neighbours></Neighbour><Neighbour><Neighbours><int>5</int></Neighbours></Neighbour><Neighbour><Neighbours><int>1</int></Neighbours></Neighbour><Neighbour><Neighbours><int>1</int></Neighbours></Neighbour></Neighbours></Assembly>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Assembly xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Id>1</Id>
+    <Density>1</Density>
+    <Type>6</Type>
+    <Instances />
+    <Neighbours>
+        <Neighbour>
+            <Neighbours>
+                <int>1</int>
+            </Neighbours>
+        </Neighbour>
+        <Neighbour>
+            <Neighbours>
+                <int>1</int>
+            </Neighbours>
+        </Neighbour>
+        <Neighbour>
+            <Neighbours>
+                <int>5</int>
+                <int>1</int>
+            </Neighbours>
+        </Neighbour>
+        <Neighbour>
+            <Neighbours>
+                <int>1</int>
+            </Neighbours>
+        </Neighbour>
+        <Neighbour>
+            <Neighbours>
+                <int>1</int>
+            </Neighbours>
+        </Neighbour>
+        <Neighbour>
+            <Neighbours>
+                <int>1</int>
+            </Neighbours>
+        </Neighbour>
+    </Neighbours>
+</Assembly>
