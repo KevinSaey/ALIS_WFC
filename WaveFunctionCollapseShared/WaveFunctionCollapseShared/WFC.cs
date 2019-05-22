@@ -11,41 +11,23 @@ namespace WaveFunctionCollapse.Shared
 
         public List<T> SampleLibrary
         {
-            get
-            {
-                return _sampleGrid.SampleLibrary;
-            }
-            set
-            {
-                _sampleGrid.SampleLibrary = value;
-            }
+            get { return _sampleGrid.SampleLibrary; }
+            set { _sampleGrid.SampleLibrary = value; }
         }
 
 
         public List<Connection> Connections
         {
-            get
-            {
-                return _sampleGrid.Connections;
-            }
-            set
-            {
-                _sampleGrid.Connections = value;
-            }
+            get { return _sampleGrid.Connections; }
+            set { _sampleGrid.Connections = value; }
         }
 
         List<IHeuristic<T>> _heuristics;
 
         public List<IHeuristic<T>> Heuristics
         {
-            get
-            {
-                return _heuristics;
-            }
-            set
-            {
-                _heuristics = value;
-            }
+            get { return _heuristics; }
+            set { _heuristics = value; }
         }
 
         public bool IsAllDetermined
@@ -59,6 +41,7 @@ namespace WaveFunctionCollapse.Shared
         SampleGrid<T> _sampleGrid;
         Engine<T> _engine;
 
+
         public WFC()
         {
 
@@ -69,7 +52,7 @@ namespace WaveFunctionCollapse.Shared
             SharedLogger.Log("Instantiating WFC");
             _sampleGrid = new SampleGrid<T>(samples, xDimension, yDimension, zDimension);
             SampleLibrary = samples;
-            
+
             _engine = new Engine<T>(SampleLibrary, _heuristics, _sampleGrid);
             SharedLogger.Log("WFC Instantiated");
         }

@@ -21,12 +21,16 @@ namespace WaveFunctionCollapse.Shared
             _sampleLibrary = samples;
             _heuristics = heuristics;
             _grid = grid;
+            
         }
 
         public void Execute()
         {
+            SetBoundryCondition(1, true, true, false, false, true, true);
+            PropogateDomains();
             while (!_grid.IsAllDetermined && !_grid.HasConflict)
             {
+
                 Step();
                 if (_grid.IsAllDetermined) SharedLogger.Log("Grid is all determined");
             }
@@ -53,15 +57,18 @@ namespace WaveFunctionCollapse.Shared
             List<int> setSamples = new List<int>();
             _counter++;
             int lowestEntropyIndex;
-            if (_counter == 1)
+            /*if (_counter == 1)
             {
                 //start from a random sample
                 lowestEntropyIndex = UtilShared.RandomNR.Next(0, _grid.PossibleSamples.Count - 1);
+
             }
             else
             {
                 lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
-            }
+            }*/
+
+            lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
             //SharedLogger.Log($"Step number {_counter}");
 
             // One step of the algorithm:
@@ -135,6 +142,38 @@ namespace WaveFunctionCollapse.Shared
             int selectedSample = possibleSamples[nextSampleIndex];
 
             return selectedSample;
+        }
+
+        void SetBoundryCondition(int boundrySamle, bool minX, bool plusX, bool minY, bool plusY, bool minZ, bool plusZ)
+        {
+            var boundryDomain = new Domain("Boundry", 1, new List<int> { boundrySamle });
+            
+            for (int i = 0; i < _grid.PossibleSamples.Count; i++)
+            {
+                if (minX && _grid.GetIndexOfPossibleSample(i).x == 0) boundryDomain.AddTileIndex(i);
+                if (minY && _grid.GetIndexOfPossibleSample(i).y == 0) boundryDomain.AddTileIndex(i);
+                if (minZ && _grid.GetIndexOfPossibleSample(i).z == 0) boundryDomain.AddTileIndex(i);
+
+                if (plusX && _grid.GetIndexOfPossibleSample(i).x == _grid.Dimensions.x-1) boundryDomain.AddTileIndex(i);
+                if (plusY && _grid.GetIndexOfPossibleSample(i).y == _grid.Dimensions.y-1) boundryDomain.AddTileIndex(i);
+                if (plusZ && _grid.GetIndexOfPossibleSample(i).z == _grid.Dimensions.z-1) boundryDomain.AddTileIndex(i);
+            }
+
+            // check inside polyline condition to add empty
+
+            _grid.Domains.Add(boundryDomain);
+        }
+
+        void PropogateDomains()
+        {
+            foreach (var domain in _grid.Domains)
+            {
+                foreach (var tileIndex in domain.TileIndices)
+                {
+                    _grid.PossibleSamples[tileIndex].And(UtilShared.ToBitArray(domain.PossibleSamples.ToList(),_grid.SampleLibrary.Count));
+                    if (domain.PossibleSamples.Count == 1) _grid.SetSample(tileIndex, domain.PossibleSamples[0]);
+                }
+            }
         }
     }
 }

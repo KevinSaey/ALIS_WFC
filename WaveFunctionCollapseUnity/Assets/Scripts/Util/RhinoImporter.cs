@@ -59,9 +59,7 @@ namespace WaveFunctionCollapse.Unity
                 var oldPos = oldInstance.Pose.position;
                 Util.OrientIndex(oldPos, anchor, 90, out var newPos);
                 var oldRot = oldInstance.Pose.rotation.eulerAngles;
-                Debug.Log($"oldPos {oldPos}");
                 var newRot = Quaternion.Euler(Vector3.up * 90 + oldInstance.Pose.rotation.eulerAngles);
-                Debug.Log($"newPos {newPos}");
                 var newPose = new Pose(newPos, newRot);
 
                 newInstances.Add(new Instance { DefinitionIndex = oldInstance.DefinitionIndex, Pose = newPose });

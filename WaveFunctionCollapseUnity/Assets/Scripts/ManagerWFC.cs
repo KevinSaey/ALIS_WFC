@@ -58,11 +58,11 @@ namespace WaveFunctionCollapse.Unity
         void Start()
         {
             //Debug.Log("Execute WFC");
-            //_waveFunctionCollapse.Execute();
-            //DrawGrid();
+            _waveFunctionCollapse.Execute();
+            DrawGrid();
 
             _step = Step(.3f);
-            StartCoroutine(_step);
+            //StartCoroutine(_step);
         }
 
         void OnGUI()

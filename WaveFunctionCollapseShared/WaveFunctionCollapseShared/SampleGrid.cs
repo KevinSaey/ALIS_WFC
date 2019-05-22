@@ -16,11 +16,13 @@ namespace WaveFunctionCollapse.Shared
         public List<int> SelectedSamples;
         public List<Connection> Connections;
         public List<T> SampleLibrary;
+        public List<Domain> Domains;
 
 
         internal SampleGrid(List<T> sampleLibrary, int dimX, int dimY, int dimZ)
         {
             Connections = new List<Connection>();
+            Domains = new List<Domain>();
             Dimensions = new Vector3IntShared { x = dimX, y = dimY, z = dimZ };
             SampleLibrary = sampleLibrary;
 
