@@ -57,7 +57,7 @@ namespace WaveFunctionCollapse.Shared
             List<int> setSamples = new List<int>();
             _counter++;
             int lowestEntropyIndex;
-            /*if (_counter == 1)
+            if (_counter == 1)
             {
                 //start from a random sample
                 lowestEntropyIndex = UtilShared.RandomNR.Next(0, _grid.PossibleSamples.Count - 1);
@@ -66,9 +66,9 @@ namespace WaveFunctionCollapse.Shared
             else
             {
                 lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
-            }*/
+            }
 
-            lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
+            //lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
             //SharedLogger.Log($"Step number {_counter}");
 
             // One step of the algorithm:
