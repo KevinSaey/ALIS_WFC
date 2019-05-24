@@ -33,7 +33,6 @@ namespace WaveFunctionCollapse.Shared
             for (int j = 0; j < 6; j++)
             {
                 Vector3IntShared neighbourIndex = grid.GetIndexOfPossibleSample(currentIndex) + neighbourIndices[j];
-                SharedLogger.Log(neighbourIndex.ToString());
 
                 if (UtilShared.CheckIndex(neighbourIndex, grid.Dimensions)) // check if the neighbour is out of bounds
                 {

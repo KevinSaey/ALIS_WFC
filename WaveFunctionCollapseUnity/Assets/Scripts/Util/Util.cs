@@ -7,13 +7,21 @@ using WaveFunctionCollapse.Shared;
 namespace WaveFunctionCollapse.Unity
 {
     public enum Axis { X, Y, Z };
+    
     public class UnityLog : ISharedLogger
     {
+        public bool EnableLog = true;
+
+        public UnityLog(bool log)
+        {
+            EnableLog = log;
+        }
+
+        
+
         public void Log(object message)
         {
-
-            //Debug.Log(message);
-
+            if(EnableLog) Debug.Log(message);
         }
     }
 

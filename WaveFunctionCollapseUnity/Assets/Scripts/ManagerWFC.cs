@@ -14,7 +14,7 @@ namespace WaveFunctionCollapse.Unity
         [SerializeField]
         Vector3Int _WFCSize;
         [SerializeField]
-        bool _rhino;
+        bool _rhino, _log, _rotate;
 
         List<ALIS_Sample> _sampleLibrary = new List<ALIS_Sample>();
         WFC<ALIS_Sample> _waveFunctionCollapse;
@@ -26,8 +26,9 @@ namespace WaveFunctionCollapse.Unity
 
         void Awake()
         {
-            SharedLogger.CurrentLogger = new UnityLog();
-
+            SharedLogger.CurrentLogger = new UnityLog(_log);
+            
+            
             if (_rhino) RhinoAwake();
             else RandomAwake();
         }
@@ -43,7 +44,7 @@ namespace WaveFunctionCollapse.Unity
 
         void RhinoAwake()
         {
-            _rhinoImporter = new RhinoImporter(_tileSize);
+            _rhinoImporter = new RhinoImporter(_tileSize,_rotate);
             _sampleLibrary = _rhinoImporter.Samples;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 
@@ -58,11 +59,11 @@ namespace WaveFunctionCollapse.Unity
         void Start()
         {
             //Debug.Log("Execute WFC");
-            _waveFunctionCollapse.Execute();
-            DrawGrid();
+            //_waveFunctionCollapse.Execute();
+            //DrawGrid();
 
             _step = Step(.3f);
-            //StartCoroutine(_step);
+            StartCoroutine(_step);
         }
 
         void OnGUI()

@@ -18,7 +18,7 @@ namespace WaveFunctionCollapse.Unity
         string _path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
         //Grid3D _grid;
 
-        public RhinoImporter(Vector3Int tileSize)
+        public RhinoImporter(Vector3Int tileSize, bool rotate)
         {
             var files = LoadFiles();
             Debug.Log($"{files.Count()} ALIS_samples loaded");
@@ -29,20 +29,22 @@ namespace WaveFunctionCollapse.Unity
                 Samples.Add(Assembly.Import(files[i]).ToALIS_Sample());
             }
 
-            //rotate samples
-            var nrOfSamples = Samples.Count;
-            for (int i = 1; i < nrOfSamples; i++)
+            if (rotate)
             {
-                //if (Samples[i].Instances.Count != 0)
-                //{
+                //rotate samples
+                var nrOfSamples = Samples.Count;
+                for (int i = 1; i < nrOfSamples; i++)
+                {
+                    //if (Samples[i].Instances.Count != 0)
+                    //{
                     Samples.Add(RotateALISSample(Samples[i], Samples.Count, ((Vector3)tileSize - Vector3.one) / 2, 1, i));
                     for (int j = 1; j < 3; j++)
                     {
                         Samples.Add(RotateALISSample(Samples.Last(), Samples.Count, ((Vector3)tileSize - Vector3.one) / 2, 1 + j, i));
                     }
-                //}
+                    //}
+                }
             }
-            //Assembly.Import(_path).Generate(_grid);
         }
 
         public List<string> LoadFiles()

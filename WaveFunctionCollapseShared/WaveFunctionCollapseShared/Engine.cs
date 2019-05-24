@@ -26,7 +26,7 @@ namespace WaveFunctionCollapse.Shared
 
         public void Execute()
         {
-            SetBoundryCondition(1, true, true, false, false, true, true);
+            //SetBoundryCondition(1, true, true, false, false, true, true);
             PropogateDomains();
             while (!_grid.IsAllDetermined && !_grid.HasConflict)
             {

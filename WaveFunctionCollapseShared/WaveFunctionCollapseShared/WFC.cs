@@ -74,7 +74,6 @@ namespace WaveFunctionCollapse.Shared
                 Connections.Add(new Connection(Connections.Count));
             }
 
-            //SharedLogger.Log($"connection ID: {_connections[connectionID].ID} List ID: {connectionID}");
             Connections[connectionID].SampleIDS.Add(currentSample.Id);
         }
 

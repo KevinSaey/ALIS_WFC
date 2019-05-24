@@ -14,7 +14,7 @@ namespace WaveFunctionCollapse.Unity
         public int Type;
         public List<Instance> Instances;
         public string Name;
-        static float transparency = 0f;
+        static float transparency = .2f;
 
         public ALIS_Sample(int id)
         {

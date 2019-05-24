@@ -48,7 +48,6 @@ namespace WaveFunctionCollapse.Shared
             
             foreach (var i in integerList)
             {
-                //SharedLogger.Log($"length: {length} index {i}");
                 if(i>length)
                 {
                     SharedLogger.Log($"length: {length} index {i}: Index is bigger than the length of the list. -function ToBitArray.-");

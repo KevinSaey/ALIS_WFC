@@ -37,7 +37,6 @@ namespace WaveFunctionCollapse.Shared
             SelectedSamples = new List<int>(PossibleSamples.Count);
             for (int i = 0; i < Dimensions.z * Dimensions.y * Dimensions.x; i++)
             {
-                //SharedLogger.Log($"NumberOfSamples {_wfc.Samples.Count}");
                 PossibleSamples.Add(new BitArray(SampleLibrary.Count, true));
                 SelectedSamples.Add(0);
             }
@@ -122,7 +121,6 @@ namespace WaveFunctionCollapse.Shared
         {
             SelectedSamples[index] = selectedSample;
             UtilShared.SetFalseBut(PossibleSamples[index], 0); //0 is always an empty sample
-            SharedLogger.Log($"Sample {selectedSample} assigned");
 
             SampleLibrary[selectedSample].Propagate(this, index);
 
@@ -133,7 +131,6 @@ namespace WaveFunctionCollapse.Shared
             for (int i = 0; i < PossibleSamples.Count; i++)
             {
                 int entropy = Entropy(PossibleSamples[i]);
-                SharedLogger.Log($"Sample {GetIndexOfPossibleSample(i).ToString()} Entropy {entropy}");
             }
         }
 
