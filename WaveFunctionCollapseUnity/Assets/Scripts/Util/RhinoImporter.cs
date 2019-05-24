@@ -103,7 +103,9 @@ namespace WaveFunctionCollapse.Unity
             List<HashSet<int>> possibleConnections = new List<HashSet<int>>();
             for (int i = 0; i < Neighbours.Count; i++)
             {
-                possibleConnections.Add(new HashSet<int>(Neighbours[i].Neighbours));
+                
+                    possibleConnections.Add(new HashSet<int>(Neighbours[i].Neighbours/*.Where(s=>s!= int.MaxValue)*/));
+                
             }
             var name = $"sample {Id} type {Type} rot: 0";
             ALIS_Sample alis_Sample = new ALIS_Sample(Id, Density, Type, possibleConnections, Instances, name);
