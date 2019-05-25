@@ -37,6 +37,13 @@ namespace WaveFunctionCollapse.Shared
                 return _sampleGrid.IsAllDetermined;
             }
         }
+        public bool HasConflict
+        {
+            get
+            {
+                return _sampleGrid.HasConflict;
+            }
+        }
 
         SampleGrid<T> _sampleGrid;
         Engine<T> _engine;
@@ -69,13 +76,18 @@ namespace WaveFunctionCollapse.Shared
 
         public void AddSampleConnection(int connectionID, Sample currentSample)
         {
-            while (connectionID >= Connections.Count)
+            if (Connections.Count(c => c.ID == connectionID) == 0)
             {
-                Connections.Add(new Connection(Connections.Count));
+                Connections.Add(new Connection(connectionID));
             }
-
-            Connections[connectionID].SampleIDS.Add(currentSample.Id);
+            Connections.First(c => c.ID == connectionID).SampleIDS.Add(currentSample.Id);
         }
+
+        public void RemoveEmptyConnections()
+        {
+            Connections = Connections.Where(s => s.SampleIDS != null).ToList();
+        }
+
 
         public Vector3IntShared GetIndexOfPossibleSample(int i)
         {

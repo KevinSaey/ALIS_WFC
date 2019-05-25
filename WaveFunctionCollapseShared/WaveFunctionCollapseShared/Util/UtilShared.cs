@@ -94,7 +94,7 @@ namespace WaveFunctionCollapse.Shared
         {
             if (index.x < 0 || index.x > dimensions.x - 1 || index.y < 0 || index.y > dimensions.y - 1 || index.z < 0 || index.z > dimensions.z - 1)
             {
-                SharedLogger.Log("Outside of bounds. -function CheckIndex.-");
+                //SharedLogger.Log("Outside of bounds. -function CheckIndex.-");
                 return false;
             }
             return true;

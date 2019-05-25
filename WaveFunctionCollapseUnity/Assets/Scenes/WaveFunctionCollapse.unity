@@ -196,10 +196,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
   _tileSize: {x: 4, y: 6, z: 4}
-  _WFCSize: {x: 10, y: 10, z: 10}
+  _WFCSize: {x: 5, y: 1, z: 5}
   _rhino: 1
   _log: 1
-  _rotate: 1
+  _rotate: 0
 --- !u!4 &573255905
 Transform:
   m_ObjectHideFlags: 0
@@ -397,13 +397,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0, y: 0.8761412, z: -0, w: 0.48205474}
-  m_LocalPosition: {x: -35.8, y: 13.8, z: 51.1}
+  m_LocalRotation: {x: 0.42197567, y: -0, z: -0, w: 0.90660715}
+  m_LocalPosition: {x: 2.8, y: 11.9, z: -8.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 122.36101, z: 0}
+  m_LocalEulerAnglesHint: {x: 49.919003, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
   m_ObjectHideFlags: 0

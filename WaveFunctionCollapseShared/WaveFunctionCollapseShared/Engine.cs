@@ -54,6 +54,7 @@ namespace WaveFunctionCollapse.Shared
 
         List<int>  Step()
         {
+            _grid.LogEntropy();
             List<int> setSamples = new List<int>();
             _counter++;
             int lowestEntropyIndex;
@@ -114,7 +115,7 @@ namespace WaveFunctionCollapse.Shared
 
             // d. Use the sample.propagate(grid) to apply over grid
             _sampleLibrary[selectedSample].Propagate(_grid, lowestEntropyIndex);
-
+            _grid.LogEntropy();
             return setSamples;
         }
 

@@ -126,11 +126,12 @@ namespace WaveFunctionCollapse.Shared
 
         }
 
-        public void ShowEntropy()
+        public void LogEntropy()
         {
             for (int i = 0; i < PossibleSamples.Count; i++)
             {
                 int entropy = Entropy(PossibleSamples[i]);
+                SharedLogger.Log($"Tile: {i} entropy: {entropy}");
             }
         }
 

@@ -52,7 +52,8 @@ namespace WaveFunctionCollapse.Unity
 
             //Add the samples connections to the wfc grid
             foreach (var sample in _sampleLibrary) sample.AddConnectionsToWFC(_waveFunctionCollapse);
-
+            //_waveFunctionCollapse.RemoveEmptyConnections();
+            
             _gridController = new GridController(_tileSize, _voxelSize, _WFCSize);
         }
 
@@ -78,7 +79,7 @@ namespace WaveFunctionCollapse.Unity
                 Debug.Log("Step");
                 DrawSamples(_waveFunctionCollapse.Step(1));
 
-                if (_waveFunctionCollapse.IsAllDetermined)
+                if (_waveFunctionCollapse.IsAllDetermined||_waveFunctionCollapse.HasConflict)
                 {
                     StopCoroutine(_step);
                 }
@@ -147,7 +148,7 @@ namespace WaveFunctionCollapse.Unity
                 GameObject goTile = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 goTile.transform.localScale = Vector3.Scale(Vector3.one * _voxelSize, _tileSize);
                 goTile.transform.position = Vector3.Scale(index, goTile.transform.localScale)+((Vector3)_tileSize-Vector3.one)*_voxelSize/2;
-                goTile.name = selectedSample.Name;
+                goTile.name = $"tile: {sampleIndex}{index} {selectedSample.Name}";
 
                 Material mat = goTile.GetComponent<Renderer>().material;
                 mat.color = sample.Col;
