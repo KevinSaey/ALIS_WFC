@@ -196,7 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
   _tileSize: {x: 4, y: 6, z: 4}
-  _WFCSize: {x: 3, y: 1, z: 3}
+  _WFCSize: {x: 10, y: 1, z: 10}
   _rhino: 1
   _log: 1
   _rotate: 0

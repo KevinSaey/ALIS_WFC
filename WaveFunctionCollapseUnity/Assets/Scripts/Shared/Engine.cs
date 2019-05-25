@@ -11,7 +11,6 @@ namespace WaveFunctionCollapse.Shared
     internal class Engine<T> where T : Sample
     {
         List<T> _sampleLibrary;
-        List<Connection> _connections;
         List<IHeuristic<T>> _heuristics;
         SampleGrid<T> _grid;
         int _counter = 0;
@@ -54,7 +53,7 @@ namespace WaveFunctionCollapse.Shared
 
         List<int>  Step()
         {
-            _grid.LogEntropy();
+            //_grid.LogEntropy();
             List<int> setSamples = new List<int>();
             _counter++;
             int lowestEntropyIndex;
@@ -115,7 +114,7 @@ namespace WaveFunctionCollapse.Shared
 
             // d. Use the sample.propagate(grid) to apply over grid
             _sampleLibrary[selectedSample].Propagate(_grid, lowestEntropyIndex);
-            _grid.LogEntropy();
+            //_grid.LogEntropy();
             return setSamples;
         }
 
@@ -140,6 +139,7 @@ namespace WaveFunctionCollapse.Shared
         {
             Random rnd = new Random();
             int nextSampleIndex = rnd.Next(1, possibleSamples.Count);
+            SharedLogger.Log($"{possibleSamples.Count} {nextSampleIndex}");
             int selectedSample = possibleSamples[nextSampleIndex];
 
             return selectedSample;

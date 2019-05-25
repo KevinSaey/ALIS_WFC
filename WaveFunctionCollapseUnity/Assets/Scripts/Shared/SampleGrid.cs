@@ -77,11 +77,11 @@ namespace WaveFunctionCollapse.Shared
         {
             get
             {
-                foreach (var sample in PossibleSamples)
+                for (int i = 0; i < PossibleSamples.Count; i++)
                 {
-                    if (Entropy(sample) == 0)
+                    if (Entropy(PossibleSamples[i]) == 0)
                     {
-                        SharedLogger.Log("Solution has a conflict");
+                        SharedLogger.Log($"Solution has a conflict in tile {i}");
                         return true;
                     }
                 }
@@ -103,7 +103,7 @@ namespace WaveFunctionCollapse.Shared
             for (int i = 0; i < PossibleSamples.Count; i++)
             {
                 int entropy = Entropy(PossibleSamples[i]);
-                if (entropy < lowestEntropy && entropy>1)
+                if (entropy < lowestEntropy && entropy > 1)
                 {
                     lowestEntropy = entropy;
                     lowestIndex = i;
