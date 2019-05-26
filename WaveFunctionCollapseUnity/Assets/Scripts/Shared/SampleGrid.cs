@@ -129,7 +129,7 @@ namespace WaveFunctionCollapse.Shared
         {
             SelectedSamples[index] = selectedSample;
             PossibleSamples[index] = UtilShared.SetFalseBut(PossibleSamples[index], 0); //0 is always an empty sample
-            
+
             SampleLibrary[selectedSample].Propagate(this, index);
 
         }
@@ -161,6 +161,18 @@ namespace WaveFunctionCollapse.Shared
             }
 
             return selectedConnections.Select(s => s.SampleIDS).SelectMany(s => s).ToList();
+        }
+
+        public int GetIndexFromSampleId(int sampleId)
+        {
+            int index = int.MaxValue;
+            for (int i = 0; i < SampleLibrary.Count; i++)
+            {
+                if (SampleLibrary[i].Id == sampleId) index = i;
+                
+            }
+            if (index == int.MaxValue)SharedLogger.Log($"Requested sample id:{sampleId} is not valid - function GetIndexFromSampleID");
+            return index;
         }
     }
 }

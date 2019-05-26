@@ -42,7 +42,10 @@ namespace WaveFunctionCollapse.Shared
                     if (UtilShared.CountBoolarrayTrue(NeighbourSamples) != 1) // if statement becomes obsolete if we actually have working patterns
                     {
                         List<int> samplesToMatch = new List<int>();
-                        foreach (var connection in PossibleConnections[j]) samplesToMatch.AddRange(grid.Connections.First(s=>s.ID==connection).SampleIDS);
+                        foreach (var connection in PossibleConnections[j])
+                            samplesToMatch.AddRange(
+                                grid.Connections.First(s => s.ID == connection)
+                                .SampleIDS.Where(s => s != grid.GetIndexFromSampleId(this.Id)));
 
                         grid.PossibleSamples[indexToPropagate] = NeighbourSamples.And(UtilShared.ToBoolArray(samplesToMatch.Distinct().ToList(), grid.SampleLibrary.Count));
                     }

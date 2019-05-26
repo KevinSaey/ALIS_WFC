@@ -56,12 +56,14 @@ namespace WaveFunctionCollapse.Unity
 
         public void CheckDuplicates()
         {
-            var checkedSamples = (from i in Samples
-                                  from j in Samples.SkipWhile(j => j != i)
-                                  where i != j
-                                  where i.Id != 0 && j.Id != 0
-                                  select MergeDuplicates(i, j)).Distinct();
-            //Samples = checkedSamples.OrderBy(s=>s.Id).ToList();
+            var checkedSamples = new List<ALIS_Sample>();
+            checkedSamples.Add(Samples[0]);
+            checkedSamples.AddRange((from i in Samples
+                                     from j in Samples.SkipWhile(j => j != i)
+                                     where i != j
+                                     where i.Id != 0 && j.Id != 0
+                                     select MergeDuplicates(i, j)).Distinct());
+            Samples = checkedSamples.OrderBy(s => s.Id).ToList();
         }
 
         public ALIS_Sample MergeDuplicates(ALIS_Sample sample1, ALIS_Sample sample2)

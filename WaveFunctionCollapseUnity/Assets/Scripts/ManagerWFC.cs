@@ -27,8 +27,7 @@ namespace WaveFunctionCollapse.Unity
         void Awake()
         {
             SharedLogger.CurrentLogger = new UnityLog(_log);
-            
-            
+                        
             if (_rhino) RhinoAwake();
             else RandomAwake();
         }
@@ -60,11 +59,11 @@ namespace WaveFunctionCollapse.Unity
         void Start()
         {
             //Debug.Log("Execute WFC");
-            //_waveFunctionCollapse.Execute();
-            //DrawGrid();
+            _waveFunctionCollapse.Execute();
+            DrawGrid();
 
             _step = Step(1f);
-            StartCoroutine(_step);
+            //StartCoroutine(_step);
         }
 
         void OnGUI()
@@ -87,13 +86,10 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-
         void Update()
         {
             //if (_rhino) _gridController.Update();
         }
-
-
 
         public void InitialiseRandomSamples()
         {
@@ -159,8 +155,6 @@ namespace WaveFunctionCollapse.Unity
                 mat.DisableKeyword("_ALPHABLEND_ON");
                 mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
                 mat.renderQueue = 3000;
-
-                
 
                 if (_rhino)
                 {

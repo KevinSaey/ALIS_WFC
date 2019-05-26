@@ -85,6 +85,11 @@ namespace WaveFunctionCollapse.Shared
             bool[] newBoolArray = new bool[length];
             foreach (var integer in integerList)
             {
+                if (integer > length-1)
+                {
+                    SharedLogger.Log($"length: {length} index {integer}: Index is bigger than the length of the list. -function ToBoolArray.-");
+                    return null;
+                }
                 newBoolArray[integer] = true;
             }
             return newBoolArray;
