@@ -58,8 +58,6 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-
-
         List<int> Propagate(SampleGrid<ALIS_Sample> grid, int index)
         {
             return base.Propagate(grid, index);

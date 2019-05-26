@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using WaveFunctionCollapse.Shared;
 
 
 namespace WaveFunctionCollapse.Unity
@@ -44,11 +45,52 @@ namespace WaveFunctionCollapse.Unity
                     //}
                 }
             }
+
+            CheckDuplicates();
         }
 
         public List<string> LoadFiles()
         {
             return Directory.GetFiles(_path, "*.xml").ToList();
+        }
+
+        public void CheckDuplicates()
+        {
+            var checkedSamples = (from i in Samples
+                                  from j in Samples.SkipWhile(j => j != i)
+                                  where i != j
+                                  where i.Id != 0 && j.Id != 0
+                                  select MergeDuplicates(i, j)).Distinct();
+            //Samples = checkedSamples.OrderBy(s=>s.Id).ToList();
+        }
+
+        public ALIS_Sample MergeDuplicates(ALIS_Sample sample1, ALIS_Sample sample2)
+        {
+            if (CompareDuplicateSamples(sample1, sample2))
+            {
+                for (int i = 0; i < sample1.PossibleConnections.Count; i++)
+                {
+                    sample1.PossibleConnections[i].UnionWith(sample2.PossibleConnections[i]);
+                    sample2.PossibleConnections[i].UnionWith(sample1.PossibleConnections[i]);
+                }
+            }
+            //samples.Remove(sample2);
+            return sample1;
+        }
+
+        public static bool CompareDuplicateSamples(ALIS_Sample sample1, ALIS_Sample sample2)
+        {
+            if (sample1.Instances.Count != sample2.Instances.Count) return false;
+            if (sample1.Instances.Count == 0 && sample1.Instances.Count == sample2.Instances.Count) return true;
+            var instances1 = sample1.Instances;
+            var instances2 = sample2.Instances;
+
+            for (int i = 0; i < instances1.Count; i++)
+            {
+                if (instances2.Count(s => s.Pose == instances1[i].Pose) == 0) return false;
+            }
+
+            return true;
         }
 
         public ALIS_Sample RotateALISSample(ALIS_Sample sample, int id, Vector3 anchor, int timesRoated, int origSampleId)
@@ -102,9 +144,9 @@ namespace WaveFunctionCollapse.Unity
             List<HashSet<int>> possibleConnections = new List<HashSet<int>>();
             for (int i = 0; i < Neighbours.Count; i++)
             {
-                
-                    possibleConnections.Add(new HashSet<int>(Neighbours[i].Neighbours/*.Where(s=>s!= int.MaxValue)*/));
-                
+
+                possibleConnections.Add(new HashSet<int>(Neighbours[i].Neighbours/*.Where(s=>s!= int.MaxValue)*/));
+
             }
             var name = $"sample {Id} type {Type} rot: 0 minX: {possibleConnections[0].First()} plusX: {possibleConnections[1].First()} minY: {possibleConnections[2].First()}  plusY: {possibleConnections[3].First()}  minZ: {possibleConnections[4].First()} plusZ  {possibleConnections[5].First()}";
             ALIS_Sample alis_Sample = new ALIS_Sample(Id, Density, Type, possibleConnections, Instances, name);

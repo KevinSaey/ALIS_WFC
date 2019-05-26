@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using g3;
 
-
 namespace WaveFunctionCollapse.Shared
 {
     enum directions { minX = 0, plusX = 1, minY = 2, plusY = 3, minZ = 4, plusZ = 5 }
