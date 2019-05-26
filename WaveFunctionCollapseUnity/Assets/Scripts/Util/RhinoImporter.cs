@@ -23,7 +23,6 @@ namespace WaveFunctionCollapse.Unity
             var files = LoadFiles();
             Debug.Log($"{files.Count()} ALIS_samples loaded");
 
-
             for (int i = 0; i < files.Count; i++)
             {
                 Samples.Add(Assembly.Import(files[i]).ToALIS_Sample());

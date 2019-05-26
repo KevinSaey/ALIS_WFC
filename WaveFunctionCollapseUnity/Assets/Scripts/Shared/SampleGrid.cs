@@ -12,7 +12,7 @@ namespace WaveFunctionCollapse.Shared
     public class SampleGrid<T> where T : Sample
     {
         public Vector3IntShared Dimensions { get; private set; }
-        public List<BitArray> PossibleSamples;
+        public List<bool[]> PossibleSamples;
         public List<int> SelectedSamples;
         public List<Connection> Connections;
         public List<T> SampleLibrary;
@@ -27,17 +27,20 @@ namespace WaveFunctionCollapse.Shared
             SampleLibrary = sampleLibrary;
 
             createPossibleSampleGrid();
+            LogIndex();
+            LogEntropy();
         }
 
 
 
         void createPossibleSampleGrid()
         {
-            PossibleSamples = new List<BitArray>();
+            PossibleSamples = new List<bool[]>();
             SelectedSamples = new List<int>(PossibleSamples.Count);
             for (int i = 0; i < Dimensions.z * Dimensions.y * Dimensions.x; i++)
             {
-                PossibleSamples.Add(new BitArray(SampleLibrary.Count, true));
+                var boolArray = new bool[SampleLibrary.Count];
+                PossibleSamples.Add(boolArray.SetAll(true));
                 SelectedSamples.Add(0);
             }
 
@@ -96,6 +99,11 @@ namespace WaveFunctionCollapse.Shared
             return UtilShared.CountBitarrayTrue(sample);
         }
 
+        public int Entropy(bool[] sample)
+        {
+            return UtilShared.CountBoolarrayTrue(sample);
+        }
+
         public int FindLowestNonZeroEntropy()
         {
             int lowestEntropy = SampleLibrary.Count;
@@ -120,8 +128,8 @@ namespace WaveFunctionCollapse.Shared
         public void SetSample(int index, int selectedSample)
         {
             SelectedSamples[index] = selectedSample;
-            UtilShared.SetFalseBut(PossibleSamples[index], 0); //0 is always an empty sample
-
+            PossibleSamples[index] = UtilShared.SetFalseBut(PossibleSamples[index], 0); //0 is always an empty sample
+            
             SampleLibrary[selectedSample].Propagate(this, index);
 
         }
@@ -132,6 +140,15 @@ namespace WaveFunctionCollapse.Shared
             {
                 int entropy = Entropy(PossibleSamples[i]);
                 SharedLogger.Log($"Tile: {i} entropy: {entropy}");
+            }
+        }
+
+        public void LogIndex()
+        {
+
+            for (int i = 0; i < PossibleSamples.Count; i++)
+            {
+                SharedLogger.Log($"index {i} vector {GetIndexOfPossibleSample(i).ToString()}");
             }
         }
 

@@ -28,6 +28,37 @@ namespace WaveFunctionCollapse.Shared
             return integerList;
         }*/
 
+        public static bool[] And(this bool[] boolArray1, bool[] boolArray2)
+        {
+            bool[] newBoolArray = new bool[boolArray1.Length];
+            for (int i = 0; i < boolArray1.Length; i++)
+            {
+                newBoolArray[i] = (boolArray1[i] && boolArray2[i]);
+            }
+
+            return newBoolArray;
+        }
+
+        public static bool[] SetAll(this bool[] boolArray, bool value)
+        {
+            bool[] newBoolArray = new bool[boolArray.Length];
+            for (int i = 0; i < boolArray.Length; i++)
+            {
+                newBoolArray[i] = value;
+            }
+            return newBoolArray;
+        }
+
+        public static List<int> ToIntegerList(bool[] boolArray)
+        {
+            List<int> intList = new List<int>();
+            for (int i = 0; i < boolArray.Length; i++)
+            {
+                if (boolArray[i]) intList.Add(i);
+            }
+            return intList;
+        }
+
         public static List<int> ToIntegerList(BitArray bitArray)
         {
             var list = bitArray.Cast<bool>()
@@ -42,13 +73,30 @@ namespace WaveFunctionCollapse.Shared
             return list.First();
         }
 
+        public static int GetOneTrue(bool[] boolArray)
+        {
+            var list = ToIntegerList(boolArray);
+            if (list.Count > 1) SharedLogger.Log("Error: More than 1 item is true. -function GetOneTrue.-");
+            return list.First();
+        }
+
+        public static bool[] ToBoolArray(List<int> integerList, int length)
+        {
+            bool[] newBoolArray = new bool[length];
+            foreach (var integer in integerList)
+            {
+                newBoolArray[integer] = true;
+            }
+            return newBoolArray;
+        }
+
         public static BitArray ToBitArray(List<int> integerList, int length)
         {
             BitArray bitArray = new BitArray(length, false);
-            
+
             foreach (var i in integerList)
             {
-                if(i>length)
+                if (i > length)
                 {
                     SharedLogger.Log($"length: {length} index {i}: Index is bigger than the length of the list. -function ToBitArray.-");
                     return null;
@@ -74,7 +122,29 @@ namespace WaveFunctionCollapse.Shared
             return counter;
         }
 
+        public static int CountBoolarrayTrue(bool[] boolArray)
+        {
+            int counter = 0;
+            for (int i = 0; i < boolArray.Length; i++)
+            {
+                if (boolArray[i]) counter++;
+            }
+            return counter;
+        }
 
+        public static bool[] SetFalseBut(bool[] boolArray, int i)
+        {
+            bool[] newBoolArray = new bool[boolArray.Length];
+            if (i > boolArray.Length)
+            {
+                SharedLogger.Log($"Index {i} bigger than BitArray size {boolArray.Length}. -function SetFalseBut.-");
+            }
+            else
+            {
+                newBoolArray[i] = true;
+            }
+            return newBoolArray;
+        }
 
         public static void SetFalseBut(BitArray bitArray, int i)
         {

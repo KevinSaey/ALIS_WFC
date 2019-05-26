@@ -63,7 +63,7 @@ namespace WaveFunctionCollapse.Unity
             //_waveFunctionCollapse.Execute();
             //DrawGrid();
 
-            _step = Step(.3f);
+            _step = Step(1f);
             StartCoroutine(_step);
         }
 

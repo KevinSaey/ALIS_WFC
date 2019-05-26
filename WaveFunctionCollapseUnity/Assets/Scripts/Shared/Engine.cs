@@ -87,7 +87,7 @@ namespace WaveFunctionCollapse.Shared
             BitArray lowestEntropy = _grid.PossibleSamples[UtilShared.RandomNR.Next(0, lowestSamples.Count - 1)];
             */
 
-            BitArray lowestEntropy = _grid.PossibleSamples[lowestEntropyIndex];
+            bool[] lowestEntropy = _grid.PossibleSamples[lowestEntropyIndex];
 
 
             // b. Apply full list of heuristics over the sample chances (what is the starting proportion of choices?)
@@ -137,9 +137,7 @@ namespace WaveFunctionCollapse.Shared
 
         int SelectRandom(List<int> possibleSamples)
         {
-            Random rnd = new Random();
-            int nextSampleIndex = rnd.Next(1, possibleSamples.Count);
-            SharedLogger.Log($"{possibleSamples.Count} {nextSampleIndex}");
+            int nextSampleIndex = UtilShared.RandomNR.Next(possibleSamples.Count);
             int selectedSample = possibleSamples[nextSampleIndex];
 
             return selectedSample;
@@ -171,7 +169,7 @@ namespace WaveFunctionCollapse.Shared
             {
                 foreach (var tileIndex in domain.TileIndices)
                 {
-                    _grid.PossibleSamples[tileIndex].And(UtilShared.ToBitArray(domain.PossibleSamples.ToList(),_grid.SampleLibrary.Count));
+                    _grid.PossibleSamples[tileIndex]=_grid.PossibleSamples[tileIndex].And(UtilShared.ToBoolArray(domain.PossibleSamples.ToList(),_grid.SampleLibrary.Count));
                     if (domain.PossibleSamples.Count == 1) _grid.SetSample(tileIndex, domain.PossibleSamples[0]);
                 }
             }
