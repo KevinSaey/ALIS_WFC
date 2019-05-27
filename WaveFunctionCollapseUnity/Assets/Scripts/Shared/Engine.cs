@@ -100,7 +100,7 @@ namespace WaveFunctionCollapse.Shared
 
             int heuristicSelection = UtilShared.RandomNR.Next(2);
 
-            heuristicSelection = 1; // overwrite, delete for actual random selection
+            //heuristicSelection = 1; // overwrite, delete for actual random selection
             int selectedSample=int.MinValue;
             if (heuristicSelection == 0)
             {

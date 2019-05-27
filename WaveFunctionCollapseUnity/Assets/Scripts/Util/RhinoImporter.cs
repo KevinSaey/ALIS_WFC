@@ -28,7 +28,6 @@ namespace WaveFunctionCollapse.Unity
             {
                 Samples.Add(Assembly.Import(files[i]).ToALIS_Sample());
             }
-
             
             if (rotate)
             {
@@ -72,6 +71,7 @@ namespace WaveFunctionCollapse.Unity
             ALIS_Sample reflectedSample;
             List<HashSet<int>> neighbours = new List<HashSet<int>>();
             List<Instance> instances = new List<Instance>();
+            int id = Samples.Count;
 
             for (int i = 0; i < 6; i++)
             {
@@ -89,6 +89,8 @@ namespace WaveFunctionCollapse.Unity
                     newInstance.Pose.position.x = newX;
                     instances.Add(newInstance);
                 }
+                sampleToReflect.PossibleNeighbours[0].Add(id);
+                sampleToReflect.PossibleNeighbours[1].Add(id);
             }
             if (axis == Axis.Y)
             {
@@ -101,6 +103,8 @@ namespace WaveFunctionCollapse.Unity
                     newInstance.Pose.position.y = newY;
                     instances.Add(newInstance);
                 }
+                sampleToReflect.PossibleNeighbours[2].Add(id);
+                sampleToReflect.PossibleNeighbours[3].Add(id);
             }
             if (axis == Axis.Z)
             {
@@ -113,11 +117,13 @@ namespace WaveFunctionCollapse.Unity
                     newInstance.Pose.position.z = newZ;
                     instances.Add(newInstance);
                 }
+                sampleToReflect.PossibleNeighbours[4].Add(id);
+                sampleToReflect.PossibleNeighbours[5].Add(id);
             }
 
 
             var name = $"sample {sampleToReflect.Id} type {sampleToReflect.Type} ref: {axis}";
-            reflectedSample = new ALIS_Sample(Samples.Count, sampleToReflect.Density, sampleToReflect.Type, neighbours, instances, name);
+            reflectedSample = new ALIS_Sample(id, sampleToReflect.Density, sampleToReflect.Type, neighbours, instances, name);
             return reflectedSample;
         }
 

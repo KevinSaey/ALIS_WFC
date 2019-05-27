@@ -15,7 +15,7 @@ namespace WaveFunctionCollapse.Unity
         [SerializeField]
         Vector3Int _WFCSize;
         [SerializeField]
-        bool _rhino, _log, _rotate, _reflect;
+        bool _rhino, _log,_interval, _rotate, _reflect;
 
         List<ALIS_Sample> _sampleLibrary = new List<ALIS_Sample>();
         WFC<ALIS_Sample> _waveFunctionCollapse;
@@ -59,12 +59,16 @@ namespace WaveFunctionCollapse.Unity
 
         void Start()
         {
-            //Debug.Log("Execute WFC");
-            //_waveFunctionCollapse.Execute();
-            //DrawGrid();
-
-            _step = Step(1f);
-            StartCoroutine(_step);
+            if (_interval)
+            {
+                _step = Step(2f);
+                StartCoroutine(_step);
+            }
+            else
+            {
+                _waveFunctionCollapse.Execute();
+                DrawGrid();
+            }
         }
 
         void OnGUI()
