@@ -13,7 +13,7 @@ namespace WaveFunctionCollapse.Shared
     public abstract class Sample
     {
         public int Id { get; set; } // sample null is always an empty sample
-        public List<HashSet<int>> PossibleConnections;
+        public List<HashSet<int>> PossibleNeighbours;
 
         public List<int> Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
         {
@@ -41,13 +41,14 @@ namespace WaveFunctionCollapse.Shared
                     //crossreference lists and change neighbour
                     if (UtilShared.CountBoolarrayTrue(NeighbourSamples) != 1) // if statement becomes obsolete if we actually have working patterns
                     {
-                        List<int> samplesToMatch = new List<int>();
-                        foreach (var connection in PossibleConnections[j])
+                        HashSet<int> samplesToMatch = PossibleNeighbours[j];
+
+                        /*foreach (var connection in PossibleConnections[j])
                             samplesToMatch.AddRange(
                                 grid.Connections.First(s => s.ID == connection)
-                                .SampleIDS.Where(s => s != grid.GetIndexFromSampleId(this.Id)));
+                                .SampleIDS.Where(s => s != grid.GetIndexFromSampleId(this.Id)));*/
 
-                        grid.PossibleSamples[indexToPropagate] = NeighbourSamples.And(UtilShared.ToBoolArray(samplesToMatch.Distinct().ToList(), grid.SampleLibrary.Count));
+                        grid.PossibleSamples[indexToPropagate] = NeighbourSamples.And(UtilShared.ToBoolArray(samplesToMatch, grid.SampleLibrary.Count));
                     }
                     else
                     {

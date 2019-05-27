@@ -80,12 +80,12 @@ namespace WaveFunctionCollapse.Shared
             return list.First();
         }
 
-        public static bool[] ToBoolArray(List<int> integerList, int length)
+        public static bool[] ToBoolArray(HashSet<int> integerList, int length)
         {
             bool[] newBoolArray = new bool[length];
             foreach (var integer in integerList)
             {
-                if (integer > length-1)
+                if (integer > length-1||integer<0)
                 {
                     SharedLogger.Log($"length: {length} index {integer}: Index is bigger than the length of the list. -function ToBoolArray.-");
                     return null;

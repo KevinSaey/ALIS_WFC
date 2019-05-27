@@ -26,7 +26,7 @@ namespace WaveFunctionCollapse.Shared
         public void Execute()
         {
             //SetBoundryCondition(1, true, true, false, false, true, true);
-            PropogateDomains();
+            //PropogateDomains();
             while (!_grid.IsAllDetermined && !_grid.HasConflict)
             {
 
@@ -99,7 +99,9 @@ namespace WaveFunctionCollapse.Shared
             // for now, just select a random sample, later we'll add heuristics
 
             int heuristicSelection = UtilShared.RandomNR.Next(2);
-            int selectedSample = 0;
+
+            heuristicSelection = 1; // overwrite, delete for actual random selection
+            int selectedSample=int.MinValue;
             if (heuristicSelection == 0)
             {
                 selectedSample = SelectRandom(possibleSamples);
@@ -163,7 +165,7 @@ namespace WaveFunctionCollapse.Shared
             _grid.Domains.Add(boundryDomain);
         }
 
-        void PropogateDomains()
+        /*void PropogateDomains()
         {
             foreach (var domain in _grid.Domains)
             {
@@ -173,6 +175,6 @@ namespace WaveFunctionCollapse.Shared
                     if (domain.PossibleSamples.Count == 1) _grid.SetSample(tileIndex, domain.PossibleSamples[0]);
                 }
             }
-        }
+        }*/
     }
 }

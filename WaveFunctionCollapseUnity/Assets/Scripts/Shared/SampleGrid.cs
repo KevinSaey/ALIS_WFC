@@ -14,21 +14,21 @@ namespace WaveFunctionCollapse.Shared
         public Vector3IntShared Dimensions { get; private set; }
         public List<bool[]> PossibleSamples;
         public List<int> SelectedSamples;
-        public List<Connection> Connections;
+        //public List<Connection> Connections;
         public List<T> SampleLibrary;
         public List<Domain> Domains;
 
 
         internal SampleGrid(List<T> sampleLibrary, int dimX, int dimY, int dimZ)
         {
-            Connections = new List<Connection>();
+            //Connections = new List<Connection>();
             Domains = new List<Domain>();
             Dimensions = new Vector3IntShared { x = dimX, y = dimY, z = dimZ };
             SampleLibrary = sampleLibrary;
 
             createPossibleSampleGrid();
-            LogIndex();
-            LogEntropy();
+            //LogIndex();
+            //LogEntropy();
         }
 
 
@@ -127,7 +127,7 @@ namespace WaveFunctionCollapse.Shared
 
         public void SetSample(int index, int selectedSample)
         {
-            SelectedSamples[index] = selectedSample;
+            SelectedSamples[index] =  SampleLibrary[selectedSample].Id;
             PossibleSamples[index] = UtilShared.SetFalseBut(PossibleSamples[index], 0); //0 is always an empty sample
 
             SampleLibrary[selectedSample].Propagate(this, index);
@@ -152,7 +152,7 @@ namespace WaveFunctionCollapse.Shared
             }
         }
 
-        public List<int> GetConnectionSamples(HashSet<int> connectionID)
+        /*public List<int> GetConnectionSamples(HashSet<int> connectionID)
         {
             HashSet<Connection> selectedConnections = new HashSet<Connection>();
             foreach (var index in connectionID)
@@ -161,7 +161,7 @@ namespace WaveFunctionCollapse.Shared
             }
 
             return selectedConnections.Select(s => s.SampleIDS).SelectMany(s => s).ToList();
-        }
+        }*/
 
         public int GetIndexFromSampleId(int sampleId)
         {

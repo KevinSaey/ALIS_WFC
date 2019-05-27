@@ -16,11 +16,11 @@ namespace WaveFunctionCollapse.Shared
         }
 
 
-        public List<Connection> Connections
+        /*public List<Connection> Connections
         {
             get { return _sampleGrid.Connections; }
             set { _sampleGrid.Connections = value; }
-        }
+        }*/
 
         List<IHeuristic<T>> _heuristics;
 
@@ -74,19 +74,21 @@ namespace WaveFunctionCollapse.Shared
             _engine.Execute();
         }
 
-        public void AddSampleConnection(int connectionID, Sample currentSample)
+        /*public void AddSampleConnection(int connectionID, Sample currentSample)
         {
             if (Connections.Count(c => c.ID == connectionID) == 0)
             {
                 Connections.Add(new Connection(connectionID));
             }
             Connections.First(c => c.ID == connectionID).SampleIDS.Add(currentSample.Id);
-        }
+        }*/
 
+            /*
         public void RemoveEmptyConnections()
         {
             Connections = Connections.Where(s => s.SampleIDS != null).ToList();
         }
+        */
 
 
         public Vector3IntShared GetIndexOfPossibleSample(int i)
@@ -94,7 +96,7 @@ namespace WaveFunctionCollapse.Shared
             return _sampleGrid.GetIndexOfPossibleSample(i);
         }
 
-        public List<int> SampleIndexGrid
+        public List<int> SelectedSamples
         {
             get
             {

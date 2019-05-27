@@ -19,7 +19,7 @@ namespace WaveFunctionCollapse.Unity
         string _path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
         //Grid3D _grid;
 
-        public RhinoImporter(Vector3Int tileSize, bool rotate)
+        public RhinoImporter(Vector3Int tileSize, bool rotate, bool reflect)
         {
             var files = LoadFiles();
             Debug.Log($"{files.Count()} ALIS_samples loaded");
@@ -29,20 +29,30 @@ namespace WaveFunctionCollapse.Unity
                 Samples.Add(Assembly.Import(files[i]).ToALIS_Sample());
             }
 
+            var nrOfSamples = Samples.Count;
+            var anchor = ((Vector3)tileSize - Vector3.one) / 2;
             if (rotate)
             {
                 //rotate samples
-                var nrOfSamples = Samples.Count;
+
                 for (int i = 1; i < nrOfSamples; i++)
                 {
                     //if (Samples[i].Instances.Count != 0)
                     //{
-                    Samples.Add(RotateALISSample(Samples[i], Samples.Count, ((Vector3)tileSize - Vector3.one) / 2, 1, i));
+                    Samples.Add(RotateALISSample(Samples[i], Samples.Count, anchor, 1, i));
                     for (int j = 1; j < 3; j++)
                     {
-                        Samples.Add(RotateALISSample(Samples.Last(), Samples.Count, ((Vector3)tileSize - Vector3.one) / 2, 1 + j, i));
+                        Samples.Add(RotateALISSample(Samples.Last(), Samples.Count, anchor, 1 + j, i));
                     }
                     //}
+                }
+            }
+            if (reflect)
+            {
+                for (int i = 1; i < nrOfSamples; i++)
+                {
+                    Samples.Add(Reflect(Samples[i], Axis.X, anchor));
+                    Samples.Add(Reflect(Samples[i], Axis.Z, anchor));
                 }
             }
 
@@ -54,6 +64,60 @@ namespace WaveFunctionCollapse.Unity
             return Directory.GetFiles(_path, "*.xml").ToList();
         }
 
+        public ALIS_Sample Reflect(ALIS_Sample sampleToReflect, Axis axis, Vector3 Anchor)
+        {
+            ALIS_Sample reflectedSample;
+            List<HashSet<int>> neighbours = new List<HashSet<int>>();
+            List<Instance> instances = new List<Instance>();
+
+            for (int i = 0; i < 6; i++)
+            {
+                neighbours.Add(new HashSet<int>(sampleToReflect.PossibleNeighbours[i]));
+            }
+
+            if (axis == Axis.X)
+            {
+                neighbours[0] = new HashSet<int>(sampleToReflect.PossibleNeighbours[1]);
+                neighbours[1] = new HashSet<int>(sampleToReflect.PossibleNeighbours[0]);
+                foreach (var instance in sampleToReflect.Instances)
+                {
+                    int newX = (int)(Anchor.x + (Anchor.x - instance.Pose.position.x));
+                    var newInstance = instance;
+                    newInstance.Pose.position.x = newX;
+                    instances.Add(newInstance);
+                }
+            }
+            if (axis == Axis.Y)
+            {
+                neighbours[2] = new HashSet<int>(sampleToReflect.PossibleNeighbours[3]);
+                neighbours[3] = new HashSet<int>(sampleToReflect.PossibleNeighbours[2]);
+                foreach (var instance in sampleToReflect.Instances)
+                {
+                    int newY = (int)(Anchor.y + (Anchor.y - instance.Pose.position.y));
+                    var newInstance = instance;
+                    newInstance.Pose.position.y = newY;
+                    instances.Add(newInstance);
+                }
+            }
+            if (axis == Axis.Z)
+            {
+                neighbours[4] = new HashSet<int>(sampleToReflect.PossibleNeighbours[5]);
+                neighbours[5] = new HashSet<int>(sampleToReflect.PossibleNeighbours[4]);
+                foreach (var instance in sampleToReflect.Instances)
+                {
+                    int newZ = (int)(Anchor.z + (Anchor.z - instance.Pose.position.z));
+                    var newInstance = instance;
+                    newInstance.Pose.position.z = newZ;
+                    instances.Add(newInstance);
+                }
+            }
+
+
+            var name = $"sample {sampleToReflect.Id} type {sampleToReflect.Type} ref: {axis}";
+            reflectedSample = new ALIS_Sample(Samples.Count, sampleToReflect.Density, sampleToReflect.Type, neighbours, instances, name);
+            return reflectedSample;
+        }
+
         public void CheckDuplicates()
         {
             var checkedSamples = new List<ALIS_Sample>();
@@ -63,17 +127,17 @@ namespace WaveFunctionCollapse.Unity
                                      where i != j
                                      where i.Id != 0 && j.Id != 0
                                      select MergeDuplicates(i, j)).Distinct());
-            Samples = checkedSamples.OrderBy(s => s.Id).ToList();
+            //Samples = checkedSamples.OrderBy(s => s.Id).ToList();
         }
 
         public ALIS_Sample MergeDuplicates(ALIS_Sample sample1, ALIS_Sample sample2)
         {
             if (CompareDuplicateSamples(sample1, sample2))
             {
-                for (int i = 0; i < sample1.PossibleConnections.Count; i++)
+                for (int i = 0; i < sample1.PossibleNeighbours.Count; i++)
                 {
-                    sample1.PossibleConnections[i].UnionWith(sample2.PossibleConnections[i]);
-                    sample2.PossibleConnections[i].UnionWith(sample1.PossibleConnections[i]);
+                    sample1.PossibleNeighbours[i].UnionWith(sample2.PossibleNeighbours[i]);
+                    sample2.PossibleNeighbours[i].UnionWith(sample1.PossibleNeighbours[i]);
                 }
             }
             //samples.Remove(sample2);
@@ -97,7 +161,7 @@ namespace WaveFunctionCollapse.Unity
 
         public ALIS_Sample RotateALISSample(ALIS_Sample sample, int id, Vector3 anchor, int timesRoated, int origSampleId)
         {
-            var conn = sample.PossibleConnections;
+            var conn = sample.PossibleNeighbours;
             var newConn = new List<HashSet<int>> { conn[2], conn[3], conn[1], conn[0], conn[4], conn[5] }; // check this for lefthand rotation
             List<Instance> newInstances = new List<Instance>();
             for (int i = 0; i < sample.Instances.Count; i++)

@@ -19,7 +19,7 @@ namespace WaveFunctionCollapse.Unity
         public ALIS_Sample(int id)
         {
             Id = id;
-            PossibleConnections = new List<HashSet<int>>();
+            PossibleNeighbours = new List<HashSet<int>>();
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
         }
 
@@ -28,32 +28,32 @@ namespace WaveFunctionCollapse.Unity
             Id = id;
             Density = density;
             Type = type;
-            PossibleConnections = possibleConnecitons;
+            PossibleNeighbours = possibleConnecitons;
             Instances = instances;
             Name = name;
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
 
         }
 
-        public void AddConnectionsToWFC(WFC<ALIS_Sample> wfc)
+        /*public void AddConnectionsToWFC(WFC<ALIS_Sample> wfc)
         {
             foreach (var connection in PossibleConnections.SelectMany(s => s).Distinct())
             {
                 wfc.AddSampleConnection(connection, this);
             }
-        }
+        }*/
 
         //For testing purpouses
         public void SetRandomNeighbours(int NumberOfConnections, WFC<ALIS_Sample> wfc)
         {
             for (int i = 0; i < 6; i++)
             {
-                PossibleConnections.Add(new HashSet<int>());
+                PossibleNeighbours.Add(new HashSet<int>());
                 for (int j = 0; j < 2; j++)
                 {
                     int nextConnection = Random.Range(1, NumberOfConnections + 1);
-                    PossibleConnections[i].Add(nextConnection);
-                    wfc.AddSampleConnection(nextConnection, this);
+                    PossibleNeighbours[i].Add(nextConnection);
+                    //wfc.AddSampleConnection(nextConnection, this);
                 }
             }
         }

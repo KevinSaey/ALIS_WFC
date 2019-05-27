@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using WaveFunctionCollapse.Shared;
+using System.Linq;
 
 namespace WaveFunctionCollapse.Unity
 {
@@ -14,7 +15,7 @@ namespace WaveFunctionCollapse.Unity
         [SerializeField]
         Vector3Int _WFCSize;
         [SerializeField]
-        bool _rhino, _log, _rotate;
+        bool _rhino, _log, _rotate, _reflect;
 
         List<ALIS_Sample> _sampleLibrary = new List<ALIS_Sample>();
         WFC<ALIS_Sample> _waveFunctionCollapse;
@@ -43,14 +44,14 @@ namespace WaveFunctionCollapse.Unity
 
         void RhinoAwake()
         {
-            _rhinoImporter = new RhinoImporter(_tileSize,_rotate);
+            _rhinoImporter = new RhinoImporter(_tileSize,_rotate,_reflect);
             _sampleLibrary = _rhinoImporter.Samples;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 
             _waveFunctionCollapse = new WFC<ALIS_Sample>(_WFCSize.x, _WFCSize.y, _WFCSize.z, _sampleLibrary);
 
             //Add the samples connections to the wfc grid
-            foreach (var sample in _sampleLibrary) sample.AddConnectionsToWFC(_waveFunctionCollapse);
+            //foreach (var sample in _sampleLibrary) sample.AddConnectionsToWFC(_waveFunctionCollapse);
             //_waveFunctionCollapse.RemoveEmptyConnections();
             
             _gridController = new GridController(_tileSize, _voxelSize, _WFCSize);
@@ -59,11 +60,11 @@ namespace WaveFunctionCollapse.Unity
         void Start()
         {
             //Debug.Log("Execute WFC");
-            _waveFunctionCollapse.Execute();
-            DrawGrid();
+            //_waveFunctionCollapse.Execute();
+            //DrawGrid();
 
             _step = Step(1f);
-            //StartCoroutine(_step);
+            StartCoroutine(_step);
         }
 
         void OnGUI()
@@ -80,6 +81,7 @@ namespace WaveFunctionCollapse.Unity
 
                 if (_waveFunctionCollapse.IsAllDetermined||_waveFunctionCollapse.HasConflict)
                 {
+                    DrawGrid();
                     StopCoroutine(_step);
                 }
                 yield return new WaitForSeconds(time);
@@ -120,7 +122,7 @@ namespace WaveFunctionCollapse.Unity
         public void DrawGrid()
         {
             ClearGameobjects();
-            for (int i = 0; i < _waveFunctionCollapse.SampleIndexGrid.Count; i++)
+            for (int i = 0; i < _waveFunctionCollapse.SelectedSamples.Count; i++)
             {
                 DrawSample(i);
             }
@@ -136,7 +138,7 @@ namespace WaveFunctionCollapse.Unity
 
         public void DrawSample(int sampleIndex)
         {
-            var sample = _waveFunctionCollapse.SampleLibrary[_waveFunctionCollapse.SampleIndexGrid[sampleIndex]];
+            var sample = _waveFunctionCollapse.SampleLibrary.First(s=>s.Id== _waveFunctionCollapse.SelectedSamples[sampleIndex]);
             if (sample.Id != 0)
             {
                 ALIS_Sample selectedSample = _sampleLibrary[sample.Id];

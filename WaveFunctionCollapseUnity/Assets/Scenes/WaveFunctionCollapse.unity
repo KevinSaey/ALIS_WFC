@@ -196,10 +196,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
   _tileSize: {x: 4, y: 6, z: 4}
-  _WFCSize: {x: 7, y: 1, z: 7}
+  _WFCSize: {x: 5, y: 1, z: 5}
   _rhino: 1
   _log: 1
   _rotate: 0
+  _reflect: 0
 --- !u!4 &573255905
 Transform:
   m_ObjectHideFlags: 0
