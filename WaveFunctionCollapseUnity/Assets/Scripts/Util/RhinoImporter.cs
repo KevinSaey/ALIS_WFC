@@ -29,10 +29,11 @@ namespace WaveFunctionCollapse.Unity
                 Samples.Add(Assembly.Import(files[i]).ToALIS_Sample());
             }
 
-            var nrOfSamples = Samples.Count;
-            var anchor = ((Vector3)tileSize - Vector3.one) / 2;
+            
             if (rotate)
             {
+                var nrOfSamples = Samples.Count;
+                var anchor = ((Vector3)tileSize - Vector3.one) / 2;
                 //rotate samples
 
                 for (int i = 1; i < nrOfSamples; i++)
@@ -49,6 +50,8 @@ namespace WaveFunctionCollapse.Unity
             }
             if (reflect)
             {
+                var nrOfSamples = Samples.Count;
+                var anchor = ((Vector3)tileSize - Vector3.one) / 2;
                 for (int i = 1; i < nrOfSamples; i++)
                 {
                     Samples.Add(Reflect(Samples[i], Axis.X, anchor));
@@ -56,7 +59,7 @@ namespace WaveFunctionCollapse.Unity
                 }
             }
 
-            CheckDuplicates();
+           // CheckDuplicates();
         }
 
         public List<string> LoadFiles()
