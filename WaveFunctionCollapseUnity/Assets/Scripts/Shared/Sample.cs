@@ -58,7 +58,7 @@ namespace WaveFunctionCollapse.Shared
                         {
                             var sampleIndex = grid.GetPossibleSampleByIndex(neighbourIndex);
                             grid.SetSample(sampleIndex, index);
-                            setSamples.Add(sampleIndex);
+                            //setSamples.Add(sampleIndex); THIS IS DOING NOTHING
                         }
                     }
                 }

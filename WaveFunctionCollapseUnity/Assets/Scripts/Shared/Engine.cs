@@ -112,10 +112,10 @@ namespace WaveFunctionCollapse.Shared
             }
 
             _grid.SetSample(lowestEntropyIndex, selectedSample);
-            setSamples.Add(lowestEntropyIndex);
+            setSamples.Add(_sampleLibrary[ lowestEntropyIndex].Id);
 
             // d. Use the sample.propagate(grid) to apply over grid
-            _sampleLibrary[selectedSample].Propagate(_grid, lowestEntropyIndex);
+            //_sampleLibrary[selectedSample].Propagate(_grid, lowestEntropyIndex);
             //_grid.LogEntropy();
             return setSamples;
         }

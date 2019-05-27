@@ -9,7 +9,7 @@ namespace WaveFunctionCollapse.Shared
 {
     static class UtilShared
     {
-        public static Random RandomNR = new Random();
+        public static Random RandomNR = new Random(1);
 
         public static List<U> CrossreferenceIncludeList<U>(List<U> baseList, List<U> filterList)
         {

@@ -25,6 +25,8 @@ namespace WaveFunctionCollapse.Unity
         GridController _gridController;
         bool _colorCubes = true;
 
+        public Vector3 CenterWFC;
+
 
         void Awake()
         {
@@ -32,6 +34,8 @@ namespace WaveFunctionCollapse.Unity
                         
             if (_rhino) RhinoAwake();
             else RandomAwake();
+
+            CenterWFC = Vector3.Scale(_WFCSize , _tileSize)* (_voxelSize / 2);
         }
 
         void RandomAwake()
@@ -111,7 +115,8 @@ namespace WaveFunctionCollapse.Unity
                 if (_waveFunctionCollapse.IsAllDetermined||_waveFunctionCollapse.HasConflict)
                 {
                     DrawGrid();
-                    StopCoroutine(_step);
+                    yield break;
+                    //StopCoroutine(_step);
                 }
                 yield return new WaitForSeconds(time);
             }
@@ -157,11 +162,11 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        public void DrawSamples(List<int> sampleIndices)
+        public void DrawSamples(List<int> SampleIds)
         {
-            foreach (var sampleIndex in sampleIndices)
+            foreach (var sampleId in SampleIds)
             {
-                DrawSample(sampleIndex);
+                DrawSample(sampleId);
             }
         }
 
@@ -170,11 +175,11 @@ namespace WaveFunctionCollapse.Unity
             var sample = _waveFunctionCollapse.SampleLibrary.First(s=>s.Id== _waveFunctionCollapse.SelectedSamples[sampleIndex]);
             if (sample.Id != 0)
             {
-                ALIS_Sample selectedSample = _sampleLibrary[sample.Id];
+                ALIS_Sample selectedSample = sample;
                 Vector3Int index = Util.ToUnityVector3Int(_waveFunctionCollapse.GetIndexOfPossibleSample(sampleIndex));
                 GameObject goTile = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 goTile.transform.localScale = Vector3.Scale(Vector3.one * _voxelSize, _tileSize);
-                goTile.transform.position = Vector3.Scale(index, goTile.transform.localScale)+((Vector3)_tileSize-Vector3.one)*_voxelSize/2;
+                goTile.transform.localPosition = Vector3.Scale(index, goTile.transform.localScale)+((Vector3)_tileSize-Vector3.one)*_voxelSize/2;
                 goTile.name = $"tile: {sampleIndex}{index} {selectedSample.Name}";
 
                 Material mat = goTile.GetComponent<Renderer>().material;
