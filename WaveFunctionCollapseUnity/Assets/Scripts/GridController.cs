@@ -36,12 +36,9 @@ namespace WaveFunctionCollapse.Unity
             _grid.IniPathFindingStrucutralAnalysis();
         }
 
-        public void OnGUI() //Vicente
+        public int OnGUI(int buttonHeight, int buttonWidth, int i, int s) //Vicente
         {
-            int buttonHeight = 30;
-            int buttonWidth = 150;
-            int i = 1;
-            int s = buttonHeight + 5;
+            
 
             if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Blocks"))
             {
@@ -63,7 +60,7 @@ namespace WaveFunctionCollapse.Unity
                 _grid.SwitchBlockVisibility(_showBlocks);
             }
             _tempDisplacement = GUI.HorizontalSlider(new Rect(s, s * i++, buttonWidth, buttonHeight), _tempDisplacement, 0, 500);
-            if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Graph"))
+            /*if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Graph"))
             {
                 if (_iniPath == true)
                 {
@@ -75,7 +72,8 @@ namespace WaveFunctionCollapse.Unity
                 _showStructuralAnalysis = false;
                 _showBlocks = false;
                 _grid.SwitchBlockVisibility(_showBlocks);
-            }
+            }*/
+            return i;
         }
 
         public void Update()

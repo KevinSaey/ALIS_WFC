@@ -23,6 +23,7 @@ namespace WaveFunctionCollapse.Unity
         IEnumerator _step;
         RhinoImporter _rhinoImporter;
         GridController _gridController;
+        bool _colorCubes = true;
 
 
         void Awake()
@@ -73,12 +74,36 @@ namespace WaveFunctionCollapse.Unity
 
         void OnGUI()
         {
-            if (_rhino) _gridController.OnGUI();
+            int buttonHeight = 30;
+            int buttonWidth = 150;
+            int i = 1;
+            int s = buttonHeight + 5;
+
+            if (_rhino)
+            {
+                i =_gridController.OnGUI(buttonHeight, buttonWidth, i, s);
+
+                if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Hide colorcubes"))
+                {
+                    _colorCubes = !_colorCubes;
+                    HideColorCubes(_colorCubes);
+                }
+            }
+
+        }
+
+        void HideColorCubes(bool flag)
+        {
+            for (int i = 0; i < goColorCubes.Count; i++)
+            {
+                goColorCubes[i].GetComponent <MeshRenderer>().enabled = flag;
+        }
+
         }
 
         IEnumerator Step(float time)
         {
-            while (true)
+           while (true)
             {
                 Debug.Log("Step");
                 DrawSamples(_waveFunctionCollapse.Step(1));

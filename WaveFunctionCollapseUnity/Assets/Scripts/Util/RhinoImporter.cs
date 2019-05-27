@@ -58,7 +58,7 @@ namespace WaveFunctionCollapse.Unity
                 }
             }
 
-           // CheckDuplicates();
+           CheckDuplicates();
         }
 
         public List<string> LoadFiles()
