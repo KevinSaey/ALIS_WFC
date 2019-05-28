@@ -64,9 +64,9 @@ namespace WaveFunctionCollapse.Shared
             SharedLogger.Log("WFC Instantiated");
         }
 
-        public List<int> Step(int amount)
+        public void Step(int amount)
         {
-            return _engine.Step(amount);
+            _engine.Step(amount);
         }
 
         public void Execute()

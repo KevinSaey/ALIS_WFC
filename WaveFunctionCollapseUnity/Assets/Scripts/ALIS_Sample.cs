@@ -66,14 +66,14 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        List<int> Propagate(SampleGrid<ALIS_Sample> grid, int index)
+        public override void Propagate<ALIS_Sample>(SampleGrid<ALIS_Sample> grid, int index)
         {
-            return base.Propagate(grid, index);
+            base.Propagate(grid, index);
         }
 
-        void DrawSample(int sampleIndex)
+        public override void DrawSample(int sampleIndex)
         {
-            //base.DrawSample(this, sampleIndex);
+            SharedLogger.Log("HOOOOOORRAAAAAAAY!!!!");
             _managerWFC.DrawSample(sampleIndex);
         }
     }

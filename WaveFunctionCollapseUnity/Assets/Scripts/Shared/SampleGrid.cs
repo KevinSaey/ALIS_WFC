@@ -129,7 +129,7 @@ namespace WaveFunctionCollapse.Shared
         {
             SelectedSamples[index] =  selectedSample;
             PossibleSamples[index] = UtilShared.SetFalseBut(PossibleSamples[index], 0); //0 is always an empty sample
-            selectedSample.DrawSample(selectedSample, index);
+            selectedSample.DrawSample(index);
             selectedSample.Propagate(this, index);
 
         }

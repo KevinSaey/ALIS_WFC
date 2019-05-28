@@ -115,7 +115,7 @@ namespace WaveFunctionCollapse.Unity
 
                 if (_waveFunctionCollapse.IsAllDetermined||_waveFunctionCollapse.HasConflict)
                 {
-                    DrawGrid();
+                    //DrawGrid();
                     yield break;
                     //StopCoroutine(_step);
                 }
@@ -125,7 +125,7 @@ namespace WaveFunctionCollapse.Unity
 
         void Update()
         {
-            //if (_rhino) _gridController.Update();
+            if (_rhino) _gridController.Update();
         }
 
         public void InitialiseRandomSamples()
@@ -163,13 +163,13 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        public void DrawSamples(List<int> SampleIndices)
+        /*public void DrawSamples(List<int> SampleIndices)
         {
             foreach (var sampleIndex in SampleIndices)
             {
                 DrawSample(sampleIndex);
             }
-        }
+        }*/
 
         public void DrawSample(int sampleIndex)
         {

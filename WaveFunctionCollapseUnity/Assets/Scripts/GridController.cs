@@ -18,7 +18,7 @@ namespace WaveFunctionCollapse.Unity
         bool _showPath;
         bool _showStructuralAnalysis;
         bool _showBlocks;
-        bool _iniPath = true;
+        //bool _iniPath = true;
         bool _iniSA = true;
 
         float _tempDisplacement = 10f;

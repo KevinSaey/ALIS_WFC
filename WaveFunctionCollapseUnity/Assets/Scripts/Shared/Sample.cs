@@ -18,11 +18,11 @@ namespace WaveFunctionCollapse.Shared
         public Sample()
         { }
 
-        public void DrawSample<U>(U sample, int sampleIndex) where U : Sample
+        public virtual void DrawSample( int sampleIndex)
         {
         }
 
-        public List<int> Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
+        public virtual void Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
         {
             List<int> setSamples = new List<int>();
             SharedLogger.Log("Propogating");
@@ -71,7 +71,6 @@ namespace WaveFunctionCollapse.Shared
                 }
             }
             //grid.ShowEntropy();
-            return setSamples;
         }
     }
 }
