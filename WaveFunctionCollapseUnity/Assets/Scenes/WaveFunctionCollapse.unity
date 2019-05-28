@@ -195,8 +195,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
-  _tileSize: {x: 4, y: 7, z: 4}
-  _WFCSize: {x: 5, y: 5, z: 5}
+  _tileSize: {x: 6, y: 7, z: 6}
+  _WFCSize: {x: 3, y: 5, z: 3}
   _rhino: 1
   _log: 0
   _interval: 1
@@ -332,7 +332,6 @@ GameObject:
   m_Component:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
-  - component: {fileID: 963194226}
   - component: {fileID: 963194230}
   - component: {fileID: 963194229}
   - component: {fileID: 963194231}
@@ -343,14 +342,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &963194226
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
 --- !u!20 &963194227
 Camera:
   m_ObjectHideFlags: 0
@@ -508,7 +499,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1390614141}
   - component: {fileID: 1390614140}
-  - component: {fileID: 1390614139}
   - component: {fileID: 1390614138}
   - component: {fileID: 1390614137}
   - component: {fileID: 1390614136}
@@ -609,14 +599,6 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
---- !u!81 &1390614139
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1390614135}
-  m_Enabled: 1
 --- !u!20 &1390614140
 Camera:
   m_ObjectHideFlags: 0
