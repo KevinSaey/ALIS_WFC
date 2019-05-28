@@ -10,14 +10,12 @@ namespace WaveFunctionCollapse.Shared
 
     internal class Engine<T> where T : Sample
     {
-        List<T> _sampleLibrary;
         List<IHeuristic<T>> _heuristics;
         SampleGrid<T> _grid;
         int _counter = 0;
 
-        public Engine(List<T> samples, List<IHeuristic<T>> heuristics, SampleGrid<T> grid)
+        public Engine( List<IHeuristic<T>> heuristics, SampleGrid<T> grid)
         {
-            _sampleLibrary = samples;
             _heuristics = heuristics;
             _grid = grid;
             
@@ -101,18 +99,18 @@ namespace WaveFunctionCollapse.Shared
             int heuristicSelection = UtilShared.RandomNR.Next(2);
 
             //heuristicSelection = 1; // overwrite, delete for actual random selection
-            int selectedSample=int.MinValue;
+            T selectedSample=_grid.SampleLibrary[0];
             if (heuristicSelection == 0)
             {
-                selectedSample = SelectRandom(possibleSamples);
+                selectedSample = _grid.SampleLibrary[SelectRandom(possibleSamples)];
             }
             else if (heuristicSelection == 1)
             {
-                selectedSample = SelectLeastUsed(possibleSamples, _grid.SelectedSamples);
+                selectedSample = SelectLeastUsed(possibleSamples);
             }
 
             _grid.SetSample(lowestEntropyIndex, selectedSample);
-            setSamples.Add(_sampleLibrary[ lowestEntropyIndex].Id);
+            setSamples.Add(lowestEntropyIndex);
 
             // d. Use the sample.propagate(grid) to apply over grid
             //_sampleLibrary[selectedSample].Propagate(_grid, lowestEntropyIndex);
@@ -120,21 +118,21 @@ namespace WaveFunctionCollapse.Shared
             return setSamples;
         }
 
-        int SelectLeastUsed(List<int> possibleSamples, List<int> selectedSamples)
+        T SelectLeastUsed(List<int> possibleSamples)
         {
             int smallesAmount = int.MaxValue;
-            int leastUsed = int.MinValue;
-            foreach (var sample in possibleSamples)
+            T leastUsed = _grid.SampleLibrary[0];
+            foreach (var sample in possibleSamples.Select(s => _grid.SampleLibrary[s]))
             {
-                int amount = selectedSamples.Count(s => s == sample);
+                int amount = _grid.SelectedSamples.Count(s => s == sample);
                 if (amount < smallesAmount)
                 {
                     smallesAmount = amount;
                     leastUsed = sample;
                 }
             }
-
-            return leastUsed;
+            if (smallesAmount != int.MaxValue) return leastUsed;
+            return null;
         }
 
         int SelectRandom(List<int> possibleSamples)

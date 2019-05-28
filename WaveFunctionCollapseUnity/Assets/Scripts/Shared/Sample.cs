@@ -15,6 +15,13 @@ namespace WaveFunctionCollapse.Shared
         public int Id { get; set; } // sample null is always an empty sample
         public List<HashSet<int>> PossibleNeighbours;
 
+        public Sample()
+        { }
+
+        public void DrawSample<U>(U sample, int sampleIndex) where U : Sample
+        {
+        }
+
         public List<int> Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
         {
             List<int> setSamples = new List<int>();
@@ -57,7 +64,7 @@ namespace WaveFunctionCollapse.Shared
                         if (index != 0)
                         {
                             var sampleIndex = grid.GetPossibleSampleByIndex(neighbourIndex);
-                            grid.SetSample(sampleIndex, index);
+                            grid.SetSample(sampleIndex, grid.SampleLibrary[index]);
                             //setSamples.Add(sampleIndex); THIS IS DOING NOTHING
                         }
                     }

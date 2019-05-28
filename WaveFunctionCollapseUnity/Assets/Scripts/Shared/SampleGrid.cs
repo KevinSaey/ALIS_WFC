@@ -13,7 +13,7 @@ namespace WaveFunctionCollapse.Shared
     {
         public Vector3IntShared Dimensions { get; private set; }
         public List<bool[]> PossibleSamples;
-        public List<int> SelectedSamples;
+        public List<T> SelectedSamples;
         //public List<Connection> Connections;
         public List<T> SampleLibrary;
         public List<Domain> Domains;
@@ -36,12 +36,12 @@ namespace WaveFunctionCollapse.Shared
         void createPossibleSampleGrid()
         {
             PossibleSamples = new List<bool[]>();
-            SelectedSamples = new List<int>(PossibleSamples.Count);
+            SelectedSamples = new List<T>(PossibleSamples.Count);
             for (int i = 0; i < Dimensions.z * Dimensions.y * Dimensions.x; i++)
             {
                 var boolArray = new bool[SampleLibrary.Count];
                 PossibleSamples.Add(boolArray.SetAll(true));
-                SelectedSamples.Add(0);
+                SelectedSamples.Add(SampleLibrary[0]);
             }
 
 
@@ -125,12 +125,12 @@ namespace WaveFunctionCollapse.Shared
             return PossibleSamples.IndexOf(lowestSample);*/
         }
 
-        public void SetSample(int index, int selectedSample)
+        public void SetSample(int index, T selectedSample)
         {
-            SelectedSamples[index] =  SampleLibrary[selectedSample].Id;
+            SelectedSamples[index] =  selectedSample;
             PossibleSamples[index] = UtilShared.SetFalseBut(PossibleSamples[index], 0); //0 is always an empty sample
-
-            SampleLibrary[selectedSample].Propagate(this, index);
+            selectedSample.DrawSample(selectedSample, index);
+            selectedSample.Propagate(this, index);
 
         }
 

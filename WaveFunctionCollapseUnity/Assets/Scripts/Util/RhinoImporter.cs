@@ -18,15 +18,17 @@ namespace WaveFunctionCollapse.Unity
         public List<ALIS_Sample> Samples = new List<ALIS_Sample>();
         string _path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
         //Grid3D _grid;
+        ManagerWFC _managerWFC;
 
-        public RhinoImporter(Vector3Int tileSize, bool rotate, bool reflect)
+        public RhinoImporter(Vector3Int tileSize, bool rotate, bool reflect,ManagerWFC managerWFC)
         {
             var files = LoadFiles();
+            _managerWFC = managerWFC;
             Debug.Log($"{files.Count()} ALIS_samples loaded");
 
             for (int i = 0; i < files.Count; i++)
             {
-                Samples.Add(Assembly.Import(files[i]).ToALIS_Sample());
+                Samples.Add(Assembly.Import(files[i]).ToALIS_Sample(_managerWFC));
             }
             
             if (rotate)
@@ -123,7 +125,7 @@ namespace WaveFunctionCollapse.Unity
 
 
             var name = $"sample {sampleToReflect.Id} type {sampleToReflect.Type} ref: {axis}";
-            reflectedSample = new ALIS_Sample(id, sampleToReflect.Density, sampleToReflect.Type, neighbours, instances, name);
+            reflectedSample = new ALIS_Sample(id, sampleToReflect.Density, sampleToReflect.Type, neighbours, instances, name,_managerWFC);
             return reflectedSample;
         }
 
@@ -187,7 +189,7 @@ namespace WaveFunctionCollapse.Unity
             }
             var name = $"sample {origSampleId} type {sample.Type} rot: {timesRoated * 90}";
 
-            return new ALIS_Sample(id, sample.Density, sample.Type, newConn, newInstances, name);
+            return new ALIS_Sample(id, sample.Density, sample.Type, newConn, newInstances, name,_managerWFC);
         }
     }
 
@@ -214,7 +216,7 @@ namespace WaveFunctionCollapse.Unity
 
         }
 
-        public ALIS_Sample ToALIS_Sample()
+        public ALIS_Sample ToALIS_Sample(ManagerWFC managerWFC)
         {
             List<HashSet<int>> possibleConnections = new List<HashSet<int>>();
             for (int i = 0; i < Neighbours.Count; i++)
@@ -224,7 +226,7 @@ namespace WaveFunctionCollapse.Unity
 
             }
             var name = $"sample {Id} type {Type} rot: 0 minX: {possibleConnections[0].First()} plusX: {possibleConnections[1].First()} minY: {possibleConnections[2].First()}  plusY: {possibleConnections[3].First()}  minZ: {possibleConnections[4].First()} plusZ  {possibleConnections[5].First()}";
-            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Density, Type, possibleConnections, Instances, name);
+            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Density, Type, possibleConnections, Instances, name,managerWFC);
             return alis_Sample;
         }
 

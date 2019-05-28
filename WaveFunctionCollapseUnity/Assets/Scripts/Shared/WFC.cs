@@ -11,8 +11,8 @@ namespace WaveFunctionCollapse.Shared
 
         public List<T> SampleLibrary
         {
-            get { return _sampleGrid.SampleLibrary; }
-            set { _sampleGrid.SampleLibrary = value; }
+            get { return SampleGrid.SampleLibrary; }
+            set { SampleGrid.SampleLibrary = value; }
         }
 
 
@@ -34,18 +34,18 @@ namespace WaveFunctionCollapse.Shared
         {
             get
             {
-                return _sampleGrid.IsAllDetermined;
+                return SampleGrid.IsAllDetermined;
             }
         }
         public bool HasConflict
         {
             get
             {
-                return _sampleGrid.HasConflict;
+                return SampleGrid.HasConflict;
             }
         }
 
-        SampleGrid<T> _sampleGrid;
+        public SampleGrid<T> SampleGrid;
         Engine<T> _engine;
 
 
@@ -57,10 +57,10 @@ namespace WaveFunctionCollapse.Shared
         public WFC(int xDimension, int yDimension, int zDimension, List<T> samples)
         {
             SharedLogger.Log("Instantiating WFC");
-            _sampleGrid = new SampleGrid<T>(samples, xDimension, yDimension, zDimension);
+            SampleGrid = new SampleGrid<T>(samples, xDimension, yDimension, zDimension);
             SampleLibrary = samples;
 
-            _engine = new Engine<T>(SampleLibrary, _heuristics, _sampleGrid);
+            _engine = new Engine<T>(_heuristics, SampleGrid);
             SharedLogger.Log("WFC Instantiated");
         }
 
@@ -83,24 +83,24 @@ namespace WaveFunctionCollapse.Shared
             Connections.First(c => c.ID == connectionID).SampleIDS.Add(currentSample.Id);
         }*/
 
-            /*
-        public void RemoveEmptyConnections()
-        {
-            Connections = Connections.Where(s => s.SampleIDS != null).ToList();
-        }
-        */
+        /*
+    public void RemoveEmptyConnections()
+    {
+        Connections = Connections.Where(s => s.SampleIDS != null).ToList();
+    }
+    */
 
 
         public Vector3IntShared GetIndexOfPossibleSample(int i)
         {
-            return _sampleGrid.GetIndexOfPossibleSample(i);
+            return SampleGrid.GetIndexOfPossibleSample(i);
         }
 
-        public List<int> SelectedSamples
+        public List<T> SelectedSamples
         {
             get
             {
-                return _sampleGrid.SelectedSamples;
+                return SampleGrid.SelectedSamples;
             }
         }
     }

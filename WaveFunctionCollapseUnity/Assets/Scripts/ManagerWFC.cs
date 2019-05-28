@@ -49,7 +49,7 @@ namespace WaveFunctionCollapse.Unity
 
         void RhinoAwake()
         {
-            _rhinoImporter = new RhinoImporter(_tileSize,_rotate,_reflect);
+            _rhinoImporter = new RhinoImporter(_tileSize,_rotate,_reflect,this);
             _sampleLibrary = _rhinoImporter.Samples;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 
@@ -110,7 +110,8 @@ namespace WaveFunctionCollapse.Unity
            while (true)
             {
                 Debug.Log("Step");
-                DrawSamples(_waveFunctionCollapse.Step(1));
+                //DrawSamples(_waveFunctionCollapse.Step(1));
+                _waveFunctionCollapse.Step(1);
 
                 if (_waveFunctionCollapse.IsAllDetermined||_waveFunctionCollapse.HasConflict)
                 {
@@ -162,17 +163,17 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        public void DrawSamples(List<int> SampleIds)
+        public void DrawSamples(List<int> SampleIndices)
         {
-            foreach (var sampleId in SampleIds)
+            foreach (var sampleIndex in SampleIndices)
             {
-                DrawSample(sampleId);
+                DrawSample(sampleIndex);
             }
         }
 
         public void DrawSample(int sampleIndex)
         {
-            var sample = _waveFunctionCollapse.SampleLibrary.First(s=>s.Id== _waveFunctionCollapse.SelectedSamples[sampleIndex]);
+            var sample = _waveFunctionCollapse.SelectedSamples[sampleIndex];
             if (sample.Id != 0)
             {
                 ALIS_Sample selectedSample = sample;

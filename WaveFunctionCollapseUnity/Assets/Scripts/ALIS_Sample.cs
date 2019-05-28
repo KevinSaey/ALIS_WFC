@@ -15,6 +15,13 @@ namespace WaveFunctionCollapse.Unity
         public List<Instance> Instances;
         public string Name;
         static float transparency = .2f;
+        ManagerWFC _managerWFC;
+
+
+        public ALIS_Sample()
+        {
+
+        }
 
         public ALIS_Sample(int id)
         {
@@ -23,7 +30,7 @@ namespace WaveFunctionCollapse.Unity
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
         }
 
-        public ALIS_Sample(int id, int density, int type, List<HashSet<int>> possibleConnecitons, List<Instance> instances, string name)
+        public ALIS_Sample(int id, int density, int type, List<HashSet<int>> possibleConnecitons, List<Instance> instances, string name, ManagerWFC managerWFC)
         {
             Id = id;
             Density = density;
@@ -32,6 +39,7 @@ namespace WaveFunctionCollapse.Unity
             Instances = instances;
             Name = name;
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
+            _managerWFC = managerWFC;
 
         }
 
@@ -61,6 +69,12 @@ namespace WaveFunctionCollapse.Unity
         List<int> Propagate(SampleGrid<ALIS_Sample> grid, int index)
         {
             return base.Propagate(grid, index);
+        }
+
+        void DrawSample(int sampleIndex)
+        {
+            //base.DrawSample(this, sampleIndex);
+            _managerWFC.DrawSample(sampleIndex);
         }
     }
 
