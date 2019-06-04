@@ -24,7 +24,7 @@ namespace WaveFunctionCollapse.Shared //Code by VS
             return new Vector3IntShared { x = a.x + b.x, y = a.y + b.y, z = a.z + b.z };
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return $"Vector3Int x:{x}, y:{y}, z:{z}";
         }

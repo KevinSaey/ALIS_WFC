@@ -15,16 +15,22 @@ namespace WaveFunctionCollapse.Unity
     /// </summary>
     public class RhinoImporter//based on Vicente's code
     {
-        public List<ALIS_Sample> Samples = new List<ALIS_Sample>();
+        public List<ALIS_Sample> Samples { get; private set; } = new List<ALIS_Sample>();
         string _path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
         //Grid3D _grid;
         ManagerWFC _managerWFC;
 
-        public RhinoImporter(Vector3Int tileSize, bool rotate, bool reflect,ManagerWFC managerWFC)
+        public RhinoImporter()
+        {
+
+        }
+
+        public void InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflect,ManagerWFC managerWFC)
         {
             var files = LoadFiles();
             _managerWFC = managerWFC;
-            Debug.Log($"{files.Count()} ALIS_samples loaded");
+
+            SharedLogger.Log($"{files.Count()} ALIS_samples loaded");
 
             for (int i = 0; i < files.Count; i++)
             {
@@ -63,12 +69,12 @@ namespace WaveFunctionCollapse.Unity
            CheckDuplicates();
         }
 
-        public List<string> LoadFiles()
+        private List<string> LoadFiles()
         {
             return Directory.GetFiles(_path, "*.xml").ToList();
         }
 
-        public ALIS_Sample Reflect(ALIS_Sample sampleToReflect, Axis axis, Vector3 Anchor)
+        private ALIS_Sample Reflect(ALIS_Sample sampleToReflect, Axis axis, Vector3 Anchor)
         {
             ALIS_Sample reflectedSample;
             List<HashSet<int>> neighbours = new List<HashSet<int>>();
@@ -129,19 +135,71 @@ namespace WaveFunctionCollapse.Unity
             return reflectedSample;
         }
 
-        public void CheckDuplicates()
+        private void CheckDuplicates()
         {
-            var checkedSamples = new List<ALIS_Sample>();
+            /*var checkedSamples = new List<ALIS_Sample>();
             checkedSamples.Add(Samples[0]);
             checkedSamples.AddRange((from i in Samples
                                      from j in Samples.SkipWhile(j => j != i)
                                      where i != j
                                      where i.Id != 0 && j.Id != 0
-                                     select MergeDuplicates(i, j)).Distinct());
+                                     select MergeDuplicates(i, j)).Distinct());*/
             //Samples = checkedSamples.OrderBy(s => s.Id).ToList();
+
+            Dictionary<ALIS_Sample, List<ALIS_Sample>> equalsBySample = new Dictionary<ALIS_Sample, List<ALIS_Sample>>();
+            foreach (var sample in Samples)
+            {
+                List<ALIS_Sample> list = null;
+                var found = false;
+                foreach(var key in equalsBySample.Keys)
+                {
+                    if(!found && CompareDuplicateSamples(key, sample))
+                    {
+                        list = equalsBySample[key];
+                        found = true;
+                        list.Add(sample);
+                    }
+                }
+
+                if (!found)
+                {
+                    list = new List<ALIS_Sample>();
+                    equalsBySample.Add(sample, list);
+                }                
+            }
+
+            foreach (var key in equalsBySample.Keys)
+            {
+                var nodesConsideredEqual = equalsBySample[key];
+                if(nodesConsideredEqual.Count > 0)
+                {
+                    foreach (var itemConsideredEqual in equalsBySample[key])
+                    {
+                        //merge sample possible neighbours
+                        for (int i = 0; i < 6; i++)
+                        {
+                            key.PossibleNeighbours[i].UnionWith(itemConsideredEqual.PossibleNeighbours[i]);
+                            foreach (var sample in Samples.Where(s => key.PossibleNeighbours[i].Contains(s.Id)))
+                            {
+                                if(i%2!=0)
+                                {
+                                    sample.PossibleNeighbours[i - 1].Add(key.Id);
+                                    sample.PossibleNeighbours[i - 1].Remove(itemConsideredEqual.Id);
+                                }
+                                else
+                                {
+                                    sample.PossibleNeighbours[i + 1].Add(key.Id);
+                                    sample.PossibleNeighbours[i + 1].Remove(itemConsideredEqual.Id);
+                                }
+                            }
+                        }
+                        Samples.Remove(itemConsideredEqual);
+                    }
+                }
+            }
         }
 
-        public ALIS_Sample MergeDuplicates(ALIS_Sample sample1, ALIS_Sample sample2)
+        private ALIS_Sample MergeDuplicates(ALIS_Sample sample1, ALIS_Sample sample2)
         {
             if (CompareDuplicateSamples(sample1, sample2))
             {
@@ -170,7 +228,7 @@ namespace WaveFunctionCollapse.Unity
             return true;
         }
 
-        public ALIS_Sample RotateALISSample(ALIS_Sample sample, int id, Vector3 anchor, int timesRoated, int origSampleId)
+        private ALIS_Sample RotateALISSample(ALIS_Sample sample, int id, Vector3 anchor, int timesRoated, int origSampleId)
         {
             var conn = sample.PossibleNeighbours;
             var newConn = new List<HashSet<int>> { conn[2], conn[3], conn[1], conn[0], conn[4], conn[5] }; // check this for lefthand rotation

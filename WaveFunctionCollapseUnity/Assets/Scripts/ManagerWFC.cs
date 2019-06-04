@@ -49,7 +49,8 @@ namespace WaveFunctionCollapse.Unity
 
         void RhinoAwake()
         {
-            _rhinoImporter = new RhinoImporter(_tileSize,_rotate,_reflect,this);
+            _rhinoImporter = new RhinoImporter();
+            _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflect, this);
             _sampleLibrary = _rhinoImporter.Samples;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 
@@ -122,11 +123,12 @@ namespace WaveFunctionCollapse.Unity
                 yield return new WaitForSeconds(time);
             }
         }
+               
 
         void Update()
         {
             if (_rhino) _gridController.Update();
-        }
+        }                  
 
         public void InitialiseRandomSamples()
         {

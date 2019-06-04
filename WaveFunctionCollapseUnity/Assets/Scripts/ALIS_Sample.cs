@@ -17,6 +17,8 @@ namespace WaveFunctionCollapse.Unity
         static float transparency = .2f;
         ManagerWFC _managerWFC;
 
+        
+
 
         public ALIS_Sample()
         {
@@ -29,6 +31,7 @@ namespace WaveFunctionCollapse.Unity
             PossibleNeighbours = new List<HashSet<int>>();
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
         }
+
 
         public ALIS_Sample(int id, int density, int type, List<HashSet<int>> possibleConnecitons, List<Instance> instances, string name, ManagerWFC managerWFC)
         {

@@ -15,6 +15,11 @@ namespace WaveFunctionCollapse.Shared
         public int Id { get; set; } // sample null is always an empty sample
         public List<HashSet<int>> PossibleNeighbours;
 
+        public override string ToString()
+        {
+            return $"Sample - base id: {Id}";
+        }
+
         public Sample()
         { }
 
