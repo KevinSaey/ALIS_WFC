@@ -7,7 +7,7 @@ using WaveFunctionCollapse.Shared;
 namespace WaveFunctionCollapse.Unity
 {
     public enum Axis { X, Y, Z };
-    
+
     public class UnityLog : ISharedLogger
     {
         public bool EnableLog = true;
@@ -17,11 +17,12 @@ namespace WaveFunctionCollapse.Unity
             EnableLog = log;
         }
 
-        
+
 
         public void Log(object message)
         {
-            if(EnableLog) Debug.Log(message);
+            if (message.ToString().StartsWith("Error")) Debug.LogError(message);
+            else if (EnableLog) Debug.Log(message);
         }
     }
 
@@ -41,8 +42,8 @@ namespace WaveFunctionCollapse.Unity
         public static void TryOrientIndex(Vector3 localIndex, Vector3 anchor, Quaternion rotation, out Vector3Int worldIndex)
         {
             var rotated = rotation * localIndex.ToVector3Int();
-            worldIndex =(anchor + rotated).ToVector3Int();
-            
+            worldIndex = (anchor + rotated).ToVector3Int();
+
         }
 
         public static void OrientIndex(Vector3 localIndex, Vector3 pivot, int angle, out Vector3Int rotatedIndex)

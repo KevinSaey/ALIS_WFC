@@ -61,7 +61,7 @@ namespace WaveFunctionCollapse.Unity
             foreach (var voxel in Pattern.Voxels)
             {
                 var copyVox = voxel.ShallowClone();
-                Util.TryOrientIndex(copyVox.Index, Vector3Int.zero, Quaternion.Euler(_rotation),_grid, out var rotated);
+                Util.TryOrientIndex(copyVox.Index, Vector3Int.zero, Quaternion.Euler(_rotation), _grid, out var rotated);
 
                 copyVox.Index = rotated;
 
@@ -72,9 +72,9 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        
 
-       
+
+
 
         /// <summary>
         /// Rotate a vector according the the block rotation (only works for axis aligned orientations)
@@ -84,9 +84,9 @@ namespace WaveFunctionCollapse.Unity
         Vector3Int RotateVector(Vector3Int vec)
         {
             //reduce the rotations to 360 degrees (this limits the maximum size of the voxelgrid)
-            vec.x = vec.x % 360;
-            vec.y = vec.y % 360;
-            vec.z = vec.z % 360;
+            vec.x %= 360;
+            vec.y %= 360;
+            vec.z %= 360;
 
             // x rotation
             Vector3Int[] rotation_x = new Vector3Int[]
@@ -138,7 +138,7 @@ namespace WaveFunctionCollapse.Unity
         public void InstantiateGoParrentBlock(float voxelSize, Transform parrent)
         {
             goBlockParent = new GameObject();//GameObject.CreatePrimitive(PrimitiveType.Cube);
-            
+
             goBlockParent.name = $"Block {ZeroIndex}";
             goBlockParent.transform.localScale = new Vector3(voxelSize * 3, voxelSize * 6, voxelSize * 1);
             goBlockParent.transform.position = (Vector3)ZeroIndex * voxelSize;
@@ -152,7 +152,7 @@ namespace WaveFunctionCollapse.Unity
         /// <param name="grid">The global grid</param>
         public void DrawBlock(Grid3D grid, float voxelSize, Transform parrent)
         {
-            InstantiateGoParrentBlock(voxelSize,parrent);
+            InstantiateGoParrentBlock(voxelSize, parrent);
             foreach (var vox in BlockVoxels)
             {
                 if (!(vox.Index.x < 0 ||
@@ -168,10 +168,10 @@ namespace WaveFunctionCollapse.Unity
                         if (gridVox.Go == null)
                         {
                             gridVox.Go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            gridVox.Go.transform.position = new Vector3 (voxelSize * vox.Index.x, voxelSize * vox.Index.y, voxelSize * vox.Index.z);
-                            gridVox.Go.transform.localScale = voxelSize * Vector3.one*0.98f;
+                            gridVox.Go.transform.position = new Vector3(voxelSize * vox.Index.x, voxelSize * vox.Index.y, voxelSize * vox.Index.z);
+                            gridVox.Go.transform.localScale = voxelSize * Vector3.one * 0.98f;
                             gridVox.Go.transform.localRotation = Quaternion.identity;
-                            gridVox.Go.transform.SetParent(vox.ParentBlock.goBlockParent.transform,true);
+                            gridVox.Go.transform.SetParent(vox.ParentBlock.goBlockParent.transform, true);
                             gridVox.Go.name = vox.Name;
                         }
 

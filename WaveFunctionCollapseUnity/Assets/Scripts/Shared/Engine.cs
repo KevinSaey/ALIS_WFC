@@ -8,24 +8,24 @@ using System.Threading.Tasks;
 namespace WaveFunctionCollapse.Shared
 {
 
-    internal class Engine<T> where T : Sample
+    internal class Engine
     {
-        List<IHeuristic<T>> _heuristics;
-        SampleGrid<T> _grid;
+        List<IHeuristic> _heuristics;
+        SampleGrid _grid;
         int _counter = 0;
 
-        public Engine( List<IHeuristic<T>> heuristics, SampleGrid<T> grid)
+        public Engine(List<IHeuristic> heuristics, SampleGrid grid)
         {
             _heuristics = heuristics;
             _grid = grid;
-            
+
         }
 
         public void Execute()
         {
             //SetBoundryCondition(1, true, true, false, false, true, true);
             //PropogateDomains();
-            while (!_grid.IsAllDetermined && !_grid.HasConflict)
+            while (!_grid.IsAllDetermined && !_grid.HasContradiction)
             {
                 Step();
                 if (_grid.IsAllDetermined) SharedLogger.Log("Grid is all determined");
@@ -36,7 +36,7 @@ namespace WaveFunctionCollapse.Shared
         {
             for (int i = 0; i < amount; i++)
             {
-                if (!_grid.IsAllDetermined && !_grid.HasConflict)
+                if (!_grid.IsAllDetermined && !_grid.HasContradiction)
                 {
                     Step();
                     if (_grid.IsAllDetermined) SharedLogger.Log("Grid is all determined");
@@ -45,28 +45,29 @@ namespace WaveFunctionCollapse.Shared
         }
 
 
-        void  Step()
+        void Step()
         {
             //_grid.LogEntropy();
             _counter++;
+            SharedLogger.Log($"Step number {_counter}");
             int lowestEntropyIndex;
             if (_counter == 1)
             {
                 //start from a random sample
-                lowestEntropyIndex = UtilShared.RandomNR.Next(0, _grid.PossibleSamples.Count - 1);
+                lowestEntropyIndex = UtilShared.RandomNR.Next(0, _grid.PossibleSamples.Count);
             }
             else
             {
-                lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
+                lowestEntropyIndex = _grid.FindLowestNonZeroEntropy().First();
             }
 
             //lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
-            //SharedLogger.Log($"Step number {_counter}");
+
 
             // One step of the algorithm:
             // a. Pick out the lowest entropy
 
-            /*------------------------------------------------- RANDOM SAMPLE WITH LOWEST ENTROPY, Causes conflicts
+            /*------------------------------------------------- RANDOM SAMPLE WITH LOWEST ENTROPY, Causes Contradictions
             List<int> lowestSamples = new List<int>();
             for (int i = 0; i < _grid.PossibleSamples.Count; i++)
             {
@@ -79,7 +80,7 @@ namespace WaveFunctionCollapse.Shared
             BitArray lowestEntropy = _grid.PossibleSamples[UtilShared.RandomNR.Next(0, lowestSamples.Count - 1)];
             */
 
-            bool[] lowestEntropy = _grid.PossibleSamples[lowestEntropyIndex];
+            List<Sample> lowestEntropyTiles = _grid.PossibleSamples[lowestEntropyIndex].Where(s => s.Id != 0).ToList();
 
 
             // b. Apply full list of heuristics over the sample chances (what is the starting proportion of choices?)
@@ -87,50 +88,59 @@ namespace WaveFunctionCollapse.Shared
 
             // c. Pick one choice according to the chances supplied by heuristics
 
-            List<int> possibleSamples = UtilShared.ToIntegerList(lowestEntropy);
             // for now, just select a random sample, later we'll add heuristics
 
             int heuristicSelection = UtilShared.RandomNR.Next(2);
 
             //heuristicSelection = 1; // overwrite, delete for actual random selection
-            T selectedSample=_grid.SampleLibrary[0];
+            Sample selectedSample = _grid.SampleLibrary[0];
             if (heuristicSelection == 0)
             {
-                selectedSample = _grid.SampleLibrary[SelectRandom(possibleSamples)];
+                selectedSample = SelectRandom(lowestEntropyTiles);
             }
             else if (heuristicSelection == 1)
             {
-                selectedSample = SelectLeastUsed(possibleSamples);
+                selectedSample = SelectLeastUsed(lowestEntropyTiles);
             }
 
+            // d. Set the sample (will also propogate)
             _grid.SetSample(lowestEntropyIndex, selectedSample);
 
-            // d. Use the sample.propagate(grid) to apply over grid
-            //_sampleLibrary[selectedSample].Propagate(_grid, lowestEntropyIndex);
+
             //_grid.LogEntropy();
         }
 
-        T SelectLeastUsed(List<int> possibleSamples)
+        Sample SelectLeastUsed(List<Sample> possibleSamples)
         {
-            int smallesAmount = int.MaxValue;
-            T leastUsed = _grid.SampleLibrary[0];
-            foreach (var sample in possibleSamples.Select(s => _grid.SampleLibrary[s]))
+            int smallestAmount = int.MaxValue;
+            Sample leastUsed = _grid.SampleLibrary[0];
+            foreach (var sample in possibleSamples)
             {
                 int amount = _grid.SelectedSamples.Count(s => s == sample);
-                if (amount < smallesAmount)
+                if (amount < smallestAmount)
                 {
-                    smallesAmount = amount;
+                    smallestAmount = amount;
                     leastUsed = sample;
                 }
             }
-            if (smallesAmount != int.MaxValue) return leastUsed;
+            if (smallestAmount != int.MaxValue) return leastUsed;
             return null;
         }
 
-        int SelectRandom(List<int> possibleSamples)
+        Sample SelectRandom(List<Sample> possibleSamples)
         {
-            int nextSampleIndex = UtilShared.RandomNR.Next(possibleSamples.Count);
-            int selectedSample = possibleSamples[nextSampleIndex];
+            Sample selectedSample;
+            if (possibleSamples.Count > 1)
+            {
+                int nextSampleIndex = UtilShared.RandomNR.Next(possibleSamples.Count);
+                selectedSample = possibleSamples[nextSampleIndex];
+            }
+            else
+            {
+                SharedLogger.Log($"Error: Only {possibleSamples.Count} possible samples, random selection failed - function SelectRandom");
+                selectedSample = possibleSamples.First();
+            }
+            
 
             return selectedSample;
         }
@@ -138,16 +148,16 @@ namespace WaveFunctionCollapse.Shared
         void SetBoundryCondition(int boundrySample, bool minX, bool plusX, bool minY, bool plusY, bool minZ, bool plusZ)
         {
             var boundryDomain = new Domain("Boundry", 1, new List<int> { boundrySample });
-            
+
             for (int i = 0; i < _grid.PossibleSamples.Count; i++)
             {
                 if (minX && _grid.GetIndexOfPossibleSample(i).x == 0) boundryDomain.AddTileIndex(i);
                 if (minY && _grid.GetIndexOfPossibleSample(i).y == 0) boundryDomain.AddTileIndex(i);
                 if (minZ && _grid.GetIndexOfPossibleSample(i).z == 0) boundryDomain.AddTileIndex(i);
 
-                if (plusX && _grid.GetIndexOfPossibleSample(i).x == _grid.Dimensions.x-1) boundryDomain.AddTileIndex(i);
-                if (plusY && _grid.GetIndexOfPossibleSample(i).y == _grid.Dimensions.y-1) boundryDomain.AddTileIndex(i);
-                if (plusZ && _grid.GetIndexOfPossibleSample(i).z == _grid.Dimensions.z-1) boundryDomain.AddTileIndex(i);
+                if (plusX && _grid.GetIndexOfPossibleSample(i).x == _grid.Dimensions.x - 1) boundryDomain.AddTileIndex(i);
+                if (plusY && _grid.GetIndexOfPossibleSample(i).y == _grid.Dimensions.y - 1) boundryDomain.AddTileIndex(i);
+                if (plusZ && _grid.GetIndexOfPossibleSample(i).z == _grid.Dimensions.z - 1) boundryDomain.AddTileIndex(i);
             }
 
             // check inside polyline condition to add empty

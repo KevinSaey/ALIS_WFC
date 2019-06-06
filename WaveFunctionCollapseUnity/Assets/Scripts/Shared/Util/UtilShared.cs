@@ -28,6 +28,8 @@ namespace WaveFunctionCollapse.Shared
             return integerList;
         }*/
 
+
+
         public static bool[] And(this bool[] boolArray1, bool[] boolArray2)
         {
             bool[] newBoolArray = new bool[boolArray1.Length];

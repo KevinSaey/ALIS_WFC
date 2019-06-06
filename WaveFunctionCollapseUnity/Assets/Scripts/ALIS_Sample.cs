@@ -28,23 +28,24 @@ namespace WaveFunctionCollapse.Unity
         public ALIS_Sample(int id)
         {
             Id = id;
-            PossibleNeighbours = new List<HashSet<int>>();
+            PossibleNeighbours = new List<HashSet<Sample>>();
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
         }
 
 
-        public ALIS_Sample(int id, int density, int type, List<HashSet<int>> possibleConnecitons, List<Instance> instances, string name, ManagerWFC managerWFC)
+        public ALIS_Sample(int id, int density, int type, List<Instance> instances, string name, ManagerWFC managerWFC)
         {
             Id = id;
             Density = density;
             Type = type;
-            PossibleNeighbours = possibleConnecitons;
             Instances = instances;
             Name = name;
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
             _managerWFC = managerWFC;
 
         }
+
+        
 
         /*public void AddConnectionsToWFC(WFC<ALIS_Sample> wfc)
         {
@@ -55,28 +56,27 @@ namespace WaveFunctionCollapse.Unity
         }*/
 
         //For testing purpouses
-        public void SetRandomNeighbours(int NumberOfConnections, WFC<ALIS_Sample> wfc)
+        public void SetRandomNeighbours(int NumberOfConnections, WFC wfc)
         {
             for (int i = 0; i < 6; i++)
             {
-                PossibleNeighbours.Add(new HashSet<int>());
+                PossibleNeighbours.Add(new HashSet<Sample>());
                 for (int j = 0; j < 2; j++)
                 {
                     int nextConnection = Random.Range(1, NumberOfConnections + 1);
-                    PossibleNeighbours[i].Add(nextConnection);
+                    PossibleNeighbours[i].Add(wfc.SampleLibrary[nextConnection]);
                     //wfc.AddSampleConnection(nextConnection, this);
                 }
             }
         }
 
-        public override void Propagate<ALIS_Sample>(SampleGrid<ALIS_Sample> grid, int index)
+        public override void Propagate(SampleGrid grid, int index)
         {
             base.Propagate(grid, index);
         }
 
         public override void DrawSample(int sampleIndex)
         {
-            SharedLogger.Log("HOOOOOORRAAAAAAAY!!!!");
             _managerWFC.DrawSample(sampleIndex);
         }
     }

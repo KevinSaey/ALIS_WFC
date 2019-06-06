@@ -15,7 +15,8 @@ namespace WaveFunctionCollapse.Unity
     /// </summary>
     public class RhinoImporter//based on Vicente's code
     {
-        public List<ALIS_Sample> Samples { get; private set; } = new List<ALIS_Sample>();
+        //public List<ALIS_Sample> Samples { get; private set; } = new List<ALIS_Sample>();
+        public Dictionary<int, Sample> SampleLibrary { get; private set; }
         string _path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
         //Grid3D _grid;
         ManagerWFC _managerWFC;
@@ -25,19 +26,42 @@ namespace WaveFunctionCollapse.Unity
 
         }
 
-        public void InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflect,ManagerWFC managerWFC)
+        public void InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflect, ManagerWFC managerWFC)
         {
             var files = LoadFiles();
             _managerWFC = managerWFC;
+            List<Assembly> importedAssemblies = new List<Assembly>();
 
-            SharedLogger.Log($"{files.Count()} ALIS_samples loaded");
+
+
+            SampleLibrary = new Dictionary<int, Sample>();
 
             for (int i = 0; i < files.Count; i++)
             {
-                Samples.Add(Assembly.Import(files[i]).ToALIS_Sample(_managerWFC));
+                importedAssemblies.Add(Assembly.Import(files[i]));
+                var sample = Assembly.Import(files[i]).ToALIS_Sample(_managerWFC);
+
+                SampleLibrary.Add(sample.Id, sample);
+
             }
-            
-            if (rotate)
+
+            foreach (var sampleID in SampleLibrary.Keys)
+            {
+                List<HashSet<Sample>> neighbours = new List<HashSet<Sample>>();
+                for (int i = 0; i < 6; i++)
+                {
+                    neighbours.Add(new HashSet<Sample>());
+                    var importedNeighbours = importedAssemblies.First(s => s.Id == sampleID).Neighbours[i].Neighbours;
+                    for (int j = 0; j < importedNeighbours.Count(); j++)
+                    {
+                        neighbours[i].Add(SampleLibrary[importedNeighbours[j]]);
+                    }
+                }
+                SampleLibrary[sampleID].InitialisePossibleNeighbours(neighbours);
+            }
+
+
+            /*if (rotate)
             {
                 var nrOfSamples = Samples.Count;
                 var anchor = ((Vector3)tileSize - Vector3.one) / 2;
@@ -54,8 +78,8 @@ namespace WaveFunctionCollapse.Unity
                     }
                     //}
                 }
-            }
-            if (reflect)
+            }*/
+            /*if (reflect)
             {
                 var nrOfSamples = Samples.Count;
                 var anchor = ((Vector3)tileSize - Vector3.one) / 2;
@@ -64,9 +88,10 @@ namespace WaveFunctionCollapse.Unity
                     Samples.Add(Reflect(Samples[i], Axis.X, anchor));
                     Samples.Add(Reflect(Samples[i], Axis.Z, anchor));
                 }
-            }
+            }*/
 
-           CheckDuplicates();
+            CheckDuplicates();
+            SharedLogger.Log($"{files.Count()} ALIS_samples loaded");
         }
 
         private List<string> LoadFiles()
@@ -74,7 +99,7 @@ namespace WaveFunctionCollapse.Unity
             return Directory.GetFiles(_path, "*.xml").ToList();
         }
 
-        private ALIS_Sample Reflect(ALIS_Sample sampleToReflect, Axis axis, Vector3 Anchor)
+        /*private ALIS_Sample Reflect(ALIS_Sample sampleToReflect, Axis axis, Vector3 Anchor)
         {
             ALIS_Sample reflectedSample;
             List<HashSet<int>> neighbours = new List<HashSet<int>>();
@@ -133,7 +158,7 @@ namespace WaveFunctionCollapse.Unity
             var name = $"sample {sampleToReflect.Id} type {sampleToReflect.Type} ref: {axis}";
             reflectedSample = new ALIS_Sample(id, sampleToReflect.Density, sampleToReflect.Type, neighbours, instances, name,_managerWFC);
             return reflectedSample;
-        }
+        }*/
 
         private void CheckDuplicates()
         {
@@ -147,31 +172,32 @@ namespace WaveFunctionCollapse.Unity
             //Samples = checkedSamples.OrderBy(s => s.Id).ToList();
 
             Dictionary<ALIS_Sample, List<ALIS_Sample>> equalsBySample = new Dictionary<ALIS_Sample, List<ALIS_Sample>>();
-            foreach (var sample in Samples)
+            foreach (var sample in SampleLibrary.Values)
             {
+                ALIS_Sample alisSample = sample as ALIS_Sample;
                 List<ALIS_Sample> list = null;
                 var found = false;
-                foreach(var key in equalsBySample.Keys)
+                foreach (var key in equalsBySample.Keys)
                 {
-                    if(!found && CompareDuplicateSamples(key, sample))
+                    if (!found && CompareDuplicateSamples(key as ALIS_Sample, alisSample as ALIS_Sample))
                     {
                         list = equalsBySample[key];
                         found = true;
-                        list.Add(sample);
+                        list.Add(alisSample);
                     }
                 }
 
                 if (!found)
                 {
                     list = new List<ALIS_Sample>();
-                    equalsBySample.Add(sample, list);
-                }                
+                    equalsBySample.Add(alisSample, list);
+                }
             }
 
             foreach (var key in equalsBySample.Keys)
             {
                 var nodesConsideredEqual = equalsBySample[key];
-                if(nodesConsideredEqual.Count > 0)
+                if (nodesConsideredEqual.Count > 0)
                 {
                     foreach (var itemConsideredEqual in equalsBySample[key])
                     {
@@ -179,25 +205,27 @@ namespace WaveFunctionCollapse.Unity
                         for (int i = 0; i < 6; i++)
                         {
                             key.PossibleNeighbours[i].UnionWith(itemConsideredEqual.PossibleNeighbours[i]);
-                            foreach (var sample in Samples.Where(s => key.PossibleNeighbours[i].Contains(s.Id)))
+                            foreach (var sample in SampleLibrary.Values.Where(s => key.PossibleNeighbours[i].Contains(s)))
                             {
-                                if(i%2!=0)
+                                if (i % 2 != 0)
                                 {
-                                    sample.PossibleNeighbours[i - 1].Add(key.Id);
-                                    sample.PossibleNeighbours[i - 1].Remove(itemConsideredEqual.Id);
+                                    sample.PossibleNeighbours[i - 1].Add(key);
+                                    sample.PossibleNeighbours[i - 1].Remove(itemConsideredEqual);
                                 }
                                 else
                                 {
-                                    sample.PossibleNeighbours[i + 1].Add(key.Id);
-                                    sample.PossibleNeighbours[i + 1].Remove(itemConsideredEqual.Id);
+                                    sample.PossibleNeighbours[i + 1].Add(key);
+                                    sample.PossibleNeighbours[i + 1].Remove(itemConsideredEqual);
                                 }
                             }
                         }
-                        Samples.Remove(itemConsideredEqual);
+                        SampleLibrary.Remove(itemConsideredEqual.Id);
                     }
                 }
             }
+            SampleLibrary = SampleLibrary.OrderBy(s => s.Key).ToDictionary(p=>p.Key,p=>p.Value);
         }
+
 
         private ALIS_Sample MergeDuplicates(ALIS_Sample sample1, ALIS_Sample sample2)
         {
@@ -228,10 +256,10 @@ namespace WaveFunctionCollapse.Unity
             return true;
         }
 
-        private ALIS_Sample RotateALISSample(ALIS_Sample sample, int id, Vector3 anchor, int timesRoated, int origSampleId)
+        /*private ALIS_Sample RotateALISSample(ALIS_Sample sample, int id, Vector3 anchor, int timesRoated, int origSampleId)
         {
             var conn = sample.PossibleNeighbours;
-            var newConn = new List<HashSet<int>> { conn[2], conn[3], conn[1], conn[0], conn[4], conn[5] }; // check this for lefthand rotation
+            var newConn = new List<HashSet<ALIS_Sample>> { conn[2], conn[3], conn[1], conn[0], conn[4], conn[5] }; // check this for lefthand rotation
             List<Instance> newInstances = new List<Instance>();
             for (int i = 0; i < sample.Instances.Count; i++)
             {
@@ -248,10 +276,9 @@ namespace WaveFunctionCollapse.Unity
             var name = $"sample {origSampleId} type {sample.Type} rot: {timesRoated * 90}";
 
             return new ALIS_Sample(id, sample.Density, sample.Type, newConn, newInstances, name,_managerWFC);
-        }
+        }*/
     }
-
-
+    
 
     /// <summary>
     /// Assembly pattern existing of blocks 
@@ -274,47 +301,33 @@ namespace WaveFunctionCollapse.Unity
 
         }
 
-        public ALIS_Sample ToALIS_Sample(ManagerWFC managerWFC)
+        List<HashSet<int>> GetNeighbours()
         {
-            List<HashSet<int>> possibleConnections = new List<HashSet<int>>();
+            List<HashSet<int>> possibleNeighbours = new List<HashSet<int>>();
             for (int i = 0; i < Neighbours.Count; i++)
             {
-
-                possibleConnections.Add(new HashSet<int>(Neighbours[i].Neighbours/*.Where(s=>s!= int.MaxValue)*/));
-
+                possibleNeighbours.Add(new HashSet<int>(Neighbours[i].Neighbours/*.Where(s=>s!= int.MaxValue)*/));
             }
-            var name = $"sample {Id} type {Type} rot: 0 minX: {possibleConnections[0].First()} plusX: {possibleConnections[1].First()} minY: {possibleConnections[2].First()}  plusY: {possibleConnections[3].First()}  minZ: {possibleConnections[4].First()} plusZ  {possibleConnections[5].First()}";
-            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Density, Type, possibleConnections, Instances, name,managerWFC);
-            return alis_Sample;
+
+            return possibleNeighbours;
         }
 
-
-        /*
-        public void Generate(Grid3D grid)
+        public ALIS_Sample ToALIS_Sample(ManagerWFC managerWFC)
         {
-            var pattern = new PatternC();
-            foreach (var instance in Instances)
-            {
-                var rotation = instance.Pose.rotation.eulerAngles.ToVector3Int();
-                Debug.Log("imported rotation " + rotation);
-                if (rotation.x == -90) rotation.x = 270;
-                if (rotation.y == -90) rotation.x = 270;
-                if (rotation.z == -90) rotation.x = 270;
-                Debug.Log("adjusted rotation " + rotation);
+            var name = $"sample {Id} type {Type} rot: 0 ";
+            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Density, Type, Instances, name, managerWFC);
+            return alis_Sample;
+        }
+    }
 
-                var block = new Block(pattern, instance.Pose.position.ToVector3Int(), rotation, grid);
-                grid.AddBlockToGrid(block);
-            }
-        }*/
-        public class Neighbour
+    public class Neighbour
+    {
+        public List<int> Neighbours;
+
+        private Neighbour() { }
+        public Neighbour(List<int> neighbours)
         {
-            public List<int> Neighbours;
-
-            private Neighbour() { }
-            public Neighbour(List<int> neighbours)
-            {
-                Neighbours = neighbours;
-            }
+            Neighbours = neighbours;
         }
     }
 

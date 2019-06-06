@@ -9,38 +9,38 @@ using System.Threading.Tasks;
 
 namespace WaveFunctionCollapse.Shared
 {
-    public class SampleGrid<T> where T : Sample
+    public class SampleGrid
     {
         public Vector3IntShared Dimensions { get; private set; }
-        public List<bool[]> PossibleSamples;
-        public List<T> SelectedSamples;
+        public List<HashSet<Sample>> PossibleSamples;
+        public List<Sample> SelectedSamples;
         //public List<Connection> Connections;
-        public List<T> SampleLibrary;
+        public Dictionary<int, Sample> SampleLibrary;
         public List<Domain> Domains;
 
 
-        internal SampleGrid(List<T> sampleLibrary, int dimX, int dimY, int dimZ)
+        internal SampleGrid(Dictionary<int, Sample> sampleLibrary, int dimX, int dimY, int dimZ)
         {
             //Connections = new List<Connection>();
             Domains = new List<Domain>();
             Dimensions = new Vector3IntShared { x = dimX, y = dimY, z = dimZ };
             SampleLibrary = sampleLibrary;
 
-            createPossibleSampleGrid();
+            CreatePossibleSampleGrid();
             //LogIndex();
             //LogEntropy();
         }
 
 
 
-        void createPossibleSampleGrid()
+        void CreatePossibleSampleGrid()
         {
-            PossibleSamples = new List<bool[]>();
-            SelectedSamples = new List<T>(PossibleSamples.Count);
+            PossibleSamples = new List<HashSet<Sample>>();
+            SelectedSamples = new List<Sample>(PossibleSamples.Count);
             for (int i = 0; i < Dimensions.z * Dimensions.y * Dimensions.x; i++)
             {
-                var boolArray = new bool[SampleLibrary.Count];
-                PossibleSamples.Add(boolArray.SetAll(true));
+                PossibleSamples.Add(new HashSet<Sample>(SampleLibrary.Values));
+
                 SelectedSamples.Add(SampleLibrary[0]);
             }
 
@@ -76,7 +76,7 @@ namespace WaveFunctionCollapse.Shared
 
 
 
-        public Boolean HasConflict
+        public Boolean HasContradiction
         {
             get
             {
@@ -84,7 +84,7 @@ namespace WaveFunctionCollapse.Shared
                 {
                     if (Entropy(PossibleSamples[i]) == 0)
                     {
-                        SharedLogger.Log($"Solution has a conflict in tile {i}");
+                        SharedLogger.Log($"Solution has a Contradiction in tile {i}");
                         return true;
                     }
                 }
@@ -104,31 +104,41 @@ namespace WaveFunctionCollapse.Shared
             return UtilShared.CountBoolarrayTrue(sample);
         }
 
-        public int FindLowestNonZeroEntropy()
+        public int Entropy(HashSet<Sample> sample)
         {
-            int lowestEntropy = SampleLibrary.Count;
-            int lowestIndex = -1;
+            return sample.Count;
+        }
+
+        public List<int> FindLowestNonZeroEntropy()
+        {
+            int lowestEntropy = int.MaxValue;
+            List<int> lowestIndices = new List<int>();
             for (int i = 0; i < PossibleSamples.Count; i++)
             {
                 int entropy = Entropy(PossibleSamples[i]);
                 if (entropy < lowestEntropy && entropy > 1)
                 {
                     lowestEntropy = entropy;
-                    lowestIndex = i;
+                    lowestIndices = new List<int>() { i };
+                }
+                else if (entropy == lowestEntropy)
+                {
+                    lowestIndices.Add(i);
                 }
             }
-            if (lowestIndex == -1) lowestIndex = 0;
 
-            return lowestIndex;
-            /*
-            BitArray lowestSample = PossibleSamples.OrderByDescending(o => Entropy(o)).Where(s => Entropy(s) > 1).First();
-            return PossibleSamples.IndexOf(lowestSample);*/
+            return lowestIndices;
         }
 
-        public void SetSample(int index, T selectedSample)
+        public void SetSample(int index, Sample selectedSample)
         {
-            SelectedSamples[index] =  selectedSample;
-            PossibleSamples[index] = UtilShared.SetFalseBut(PossibleSamples[index], 0); //0 is always an empty sample
+            if (selectedSample.Id == 0)
+            {
+                SharedLogger.Log("Error: Trying to set sample 0 - function SetSample");
+                return;
+            }
+            SelectedSamples[index] = selectedSample;
+            PossibleSamples[index] = new HashSet<Sample>() { SampleLibrary[0] }; //0 is always an empty sample
             selectedSample.DrawSample(index);
             selectedSample.Propagate(this, index);
 
@@ -169,9 +179,9 @@ namespace WaveFunctionCollapse.Shared
             for (int i = 0; i < SampleLibrary.Count; i++)
             {
                 if (SampleLibrary[i].Id == sampleId) index = i;
-                
+
             }
-            if (index == int.MaxValue)SharedLogger.Log($"Requested sample id:{sampleId} is not valid - function GetIndexFromSampleID");
+            if (index == int.MaxValue) SharedLogger.Log($"Requested sample id:{sampleId} is not valid - function GetIndexFromSampleID");
             return index;
         }
     }

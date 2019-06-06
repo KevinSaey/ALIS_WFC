@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace WaveFunctionCollapse.Shared
 {
-    public interface IHeuristic<T> where T : Sample
+    public interface IHeuristic
     {
-        Dictionary<T, float> ApplyOverChoices(Dictionary<T, float> chances, T picked, SampleGrid<T> grid);
+        Dictionary<Sample, float> ApplyOverChoices(Dictionary<Sample, float> chances, Sample picked, SampleGrid grid);
     }
 }

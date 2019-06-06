@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace WaveFunctionCollapse.Shared
 {
-    public class WFC<T> where T : Sample
+    public class WFC
     {
 
-        public List<T> SampleLibrary
+        public Dictionary<int,Sample> SampleLibrary
         {
             get { return SampleGrid.SampleLibrary; }
             set { SampleGrid.SampleLibrary = value; }
@@ -22,9 +22,9 @@ namespace WaveFunctionCollapse.Shared
             set { _sampleGrid.Connections = value; }
         }*/
 
-        List<IHeuristic<T>> _heuristics;
+        List<IHeuristic> _heuristics;
 
-        public List<IHeuristic<T>> Heuristics
+        public List<IHeuristic> Heuristics
         {
             get { return _heuristics; }
             set { _heuristics = value; }
@@ -37,16 +37,16 @@ namespace WaveFunctionCollapse.Shared
                 return SampleGrid.IsAllDetermined;
             }
         }
-        public bool HasConflict
+        public bool HasContradiction
         {
             get
             {
-                return SampleGrid.HasConflict;
+                return SampleGrid.HasContradiction;
             }
         }
 
-        public SampleGrid<T> SampleGrid;
-        Engine<T> _engine;
+        public SampleGrid SampleGrid;
+        Engine _engine;
 
 
         public WFC()
@@ -54,13 +54,13 @@ namespace WaveFunctionCollapse.Shared
 
         }
 
-        public WFC(int xDimension, int yDimension, int zDimension, List<T> samples)
+        public WFC(int xDimension, int yDimension, int zDimension, Dictionary<int,Sample> samples)
         {
             SharedLogger.Log("Instantiating WFC");
-            SampleGrid = new SampleGrid<T>(samples, xDimension, yDimension, zDimension);
+            SampleGrid = new SampleGrid(samples, xDimension, yDimension, zDimension);
             SampleLibrary = samples;
 
-            _engine = new Engine<T>(_heuristics, SampleGrid);
+            _engine = new Engine(_heuristics, SampleGrid);
             SharedLogger.Log("WFC Instantiated");
         }
 
@@ -96,7 +96,7 @@ namespace WaveFunctionCollapse.Shared
             return SampleGrid.GetIndexOfPossibleSample(i);
         }
 
-        public List<T> SelectedSamples
+        public List<Sample> SelectedSamples
         {
             get
             {

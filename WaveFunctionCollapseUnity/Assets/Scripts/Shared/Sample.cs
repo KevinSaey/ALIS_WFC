@@ -8,12 +8,12 @@ using g3;
 
 namespace WaveFunctionCollapse.Shared
 {
-    enum directions { minX = 0, plusX = 1, minY = 2, plusY = 3, minZ = 4, plusZ = 5 }
+    enum Directions { minX = 0, plusX = 1, minY = 2, plusY = 3, minZ = 4, plusZ = 5 }
 
     public abstract class Sample
     {
         public int Id { get; set; } // sample null is always an empty sample
-        public List<HashSet<int>> PossibleNeighbours;
+        public List<HashSet<Sample>> PossibleNeighbours;
 
         public override string ToString()
         {
@@ -23,13 +23,22 @@ namespace WaveFunctionCollapse.Shared
         public Sample()
         { }
 
-        public virtual void DrawSample( int sampleIndex)
+        public virtual void DrawSample(int sampleIndex)
         {
         }
 
-        public virtual void Propagate<U>(SampleGrid<U> grid, int currentIndex) where U : Sample
+        public void InitialisePossibleNeighbours(List<HashSet<Sample>> possibleNeighbours)
         {
-            List<int> setSamples = new List<int>();
+            PossibleNeighbours = possibleNeighbours;
+        }
+
+        public virtual void Propagate(SampleGrid grid, int currentIndex)
+        {
+            if (Id == 0)
+            {
+                SharedLogger.Log("Error: Propogating sample ID 0");
+                return;
+            }
             SharedLogger.Log("Propogating");
             // Neighbours propagation here
             List<Vector3IntShared> neighbourIndices = new List<Vector3IntShared> {
@@ -48,34 +57,26 @@ namespace WaveFunctionCollapse.Shared
                 if (UtilShared.CheckIndex(neighbourIndex, grid.Dimensions)) // check if the neighbour is out of bounds
                 {
                     var indexToPropagate = grid.GetPossibleSampleByIndex(neighbourIndex);
-                    bool[] NeighbourSamples = grid.PossibleSamples[indexToPropagate];
 
                     //crossreference lists and change neighbour
-                    if (UtilShared.CountBoolarrayTrue(NeighbourSamples) != 1) // if statement becomes obsolete if we actually have working patterns
-                    {
-                        HashSet<int> samplesToMatch = PossibleNeighbours[j];
+                    HashSet<Sample> CurrentPossibleNeighbours = PossibleNeighbours[j];
 
-                        /*foreach (var connection in PossibleConnections[j])
-                            samplesToMatch.AddRange(
-                                grid.Connections.First(s => s.ID == connection)
-                                .SampleIDS.Where(s => s != grid.GetIndexFromSampleId(this.Id)));*/
-
-                        grid.PossibleSamples[indexToPropagate] = NeighbourSamples.And(UtilShared.ToBoolArray(samplesToMatch, grid.SampleLibrary.Count));
-                    }
-                    else
+                    //Crossreference
+                    grid.PossibleSamples[indexToPropagate].IntersectWith(CurrentPossibleNeighbours);
+                    
+                    //assign sample
+                    if (grid.PossibleSamples[indexToPropagate].Count == 1)
                     {
-                        //assign sample
-                        var index = UtilShared.GetOneTrue(NeighbourSamples);
-                        if (index != 0)
+                        var sample = grid.PossibleSamples[indexToPropagate].First();
+                        if (sample.Id != 0)
                         {
                             var sampleIndex = grid.GetPossibleSampleByIndex(neighbourIndex);
-                            grid.SetSample(sampleIndex, grid.SampleLibrary[index]);
-                            //setSamples.Add(sampleIndex); THIS IS DOING NOTHING
+                            grid.SetSample(sampleIndex, sample);
                         }
                     }
                 }
             }
-            //grid.ShowEntropy();
+            //grid.LogEntropy();
         }
     }
 }

@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c62a5600b1eab347aa11341d9858a15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnableCapture: 1
+  EnableCapture: 0
 --- !u!4 &295298315
 Transform:
   m_ObjectHideFlags: 0
@@ -196,9 +196,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
   _tileSize: {x: 6, y: 7, z: 6}
-  _WFCSize: {x: 3, y: 5, z: 3}
+  _WFCSize: {x: 10, y: 2, z: 10}
   _rhino: 1
-  _log: 0
+  _log: 1
   _interval: 1
   _rotate: 0
   _reflect: 0
@@ -349,7 +349,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
@@ -508,7 +508,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1390614136
 MonoBehaviour:
   m_ObjectHideFlags: 0

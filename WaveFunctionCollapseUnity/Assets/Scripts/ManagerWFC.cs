@@ -15,10 +15,10 @@ namespace WaveFunctionCollapse.Unity
         [SerializeField]
         Vector3Int _WFCSize;
         [SerializeField]
-        bool _rhino, _log,_interval, _rotate, _reflect;
+        bool _rhino, _log, _interval, _rotate, _reflect;
 
-        List<ALIS_Sample> _sampleLibrary = new List<ALIS_Sample>();
-        WFC<ALIS_Sample> _waveFunctionCollapse;
+        Dictionary<int, Sample> _sampleLibrary = new Dictionary<int, Sample>();
+        WFC _waveFunctionCollapse;
         List<GameObject> goColorCubes = new List<GameObject>();
         IEnumerator _step;
         RhinoImporter _rhinoImporter;
@@ -31,18 +31,18 @@ namespace WaveFunctionCollapse.Unity
         void Awake()
         {
             SharedLogger.CurrentLogger = new UnityLog(_log);
-                        
+
             if (_rhino) RhinoAwake();
             else RandomAwake();
 
-            CenterWFC = Vector3.Scale(_WFCSize , _tileSize)* (_voxelSize / 2);
+            CenterWFC = Vector3.Scale(_WFCSize, _tileSize) * (_voxelSize / 2);
         }
 
         void RandomAwake()
         {
             InitialiseRandomSamples();
 
-            _waveFunctionCollapse = new WFC<ALIS_Sample>(_WFCSize.x, _WFCSize.y, _WFCSize.z, _sampleLibrary);
+            _waveFunctionCollapse = new WFC(_WFCSize.x, _WFCSize.y, _WFCSize.z, _sampleLibrary);
 
             SetRandomSamples();
         }
@@ -51,15 +51,15 @@ namespace WaveFunctionCollapse.Unity
         {
             _rhinoImporter = new RhinoImporter();
             _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflect, this);
-            _sampleLibrary = _rhinoImporter.Samples;
+            _sampleLibrary = _rhinoImporter.SampleLibrary;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 
-            _waveFunctionCollapse = new WFC<ALIS_Sample>(_WFCSize.x, _WFCSize.y, _WFCSize.z, _sampleLibrary);
+            _waveFunctionCollapse = new WFC(_WFCSize.x, _WFCSize.y, _WFCSize.z, _sampleLibrary);
 
             //Add the samples connections to the wfc grid
             //foreach (var sample in _sampleLibrary) sample.AddConnectionsToWFC(_waveFunctionCollapse);
             //_waveFunctionCollapse.RemoveEmptyConnections();
-            
+
             _gridController = new GridController(_tileSize, _voxelSize, _WFCSize);
         }
 
@@ -86,7 +86,7 @@ namespace WaveFunctionCollapse.Unity
 
             if (_rhino)
             {
-                i =_gridController.OnGUI(buttonHeight, buttonWidth, i, s);
+                i = _gridController.OnGUI(buttonHeight, buttonWidth, i, s);
 
                 if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Hide colorcubes"))
                 {
@@ -94,27 +94,25 @@ namespace WaveFunctionCollapse.Unity
                     HideColorCubes(_colorCubes);
                 }
             }
-
         }
 
         void HideColorCubes(bool flag)
         {
             for (int i = 0; i < goColorCubes.Count; i++)
             {
-                goColorCubes[i].GetComponent <MeshRenderer>().enabled = flag;
-        }
-
+                goColorCubes[i].GetComponent<MeshRenderer>().enabled = flag;
+            }
         }
 
         IEnumerator Step(float time)
         {
-           while (true)
+            while (true)
             {
-                Debug.Log("Step");
+                //Debug.Log("Step");
                 //DrawSamples(_waveFunctionCollapse.Step(1));
                 _waveFunctionCollapse.Step(1);
 
-                if (_waveFunctionCollapse.IsAllDetermined||_waveFunctionCollapse.HasConflict)
+                if (_waveFunctionCollapse.IsAllDetermined || _waveFunctionCollapse.HasContradiction)
                 {
                     //DrawGrid();
                     yield break;
@@ -123,18 +121,18 @@ namespace WaveFunctionCollapse.Unity
                 yield return new WaitForSeconds(time);
             }
         }
-               
+
 
         void Update()
         {
             if (_rhino) _gridController.Update();
-        }                  
+        }
 
         public void InitialiseRandomSamples()
         {
             for (int i = 0; i < 20; i++)
             {
-                _sampleLibrary.Add(new ALIS_Sample(i));
+                _sampleLibrary.Add(i, new ALIS_Sample(i));
             }
         }
 
@@ -142,7 +140,8 @@ namespace WaveFunctionCollapse.Unity
         {
             for (int i = 1; i < _sampleLibrary.Count; i++)
             {
-                _sampleLibrary[i].SetRandomNeighbours(10, _waveFunctionCollapse);
+                var sample = _sampleLibrary[i] as ALIS_Sample;
+                sample.SetRandomNeighbours(10, _waveFunctionCollapse);
             }
         }
 
@@ -178,15 +177,15 @@ namespace WaveFunctionCollapse.Unity
             var sample = _waveFunctionCollapse.SelectedSamples[sampleIndex];
             if (sample.Id != 0)
             {
-                ALIS_Sample selectedSample = sample;
+                ALIS_Sample selectedSample = sample as ALIS_Sample;
                 Vector3Int index = Util.ToUnityVector3Int(_waveFunctionCollapse.GetIndexOfPossibleSample(sampleIndex));
                 GameObject goTile = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 goTile.transform.localScale = Vector3.Scale(Vector3.one * _voxelSize, _tileSize);
-                goTile.transform.localPosition = Vector3.Scale(index, goTile.transform.localScale)+((Vector3)_tileSize-Vector3.one)*_voxelSize/2;
+                goTile.transform.localPosition = Vector3.Scale(index, goTile.transform.localScale) + ((Vector3)_tileSize - Vector3.one) * _voxelSize / 2;
                 goTile.name = $"tile: {sampleIndex}{index} {selectedSample.Name}";
 
                 Material mat = goTile.GetComponent<Renderer>().material;
-                mat.color = sample.Col;
+                mat.color = selectedSample.Col;
                 mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                 mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 mat.SetInt("_ZWrite", 0);
