@@ -61,11 +61,14 @@ namespace WaveFunctionCollapse.Shared
                     //crossreference lists and change neighbour
                     HashSet<Sample> CurrentPossibleNeighbours = PossibleNeighbours[j];
 
-                    //Crossreference
-                    grid.PossibleSamples[indexToPropagate].IntersectWith(CurrentPossibleNeighbours);
-                    
+                    if (grid.PossibleSamples[indexToPropagate].Count != 1)
+                    {
+                        //Crossreference
+                        grid.PossibleSamples[indexToPropagate].IntersectWith(CurrentPossibleNeighbours);
+                    }
+
                     //assign sample
-                    if (grid.PossibleSamples[indexToPropagate].Count == 1)
+                    if(grid.PossibleSamples[indexToPropagate].Count == 1)
                     {
                         var sample = grid.PossibleSamples[indexToPropagate].First();
                         if (sample.Id != 0)

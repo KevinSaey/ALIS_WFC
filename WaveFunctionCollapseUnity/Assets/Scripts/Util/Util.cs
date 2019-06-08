@@ -46,6 +46,7 @@ namespace WaveFunctionCollapse.Unity
 
         }
 
+
         public static void OrientIndex(Vector3 localIndex, Vector3 pivot, int angle, out Vector3Int rotatedIndex)
         {
             var direction = localIndex - pivot;
@@ -62,6 +63,8 @@ namespace WaveFunctionCollapse.Unity
         }
 
         public static Vector3Int ToVector3Int(this Vector3 v) => new Vector3Int(Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y), Mathf.RoundToInt(v.z));
+
+        public static Vector3 AbsoluteValues(this Vector3 v) => new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
 
         public static bool CheckBounds(Vector3Int index, Grid3D grid)
         {

@@ -15,7 +15,7 @@ namespace WaveFunctionCollapse.Unity
         [SerializeField]
         Vector3Int _WFCSize;
         [SerializeField]
-        bool _rhino, _log, _interval, _rotate, _reflect;
+        bool _rhino, _log, _interval, _rotate, _reflectX,_reflectY,_reflectZ;
 
         Dictionary<int, Sample> _sampleLibrary = new Dictionary<int, Sample>();
         WFC _waveFunctionCollapse;
@@ -50,7 +50,7 @@ namespace WaveFunctionCollapse.Unity
         void RhinoAwake()
         {
             _rhinoImporter = new RhinoImporter();
-            _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflect, this);
+            _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflectX,_reflectY,_reflectZ, this);
             _sampleLibrary = _rhinoImporter.SampleLibrary;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 

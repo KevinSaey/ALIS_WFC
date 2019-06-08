@@ -91,7 +91,7 @@ namespace WaveFunctionCollapse.Shared
             // for now, just select a random sample, later we'll add heuristics
 
             int heuristicSelection = UtilShared.RandomNR.Next(2);
-
+            heuristicSelection = 1;
             //heuristicSelection = 1; // overwrite, delete for actual random selection
             Sample selectedSample = _grid.SampleLibrary[0];
             if (heuristicSelection == 0)
