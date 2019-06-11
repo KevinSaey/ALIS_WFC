@@ -12,21 +12,28 @@ namespace WaveFunctionCollapse.Shared //Code by VS
 
     public struct Vector3IntShared
     {
-        public int x, y, z;
+        public int X, Y, Z;
+
+        public Vector3IntShared(int x, int y, int z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
 
         public static Vector3IntShared operator *(Vector3IntShared a, Vector3IntShared b)
         {
-            return new Vector3IntShared { x = a.x * b.x, y = a.y * b.y, z = a.z * b.z };
+            return new Vector3IntShared { X = a.X * b.X, Y = a.Y * b.Y, Z = a.Z * b.Z };
         }
 
         public static Vector3IntShared operator +(Vector3IntShared a, Vector3IntShared b)
         {
-            return new Vector3IntShared { x = a.x + b.x, y = a.y + b.y, z = a.z + b.z };
+            return new Vector3IntShared { X = a.X + b.X, Y = a.Y + b.Y, Z = a.Z + b.Z };
         }
 
         public override string ToString()
         {
-            return $"Vector3Int x:{x}, y:{y}, z:{z}";
+            return $"Vector3Int x:{X}, y:{Y}, z:{Z}";
         }
     }
 

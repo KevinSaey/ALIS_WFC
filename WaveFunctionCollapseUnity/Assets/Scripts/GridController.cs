@@ -85,9 +85,9 @@ namespace WaveFunctionCollapse.Unity
             var pattern = new PatternC();
             foreach (var instance in sample.Instances)
             {
-                var rotation = instance.Pose.rotation.eulerAngles.ToVector3Int();
+                var rotation = instance.Pose.rotation.eulerAngles.ToVector3IntRound();
                 
-                var block = new Block(pattern, instance.Pose.position.ToVector3Int() + tileIndex * tileSize, rotation, _grid);
+                var block = new Block(pattern, instance.Pose.position.ToVector3IntRound() + tileIndex * tileSize, rotation, _grid);
                 _grid.AddBlockToGrid(block,parrent);
             }
         }

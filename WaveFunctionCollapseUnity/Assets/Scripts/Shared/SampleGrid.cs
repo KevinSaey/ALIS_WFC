@@ -23,7 +23,7 @@ namespace WaveFunctionCollapse.Shared
         {
             //Connections = new List<Connection>();
             Domains = new List<Domain>();
-            Dimensions = new Vector3IntShared { x = dimX, y = dimY, z = dimZ };
+            Dimensions = new Vector3IntShared { X = dimX, Y = dimY, Z = dimZ };
             SampleLibrary = sampleLibrary;
 
             CreatePossibleSampleGrid();
@@ -37,7 +37,7 @@ namespace WaveFunctionCollapse.Shared
         {
             PossibleSamples = new List<HashSet<Sample>>();
             SelectedSamples = new List<Sample>(PossibleSamples.Count);
-            for (int i = 0; i < Dimensions.z * Dimensions.y * Dimensions.x; i++)
+            for (int i = 0; i < Dimensions.Z * Dimensions.Y * Dimensions.X; i++)
             {
                 PossibleSamples.Add(new HashSet<Sample>(SampleLibrary.Values));
 
@@ -54,18 +54,12 @@ namespace WaveFunctionCollapse.Shared
 
         public Vector3IntShared GetIndexOfPossibleSample(int i)
         {
-            int newZ = i / (Dimensions.x * Dimensions.y);
-            i %= (Dimensions.x * Dimensions.y);
-            int newY = i / Dimensions.x;
-            i %= Dimensions.x;
-            int newX = i;
-
-            return new Vector3IntShared { x = newX, y = newY, z = newZ };
+            return UtilShared.GetIndexInGrid(i, Dimensions); ;
         }
 
         public int GetPossibleSampleByIndex(Vector3IntShared index)
         {
-            return Dimensions.x * Dimensions.y * index.z + Dimensions.x * index.y + index.x;
+            return Dimensions.X * Dimensions.Y * index.Z + Dimensions.X * index.Y + index.X;
         }
 
 
@@ -92,17 +86,6 @@ namespace WaveFunctionCollapse.Shared
 
                 return false;
             }
-        }
-
-
-        public int Entropy(BitArray sample)
-        {
-            return UtilShared.CountBitarrayTrue(sample);
-        }
-
-        public int Entropy(bool[] sample)
-        {
-            return UtilShared.CountBoolarrayTrue(sample);
         }
 
         public int Entropy(HashSet<Sample> sample)

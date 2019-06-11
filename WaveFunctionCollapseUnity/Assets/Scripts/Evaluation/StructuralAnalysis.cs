@@ -33,8 +33,6 @@ namespace WaveFunctionCollapse.Unity
             if (!_soleved)
             {
                 // analysis model
-
-
                 _corners = _grid.GetCorners()
                     .Where(c => c.GetConnectedVoxels().Any(v => v.Type == VoxelType.Block))
                     .Select(c => new FeaCorner(c))
@@ -84,7 +82,7 @@ namespace WaveFunctionCollapse.Unity
                     totalForce /= vox.Value.Count;
                     forces.Add(Mathf.Abs(totalForce));
 
-                    vox.Key.Value = Mathf.Abs(totalForce);
+                    vox.Key.Value = totalForce;
                 }
             }
 

@@ -15,7 +15,9 @@ namespace WaveFunctionCollapse.Unity
         [SerializeField]
         Vector3Int _WFCSize;
         [SerializeField]
-        bool _rhino, _log, _interval, _rotate, _reflectX, _reflectY, _reflectZ;
+        bool _rhino, _log, _interval, _rotate, _reflectX, _reflectY, _reflectZ, _merge;
+        [SerializeField]
+        string Path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
 
         Dictionary<int, Sample> _sampleLibrary = new Dictionary<int, Sample>();
         WFC _waveFunctionCollapse;
@@ -51,7 +53,7 @@ namespace WaveFunctionCollapse.Unity
         void RhinoAwake()
         {
             _rhinoImporter = new RhinoImporter();
-            _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflectX, _reflectY, _reflectZ, this);
+            _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflectX, _reflectY, _reflectZ, _merge, this);
             _sampleLibrary = _rhinoImporter.SampleLibrary;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 
@@ -103,6 +105,11 @@ namespace WaveFunctionCollapse.Unity
                         _imported = true;
                     }
 
+                    _reflectX = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectX, "ReflectX");
+                    _reflectY = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectY, "ReflectY");
+                    _reflectZ = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectZ, "ReflectZ");
+                    _merge = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _merge, "Merge");
+                    _rotate = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _rotate, "Rotate");
 
                     _WFCSize.x = int.Parse(GUI.TextField(new Rect(s, s * ++i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.x.ToString()));
                     GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC X");
@@ -136,7 +143,7 @@ namespace WaveFunctionCollapse.Unity
                         }
                         if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Export to rhino"))
                         {
-
+                            RhinoExporter.Export(_waveFunctionCollapse.SelectedSamples.Select(t=>t as ALIS_Sample).ToList(), _WFCSize, _tileSize, Path, _seed);
                         }
                     }
 

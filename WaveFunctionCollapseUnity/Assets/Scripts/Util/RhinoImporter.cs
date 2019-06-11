@@ -23,7 +23,7 @@ namespace WaveFunctionCollapse.Unity
         {
         }
 
-        public void InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflectX, bool reflectY, bool reflectZ, ManagerWFC managerWFC)
+        public void InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflectX, bool reflectY, bool reflectZ,bool merge, ManagerWFC managerWFC)
         {
             var files = LoadFiles();
             _managerWFC = managerWFC;
@@ -53,6 +53,14 @@ namespace WaveFunctionCollapse.Unity
                     }
                 }
                 SampleLibrary[sampleID].InitialisePossibleNeighbours(neighbours);
+            }
+
+            if (merge)
+            {
+                foreach (var samplesIDsToMerge in importedAssemblies.Values.Select(s=>s.MergeNeighbours))
+                {
+                    MergeSampleNeighbours(samplesIDsToMerge);
+                }
             }
 
             if (rotate)

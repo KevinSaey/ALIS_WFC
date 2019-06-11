@@ -42,12 +42,12 @@ namespace WaveFunctionCollapse.Shared
             SharedLogger.Log("Propogating");
             // Neighbours propagation here
             List<Vector3IntShared> neighbourIndices = new List<Vector3IntShared> {
-                new Vector3IntShared { x=-1, y=0, z=0 },
-                new Vector3IntShared { x=1, y=0, z=0 },
-                new Vector3IntShared { x=0, y=-1, z=0 },
-                new Vector3IntShared { x=0, y=1, z=0 },
-                new Vector3IntShared { x=0, y=0, z=-1 },
-                new Vector3IntShared { x=0, y=0, z=1 } };
+                new Vector3IntShared { X=-1, Y=0, Z=0 },
+                new Vector3IntShared { X=1, Y=0, Z=0 },
+                new Vector3IntShared { X=0, Y=-1, Z=0 },
+                new Vector3IntShared { X=0, Y=1, Z=0 },
+                new Vector3IntShared { X=0, Y=0, Z=-1 },
+                new Vector3IntShared { X=0, Y=0, Z=1 } };
 
             for (int j = 0; j < 6; j++)
             {

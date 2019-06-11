@@ -200,10 +200,11 @@ MonoBehaviour:
   _rhino: 1
   _log: 1
   _interval: 1
-  _rotate: 0
+  _rotate: 1
   _reflectX: 1
-  _reflectY: 0
+  _reflectY: 1
   _reflectZ: 1
+  _merge: 1
   CenterWFC: {x: 0, y: 0, z: 0}
 --- !u!4 &573255905
 Transform:
@@ -354,7 +355,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.16981131, g: 0.16420433, b: 0.16420433, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

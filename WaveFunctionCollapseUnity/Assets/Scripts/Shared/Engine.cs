@@ -155,13 +155,13 @@ namespace WaveFunctionCollapse.Shared
 
             for (int i = 0; i < _grid.PossibleSamples.Count; i++)
             {
-                if (minX && _grid.GetIndexOfPossibleSample(i).x == 0) boundryDomain.AddTileIndex(i);
-                if (minY && _grid.GetIndexOfPossibleSample(i).y == 0) boundryDomain.AddTileIndex(i);
-                if (minZ && _grid.GetIndexOfPossibleSample(i).z == 0) boundryDomain.AddTileIndex(i);
+                if (minX && _grid.GetIndexOfPossibleSample(i).X == 0) boundryDomain.AddTileIndex(i);
+                if (minY && _grid.GetIndexOfPossibleSample(i).Y == 0) boundryDomain.AddTileIndex(i);
+                if (minZ && _grid.GetIndexOfPossibleSample(i).Z == 0) boundryDomain.AddTileIndex(i);
 
-                if (plusX && _grid.GetIndexOfPossibleSample(i).x == _grid.Dimensions.x - 1) boundryDomain.AddTileIndex(i);
-                if (plusY && _grid.GetIndexOfPossibleSample(i).y == _grid.Dimensions.y - 1) boundryDomain.AddTileIndex(i);
-                if (plusZ && _grid.GetIndexOfPossibleSample(i).z == _grid.Dimensions.z - 1) boundryDomain.AddTileIndex(i);
+                if (plusX && _grid.GetIndexOfPossibleSample(i).X == _grid.Dimensions.X - 1) boundryDomain.AddTileIndex(i);
+                if (plusY && _grid.GetIndexOfPossibleSample(i).Y == _grid.Dimensions.Y - 1) boundryDomain.AddTileIndex(i);
+                if (plusZ && _grid.GetIndexOfPossibleSample(i).Z == _grid.Dimensions.Z - 1) boundryDomain.AddTileIndex(i);
             }
 
             // check inside polyline condition to add empty

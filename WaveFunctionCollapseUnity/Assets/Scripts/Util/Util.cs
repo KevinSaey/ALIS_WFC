@@ -35,14 +35,14 @@ namespace WaveFunctionCollapse.Unity
 
         public static Vector3Int ToUnityVector3Int(Vector3IntShared vector3IntShared) // Ask Vicente how to do this properly
         {
-            return new Vector3Int(vector3IntShared.x, vector3IntShared.y, vector3IntShared.z);
+            return new Vector3Int(vector3IntShared.X, vector3IntShared.Y, vector3IntShared.Z);
         }
 
 
         public static void TryOrientIndex(Vector3 localIndex, Vector3 anchor, Quaternion rotation, out Vector3Int worldIndex)
         {
-            var rotated = rotation * localIndex.ToVector3Int();
-            worldIndex = (anchor + rotated).ToVector3Int();
+            var rotated = rotation * localIndex.ToVector3IntRound();
+            worldIndex = (anchor + rotated).ToVector3IntRound();
 
         }
 
@@ -52,17 +52,19 @@ namespace WaveFunctionCollapse.Unity
             var direction = localIndex - pivot;
             direction = Quaternion.Euler(0, 90, 0) * direction;
 
-            rotatedIndex = (direction + pivot).ToVector3Int();
+            rotatedIndex = (direction + pivot).ToVector3IntRound();
         }
 
         public static bool TryOrientIndex(Vector3Int localIndex, Vector3Int anchor, Quaternion rotation, Grid3D grid, out Vector3Int worldIndex)
         {
             var rotated = rotation * localIndex;
-            worldIndex = anchor + rotated.ToVector3Int();
+            worldIndex = anchor + rotated.ToVector3IntRound();
             return CheckBounds(worldIndex, grid);
         }
 
-        public static Vector3Int ToVector3Int(this Vector3 v) => new Vector3Int(Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y), Mathf.RoundToInt(v.z));
+        public static Vector3Int ToVector3IntRound(this Vector3 v) => new Vector3Int(Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y), Mathf.RoundToInt(v.z));
+
+        public static Vector3IntShared ToVector3IntShared(this Vector3Int v) => new Vector3IntShared(v.x, v.y, v.z);
 
         public static Vector3 AbsoluteValues(this Vector3 v) => new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
 
