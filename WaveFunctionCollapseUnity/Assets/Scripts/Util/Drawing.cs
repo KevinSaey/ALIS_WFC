@@ -191,7 +191,7 @@ namespace WaveFunctionCollapse.Unity
             4,5,1,0,
             5,7,3,1,
             7,6,2,3
-        };
+            };
 
             var v = f.Select(i => corners[i]).ToArray();
 

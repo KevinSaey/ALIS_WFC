@@ -40,6 +40,18 @@ namespace WaveFunctionCollapse.Unity
             MakeEdges();
         }
 
+        public void Reset()
+        {
+            Blocks = new List<Block>();
+
+            foreach (var vox in Voxels)
+            {
+                vox.Type = VoxelType.Empty;
+                //vox.DestroyGoVoxel();
+            }
+        }
+
+
         /// <summary>
         /// initialise the pathfinding & Strucutral analysis 
         /// </summary>

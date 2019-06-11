@@ -10,17 +10,13 @@ namespace WaveFunctionCollapse.Unity
     {
         public static Vector3Int Size;
         public static float VoxelSize;
-        public static int  MinCon;
 
         Block startBlock;
         public static Grid3D _grid;
 
         bool _showPath;
-        bool _showStructuralAnalysis;
+        public bool ShowStructuralAnalysis { get; private set; }
         bool _showBlocks;
-        //bool _iniPath = true;
-        bool _iniSA = true;
-
         float _tempDisplacement = 10f;
 
 
@@ -30,8 +26,6 @@ namespace WaveFunctionCollapse.Unity
             VoxelSize = voxelSize;
 
             _grid = new Grid3D(Size,VoxelSize);
-
-            var pattern = new PatternA();
 
             _grid.IniPathFindingStrucutralAnalysis();
         }
@@ -43,22 +37,20 @@ namespace WaveFunctionCollapse.Unity
             if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Blocks"))
             {
                 _showPath = false;
-                _showStructuralAnalysis = false;
+                ShowStructuralAnalysis = false;
                 _showBlocks = true;
                 _grid.SwitchBlockVisibility(_showBlocks);
             }
             if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Structural Analysis")) 
             {
-                if (_iniSA == true)
-                {
-                    _grid.SAnalysis.Analysis();
-                    _iniSA = false;
-                }
+                                _grid.SAnalysis.Analysis();
+
                 _showPath = false;
-                _showStructuralAnalysis = true;
+                ShowStructuralAnalysis = true;
                 _showBlocks = false;
                 _grid.SwitchBlockVisibility(_showBlocks);
             }
+            _grid.SAnalysis.Deflection = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _grid.SAnalysis.Deflection, "Displacement - Force");
             _tempDisplacement = GUI.HorizontalSlider(new Rect(s, s * i++, buttonWidth, buttonHeight), _tempDisplacement, 0, 500);
             /*if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Graph"))
             {
@@ -82,7 +74,7 @@ namespace WaveFunctionCollapse.Unity
             {
                 _grid.PFinding.DrawMesh();
             }
-            if (_showStructuralAnalysis)
+            if (ShowStructuralAnalysis)
             {
                 _grid.SAnalysis.DrawMesh(_tempDisplacement);
             }
@@ -100,6 +92,10 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
+        public void Reset()
+        {
+            _grid.Reset();
+        }
     }
 
     

@@ -63,25 +63,12 @@ namespace WaveFunctionCollapse.Unity
         {
             bool valid = true;
             valid = valid && grid.CanBlockExist(block);
-            valid = valid && CheckMinConnPoints(block, grid);
             //valid = valid && ConnectedPath(block, grid);
             //add more rules
             return valid;
         }
 
-        /// <summary>
-        /// Validation function. Will check if the block has enough connection voxels. Minimum connections are given in the controller gameobject.
-        /// </summary>
-        /// <param name="block">The block to validate</param>
-        /// <param name="grid">The voxel grid</param>
-        /// <returns>Can the block be added or not</returns>
-        private bool CheckMinConnPoints(Block block, Grid3D grid)
-        {
-            IEnumerable<Vector3Int> connPoints = GetConnectionPoints(grid).Select(pt => pt.Index);
-            IEnumerable<Vector3Int> blocks = block.BlockVoxels.Where(vx => vx.Type == VoxelType.Block).Select(pt => pt.Index);
 
-            return connPoints.Intersect(blocks).Count() >= GridController.MinCon;
-        }
 
         /// <summary>
         /// Check if the added block is connected to the main robot path (no fully functional)

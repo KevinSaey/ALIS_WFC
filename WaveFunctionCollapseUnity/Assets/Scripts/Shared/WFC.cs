@@ -9,10 +9,10 @@ namespace WaveFunctionCollapse.Shared
     public class WFC
     {
 
-        public Dictionary<int,Sample> SampleLibrary
+        public Dictionary<int, Sample> SampleLibrary
         {
-            get { return SampleGrid.SampleLibrary; }
-            set { SampleGrid.SampleLibrary = value; }
+            get { return _sampleGrid.SampleLibrary; }
+            set { _sampleGrid.SampleLibrary = value; }
         }
 
 
@@ -34,18 +34,18 @@ namespace WaveFunctionCollapse.Shared
         {
             get
             {
-                return SampleGrid.IsAllDetermined;
+                return _sampleGrid.IsAllDetermined;
             }
         }
         public bool HasContradiction
         {
             get
             {
-                return SampleGrid.HasContradiction;
+                return _sampleGrid.HasContradiction;
             }
         }
 
-        public SampleGrid SampleGrid;
+        SampleGrid _sampleGrid;
         Engine _engine;
 
 
@@ -54,13 +54,13 @@ namespace WaveFunctionCollapse.Shared
 
         }
 
-        public WFC(int xDimension, int yDimension, int zDimension, Dictionary<int,Sample> samples)
+        public WFC(int xDimension, int yDimension, int zDimension, Dictionary<int, Sample> samples)
         {
             SharedLogger.Log("Instantiating WFC");
-            SampleGrid = new SampleGrid(samples, xDimension, yDimension, zDimension);
+            _sampleGrid = new SampleGrid(samples, xDimension, yDimension, zDimension);
             SampleLibrary = samples;
 
-            _engine = new Engine(_heuristics, SampleGrid);
+            _engine = new Engine(_heuristics, _sampleGrid);
             SharedLogger.Log("WFC Instantiated");
         }
 
@@ -74,6 +74,11 @@ namespace WaveFunctionCollapse.Shared
             _engine.Execute();
         }
 
+        public void Reset()
+        {
+            _sampleGrid.Reset();
+            _engine.Reset();
+        }
         /*public void AddSampleConnection(int connectionID, Sample currentSample)
         {
             if (Connections.Count(c => c.ID == connectionID) == 0)
@@ -93,14 +98,14 @@ namespace WaveFunctionCollapse.Shared
 
         public Vector3IntShared GetIndexOfPossibleSample(int i)
         {
-            return SampleGrid.GetIndexOfPossibleSample(i);
+            return _sampleGrid.GetIndexOfPossibleSample(i);
         }
 
         public List<Sample> SelectedSamples
         {
             get
             {
-                return SampleGrid.SelectedSamples;
+                return _sampleGrid.SelectedSamples;
             }
         }
     }

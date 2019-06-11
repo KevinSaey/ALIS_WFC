@@ -195,15 +195,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
-  _tileSize: {x: 5, y: 6, z: 5}
-  _WFCSize: {x: 10, y: 2, z: 10}
+  _tileSize: {x: 6, y: 7, z: 6}
+  _WFCSize: {x: 5, y: 3, z: 5}
   _rhino: 1
   _log: 1
   _interval: 1
   _rotate: 0
   _reflectX: 1
   _reflectY: 0
-  _reflectZ: 0
+  _reflectZ: 1
   CenterWFC: {x: 0, y: 0, z: 0}
 --- !u!4 &573255905
 Transform:

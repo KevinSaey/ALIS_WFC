@@ -44,6 +44,10 @@ namespace WaveFunctionCollapse.Shared
             }
         }
 
+        public void Reset()
+        {
+            _counter = 0;
+        }
 
         void Step()
         {

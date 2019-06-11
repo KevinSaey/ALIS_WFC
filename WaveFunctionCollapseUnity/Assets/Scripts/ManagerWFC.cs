@@ -15,7 +15,7 @@ namespace WaveFunctionCollapse.Unity
         [SerializeField]
         Vector3Int _WFCSize;
         [SerializeField]
-        bool _rhino, _log, _interval, _rotate, _reflectX,_reflectY,_reflectZ;
+        bool _rhino, _log, _interval, _rotate, _reflectX, _reflectY, _reflectZ;
 
         Dictionary<int, Sample> _sampleLibrary = new Dictionary<int, Sample>();
         WFC _waveFunctionCollapse;
@@ -23,7 +23,8 @@ namespace WaveFunctionCollapse.Unity
         IEnumerator _step;
         RhinoImporter _rhinoImporter;
         GridController _gridController;
-        bool _colorCubes = true;
+        bool _colorCubes = true, _imported = false;
+        int _seed = 0;
 
         public Vector3 CenterWFC;
 
@@ -32,8 +33,8 @@ namespace WaveFunctionCollapse.Unity
         {
             SharedLogger.CurrentLogger = new UnityLog(_log);
 
-            if (_rhino) RhinoAwake();
-            else RandomAwake();
+            /*if (_rhino) RhinoAwake();
+            else RandomAwake();*/
 
             CenterWFC = Vector3.Scale(_WFCSize, _tileSize) * (_voxelSize / 2);
         }
@@ -50,7 +51,7 @@ namespace WaveFunctionCollapse.Unity
         void RhinoAwake()
         {
             _rhinoImporter = new RhinoImporter();
-            _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflectX,_reflectY,_reflectZ, this);
+            _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflectX, _reflectY, _reflectZ, this);
             _sampleLibrary = _rhinoImporter.SampleLibrary;
             Debug.Log($"{_sampleLibrary.Count} samples loaded");
 
@@ -65,16 +66,7 @@ namespace WaveFunctionCollapse.Unity
 
         void Start()
         {
-            if (_interval)
-            {
-                _step = Step(2f);
-                StartCoroutine(_step);
-            }
-            else
-            {
-                _waveFunctionCollapse.Execute();
-                DrawGrid();
-            }
+
         }
 
         void OnGUI()
@@ -82,18 +74,86 @@ namespace WaveFunctionCollapse.Unity
             int buttonHeight = 30;
             int buttonWidth = 150;
             int i = 1;
-            int s = buttonHeight + 5;
+            int padding = 5;
+            int s = buttonHeight + padding;
 
             if (_rhino)
             {
-                i = _gridController.OnGUI(buttonHeight, buttonWidth, i, s);
-
-                if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Hide colorcubes"))
+                //Before the Samples are imported
+                _seed = int.Parse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), _seed.ToString()));
+                GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "Seed");
+                if (!_imported)
                 {
-                    _colorCubes = !_colorCubes;
-                    HideColorCubes(_colorCubes);
+                    if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Import Rhino"))
+                    {
+                        RhinoAwake();
+
+                        if (_interval)
+                        {
+                            UtilShared.RandomNR = new System.Random(_seed);
+                            _step = Step(0.5f);
+                            StartCoroutine(_step);
+                        }
+                        else
+                        {
+                            _waveFunctionCollapse.Execute();
+                            DrawGrid();
+                        }
+
+                        _imported = true;
+                    }
+
+
+                    _WFCSize.x = int.Parse(GUI.TextField(new Rect(s, s * ++i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.x.ToString()));
+                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC X");
+                    _WFCSize.y = int.Parse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.y.ToString()));
+                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC Y");
+                    _WFCSize.z = int.Parse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.z.ToString()));
+                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC Z");
+
+                }
+
+                //When the samples are imported
+                else if (_imported)
+                {
+                    if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Hide colorcubes"))
+                    {
+                        _colorCubes = !_colorCubes;
+                        HideColorCubes(_colorCubes);
+                    }
+
+                    //When the aggregation is finished
+                    if (_waveFunctionCollapse.IsAllDetermined || _waveFunctionCollapse.HasContradiction)
+                    {
+                        i = _gridController.OnGUI(buttonHeight, buttonWidth, i, s);
+
+                        if (!_gridController.ShowStructuralAnalysis)
+                        {
+                            if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Regenerate"))
+                            {
+                                Regenerate();
+                            }
+                        }
+                        if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Export to rhino"))
+                        {
+
+                        }
+                    }
+
+
                 }
             }
+        }
+
+        private void Regenerate()
+        {
+            StopCoroutine(_step);
+            ClearGameobjects();
+            _waveFunctionCollapse.Reset();
+            _gridController.Reset();
+            _step = Step(0.5f);
+            StartCoroutine(_step);
+
         }
 
         void HideColorCubes(bool flag)
@@ -112,7 +172,15 @@ namespace WaveFunctionCollapse.Unity
                 //DrawSamples(_waveFunctionCollapse.Step(1));
                 _waveFunctionCollapse.Step(1);
 
-                if (_waveFunctionCollapse.IsAllDetermined || _waveFunctionCollapse.HasContradiction)
+                if (_waveFunctionCollapse.HasContradiction)
+                {
+                    _seed++;
+                    UtilShared.RandomNR = new System.Random(_seed);
+                    Regenerate();
+                    yield break;
+                }
+
+                if (_waveFunctionCollapse.IsAllDetermined)
                 {
                     //DrawGrid();
                     yield break;
@@ -125,7 +193,7 @@ namespace WaveFunctionCollapse.Unity
 
         void Update()
         {
-            if (_rhino) _gridController.Update();
+            if (_imported && _rhino) _gridController.Update();
         }
 
         public void InitialiseRandomSamples()

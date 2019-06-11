@@ -9,43 +9,38 @@ namespace WaveFunctionCollapse.Unity
 {
     public class ALIS_Sample : Sample
     {
+        public int OrigId;
         public Color Col;
         public int Density;
         public int Type;
         public List<Instance> Instances;
         public string Name;
-        static float transparency = .2f;
-        ManagerWFC _managerWFC;
-
-        
-
+        static readonly float transparency = .2f;
+        readonly ManagerWFC  _managerWFC;
 
         public ALIS_Sample()
         {
-
         }
 
         public ALIS_Sample(int id)
         {
             Id = id;
+            OrigId = id;
             PossibleNeighbours = new List<HashSet<Sample>>();
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
         }
 
-
-        public ALIS_Sample(int id, int density, int type, List<Instance> instances, string name, ManagerWFC managerWFC)
+        public ALIS_Sample(int id, int origID,int density, int type, List<Instance> instances, string name, ManagerWFC managerWFC)
         {
             Id = id;
+            OrigId = origID;
             Density = density;
             Type = type;
             Instances = instances;
             Name = name;
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
             _managerWFC = managerWFC;
-
         }
-
-        
 
         /*public void AddConnectionsToWFC(WFC<ALIS_Sample> wfc)
         {

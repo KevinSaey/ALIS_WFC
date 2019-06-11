@@ -47,6 +47,11 @@ namespace WaveFunctionCollapse.Shared
 
         }
 
+        public void Reset()
+        {
+            CreatePossibleSampleGrid();
+        }
+
         public Vector3IntShared GetIndexOfPossibleSample(int i)
         {
             int newZ = i / (Dimensions.x * Dimensions.y);
@@ -57,8 +62,6 @@ namespace WaveFunctionCollapse.Shared
 
             return new Vector3IntShared { x = newX, y = newY, z = newZ };
         }
-
-
 
         public int GetPossibleSampleByIndex(Vector3IntShared index)
         {
@@ -73,8 +76,6 @@ namespace WaveFunctionCollapse.Shared
                 return PossibleSamples.All(s => Entropy(s) == 1);
             }
         }
-
-
 
         public Boolean HasContradiction
         {
@@ -161,17 +162,6 @@ namespace WaveFunctionCollapse.Shared
                 SharedLogger.Log($"index {i} vector {GetIndexOfPossibleSample(i).ToString()}");
             }
         }
-
-        /*public List<int> GetConnectionSamples(HashSet<int> connectionID)
-        {
-            HashSet<Connection> selectedConnections = new HashSet<Connection>();
-            foreach (var index in connectionID)
-            {
-                selectedConnections.Add(Connections[index]);
-            }
-
-            return selectedConnections.Select(s => s.SampleIDS).SelectMany(s => s).ToList();
-        }*/
 
         public int GetIndexFromSampleId(int sampleId)
         {

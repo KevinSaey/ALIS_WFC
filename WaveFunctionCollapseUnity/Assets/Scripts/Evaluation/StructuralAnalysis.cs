@@ -13,6 +13,11 @@ namespace WaveFunctionCollapse.Unity
         float _displacement = -1f;
         //float _tempDisplacement = 10f;
         bool _toggleTransparency = false;
+        public bool Deflection = true;
+        bool _soleved = false;
+        Model _model = new Model();
+        List<FeaCorner> _corners;
+        Dictionary<Voxel, List<Tetrahedral>> _voxelNodes;
 
         // grid
         Grid3D _grid;
@@ -25,38 +30,82 @@ namespace WaveFunctionCollapse.Unity
 
         public void Analysis()
         {
-            // analysis model
-            var model = new Model();
+            if (!_soleved)
+            {
+                // analysis model
 
-            var corners = _grid.GetCorners()
-                .Where(c => c.GetConnectedVoxels().Any(v => v.Type == VoxelType.Block))
-                .Select(c => new FeaCorner(c))
-                .ToList();
 
-            var nodes = corners.Select(c => c.Node).ToArray();
+                _corners = _grid.GetCorners()
+                    .Where(c => c.GetConnectedVoxels().Any(v => v.Type == VoxelType.Block))
+                    .Select(c => new FeaCorner(c))
+                    .ToList();
 
-            var elements = _grid.GetVoxels()
-                 .Where(v => v.Type == VoxelType.Block)
-                 .SelectMany(v => MakeTetrahedra(v))
-                 .ToArray();
+                var nodes = _corners.Select(c => c.Node).ToArray();
 
-            model.Nodes.Add(nodes);
-            model.Elements.Add(elements);
-            
-            model.Solve();
+                var voxels = _grid.GetVoxels().Where(v => v.Type == VoxelType.Block).ToList();
+                _voxelNodes = new Dictionary<Voxel, List<Tetrahedral>>();
+                foreach (var vox in voxels)
+                {
+                    _voxelNodes.Add(vox, MakeTetrahedra(vox).ToList());
+                }
+                /*var elements = voxels
+                     .SelectMany(v => MakeTetrahedra(v))
+                     .ToArray();*/
+
+                _model.Nodes.Add(nodes);
+                _model.Elements.Add(_voxelNodes.Values.SelectMany(s => s).ToArray());
+
+                _model.Solve();
+                _soleved = true;
+            }
+
+            var forces = new List<float>();
+            if (!Deflection)
+            {
+                foreach (var vox in _voxelNodes)
+                {
+                    float totalForce = 0;
+                    foreach (var element in vox.Value)
+                    {
+                        var internalForce = Mathf.Abs((float)element.GetInternalForce(LoadCombination.DefaultLoadCombination).S11);
+                        internalForce += Mathf.Abs((float)element.GetInternalForce(LoadCombination.DefaultLoadCombination).S12);
+                        internalForce += Mathf.Abs((float)element.GetInternalForce(LoadCombination.DefaultLoadCombination).S13);
+                        internalForce += Mathf.Abs((float)element.GetInternalForce(LoadCombination.DefaultLoadCombination).S21);
+                        internalForce += Mathf.Abs((float)element.GetInternalForce(LoadCombination.DefaultLoadCombination).S22);
+                        internalForce += Mathf.Abs((float)element.GetInternalForce(LoadCombination.DefaultLoadCombination).S23);
+                        internalForce += Mathf.Abs((float)element.GetInternalForce(LoadCombination.DefaultLoadCombination).S31);
+                        internalForce += Mathf.Abs((float)element.GetInternalForce(LoadCombination.DefaultLoadCombination).S32);
+                        internalForce += Mathf.Abs((float)element.GetInternalForce(LoadCombination.DefaultLoadCombination).S33);
+
+                        internalForce /= 9;
+
+                        totalForce += (float)internalForce;
+                    }
+                    totalForce /= vox.Value.Count;
+                    forces.Add(Mathf.Abs(totalForce));
+
+                    vox.Key.Value = Mathf.Abs(totalForce);
+                }
+            }
 
             // analysis results
-            foreach (var corner in corners)
+
+            if (Deflection)
+            {
+                foreach (var vox in _grid.Voxels) vox.Value = 0;
+            }
+            foreach (var corner in _corners)
             {
                 var d = corner.Node
                .GetNodalDisplacement(LoadCase.DefaultLoadCase)
                .Displacements;
-
                 corner.Displacement = new Vector3((float)d.X, (float)d.Z, (float)d.Y);
                 var length = corner.Displacement.magnitude;
-
-                foreach (var voxel in corner.GetConnectedVoxels())
-                    voxel.Value += length;
+                if (Deflection)
+                {
+                    foreach (var voxel in corner.GetConnectedVoxels())
+                        voxel.Value += length;
+                }
             }
 
             var activeVoxels = _grid.GetVoxels().Where(v => v.Type == VoxelType.Block);
@@ -136,7 +185,7 @@ namespace WaveFunctionCollapse.Unity
                 Constraints = corner.Index.y == 0 ? Constraints.Fixed : Constraints.RotationFixed
             };
 
-            Node.Loads.Add(new NodalLoad(new Force(0, 0, -2000000, 0, 0, 0)));
+            Node.Loads.Add(new NodalLoad(new Force(0, 0, -100000, 0, 0, 0)));
         }
     }
 }
