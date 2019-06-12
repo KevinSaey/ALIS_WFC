@@ -12,7 +12,7 @@ namespace WaveFunctionCollapse.Unity
 {
     public static class RhinoExporter
     {
-        static List<Instance> _instancesExport = new List<Instance>();
+        static List<RhinoInstance> _instancesExport = new List<RhinoInstance>();
 
         public static bool Export(List<ALIS_Sample> SelectedSamples, Vector3Int gridDimensions, Vector3Int tileDimensions, string path, int seed)
         {
@@ -24,18 +24,16 @@ namespace WaveFunctionCollapse.Unity
 
                 foreach (var instance in sample.Instances)
                 {
-                    var newInstance = new Instance()
+                    var newInstance = new RhinoInstance()
                     {
                         //transform to z-up
-                        Pose = new Pose
+                        Pose = new RhinoPose
                         {
-                            position = new Vector3(instance.Pose.position.x, instance.Pose.position.z, instance.Pose.position.y),
-                            rotation = instance.Pose.rotation
+                            position = new Vector3d(worldIndex + instance.Pose.position),
+                            rotation = new QuaternionRhino(instance.Pose.rotation)
                         }
                     };
-                    newInstance.Pose.rotation.w = -newInstance.Pose.rotation.w;
 
-                    newInstance.Pose.position += new Vector3(worldIndex.x, worldIndex.z,worldIndex.y);
                     _instancesExport.Add(newInstance);
                 }
             }
@@ -52,14 +50,15 @@ namespace WaveFunctionCollapse.Unity
         }
     }
 
+    [XmlType(TypeName = "Assembly")]
     public class ExportAssembly
     {
-        public List<Instance> Instances;
+        public List<RhinoInstance> Instances;
         public ExportAssembly()
         {
         }
 
-        public static void Export(List<Instance> instances, string fileName)
+        public static void Export(List<RhinoInstance> instances, string fileName)
         {
             var exportAssembly = new ExportAssembly()
             {
@@ -72,6 +71,47 @@ namespace WaveFunctionCollapse.Unity
                 serializer.Serialize(writer, exportAssembly);
             }
         }
-
     }
+
+    [XmlType(TypeName = "Instance")]
+    public struct RhinoInstance
+    {
+        public int DefnitionIndex;
+        public RhinoPose Pose;
+    }
+
+    [XmlType(TypeName = "RhinoPose")]
+    public struct RhinoPose
+    {
+        public Vector3d position;
+        public QuaternionRhino rotation;
+    }
+
+    [XmlType(TypeName = "ImportVector3d")]
+    public struct Vector3d
+    {
+        public float X, Y, Z;
+        public Vector3d(Vector3 vector)
+        {
+            X = vector.x;
+            Y = vector.z;
+            Z = vector.y;
+        }
+    }
+
+    [XmlType(TypeName = "ImportQuaternion")]
+    public struct QuaternionRhino
+    {
+        public float A, B, C, D;
+
+        public QuaternionRhino(Quaternion quaternion)
+        {
+            A = -quaternion.w;
+            B = quaternion.x;
+            C = quaternion.z;
+            D = quaternion.y;
+        }
+    }
+    
+        
 }
