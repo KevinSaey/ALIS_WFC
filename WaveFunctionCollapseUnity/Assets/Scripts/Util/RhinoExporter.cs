@@ -20,7 +20,7 @@ namespace WaveFunctionCollapse.Unity
             {
                 var sample = SelectedSamples[i];
                 var sampleIndex = Util.ToUnityVector3Int(UtilShared.GetIndexInGrid(i, gridDimensions.ToVector3IntShared()));
-                Vector3 worldIndex = sampleIndex * sampleIndex;
+                Vector3 worldIndex = sampleIndex * tileDimensions;
 
                 foreach (var instance in sample.Instances)
                 {
@@ -29,8 +29,8 @@ namespace WaveFunctionCollapse.Unity
                         //transform to z-up
                         Pose = new RhinoPose
                         {
-                            position = new Vector3d(worldIndex + instance.Pose.position),
-                            rotation = new QuaternionRhino(instance.Pose.rotation)
+                            Position = new Vector3d(worldIndex + instance.Pose.position),
+                            Rotation = new QuaternionRhino(instance.Pose.rotation)
                         }
                     };
 
@@ -83,8 +83,8 @@ namespace WaveFunctionCollapse.Unity
     [XmlType(TypeName = "RhinoPose")]
     public struct RhinoPose
     {
-        public Vector3d position;
-        public QuaternionRhino rotation;
+        public Vector3d Position;
+        public QuaternionRhino Rotation;
     }
 
     [XmlType(TypeName = "ImportVector3d")]
@@ -108,8 +108,8 @@ namespace WaveFunctionCollapse.Unity
         {
             A = -quaternion.w;
             B = quaternion.x;
-            C = quaternion.z;
             D = quaternion.y;
+            C = quaternion.z;
         }
     }
     

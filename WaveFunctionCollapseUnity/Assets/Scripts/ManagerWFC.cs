@@ -130,7 +130,7 @@ namespace WaveFunctionCollapse.Unity
                     }
 
                     //When the aggregation is finished
-                    if (_waveFunctionCollapse.IsAllDetermined || _waveFunctionCollapse.HasContradiction)
+                    if (_waveFunctionCollapse == null?false :_waveFunctionCollapse.IsAllDetermined || _waveFunctionCollapse.HasContradiction)
                     {
                         i = _gridController.OnGUI(buttonHeight, buttonWidth, i, s);
 
@@ -158,7 +158,7 @@ namespace WaveFunctionCollapse.Unity
             ClearGameobjects();
             _waveFunctionCollapse.Reset();
             _gridController.Reset();
-            _step = Step(0.5f);
+            _step = Step(0.1f);
             StartCoroutine(_step);
 
         }

@@ -196,7 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
   _tileSize: {x: 6, y: 7, z: 6}
-  _WFCSize: {x: 5, y: 3, z: 5}
+  _WFCSize: {x: 5, y: 10, z: 5}
   _rhino: 1
   _log: 1
   _interval: 1
@@ -205,6 +205,7 @@ MonoBehaviour:
   _reflectY: 1
   _reflectZ: 1
   _merge: 1
+  Path: D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\
   CenterWFC: {x: 0, y: 0, z: 0}
 --- !u!4 &573255905
 Transform:
