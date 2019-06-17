@@ -19,6 +19,7 @@ namespace WaveFunctionCollapse.Shared
         public List<Domain> Domains;
 
 
+
         internal SampleGrid(Dictionary<int, Sample> sampleLibrary, int dimX, int dimY, int dimZ)
         {
             //Connections = new List<Connection>();
@@ -85,6 +86,15 @@ namespace WaveFunctionCollapse.Shared
                 }
 
                 return false;
+            }
+        }
+
+        public float Progress
+        {
+            get
+            {
+                float countSelectedSamples = SelectedSamples.Count(s => s.Id != 0);
+                return countSelectedSamples/(float)SelectedSamples.Count;
             }
         }
 

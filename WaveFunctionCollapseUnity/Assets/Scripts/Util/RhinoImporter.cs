@@ -16,6 +16,11 @@ namespace WaveFunctionCollapse.Unity
     public class RhinoImporter//based on Vicente's code
     {
         public Dictionary<int, Sample> SampleLibrary { get; private set; }
+        public Dictionary<int, Tile> Tiles;
+        public bool HasMesh=false;
+        public float VoxelSize = 0;
+        public Vector3Int TileSize;
+
         string _path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
         ManagerWFC _managerWFC;
 
@@ -23,7 +28,7 @@ namespace WaveFunctionCollapse.Unity
         {
         }
 
-        public void InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflectX, bool reflectY, bool reflectZ,bool merge, ManagerWFC managerWFC)
+        public void InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflectX, bool reflectY, bool reflectZ, bool merge, ManagerWFC managerWFC)
         {
             var files = LoadFiles();
             _managerWFC = managerWFC;
@@ -33,9 +38,26 @@ namespace WaveFunctionCollapse.Unity
 
             for (int i = 0; i < files.Count; i++)
             {
+
                 var assembly = Assembly.Import(files[i]);
+                if (i == 1)
+                {
+                    VoxelSize = assembly.VoxelSize;
+                    TileSize = assembly.TileSize.ToVector3IntRound();
+                    if (assembly.Mesh)
+                    {
+                        Tiles = new Dictionary<int, Tile>();
+                        HasMesh = true;
+                        foreach (var tile in assembly.Tiles)
+                        {
+                            Tiles.Add(tile.Index, tile);
+                        }
+                    }
+                }
+
                 importedAssemblies.Add(assembly.Id, assembly);
-                var sample = Assembly.Import(files[i]).ToALIS_Sample(_managerWFC);
+
+                var sample = assembly.ToALIS_Sample(_managerWFC);
 
                 SampleLibrary.Add(sample.Id, sample);
             }
@@ -57,7 +79,7 @@ namespace WaveFunctionCollapse.Unity
 
             if (merge)
             {
-                foreach (var samplesIDsToMerge in importedAssemblies.Values.Select(s=>s.MergeNeighbours))
+                foreach (var samplesIDsToMerge in importedAssemblies.Values.Select(s => s.MergeNeighbours))
                 {
                     MergeSampleNeighbours(samplesIDsToMerge);
                 }
@@ -76,8 +98,8 @@ namespace WaveFunctionCollapse.Unity
                     if (importedAssemblies[origSample.OrigId].Rotate)
                     {
                         List<int> newSampleIds = new List<int>();
-                        
-                        if (origSample.Instances.Count != 0)
+
+                        if (origSample.Instances.Count != 0)//------------------------------
                         {
                             newSampleIds.Add(SampleLibrary.Count);
                             var newSample = RotateALISSample(origSample, SampleLibrary.Count, anchor, 1, key);
@@ -194,7 +216,7 @@ namespace WaveFunctionCollapse.Unity
                     instances.Add(newInstance);
                 }
                 var name = $"sample {sampleToReflect.Id} type {sampleToReflect.Type} ref: {axis}";
-                reflectedSample = new ALIS_Sample(id,sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC);
+                reflectedSample = new ALIS_Sample(id, sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC,sampleToReflect.Weight);
 
                 sampleToReflect.PossibleNeighbours[0].Add(reflectedSample);
                 sampleToReflect.PossibleNeighbours[1].Add(reflectedSample);
@@ -216,7 +238,7 @@ namespace WaveFunctionCollapse.Unity
                     instances.Add(newInstance);
                 }
                 var name = $"sample {sampleToReflect.Id} type {sampleToReflect.Type} ref: {axis}";
-                reflectedSample = new ALIS_Sample(id, sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC);
+                reflectedSample = new ALIS_Sample(id, sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC, sampleToReflect.Weight);
 
                 sampleToReflect.PossibleNeighbours[2].Add(reflectedSample);
                 sampleToReflect.PossibleNeighbours[3].Add(reflectedSample);
@@ -238,7 +260,7 @@ namespace WaveFunctionCollapse.Unity
                     instances.Add(newInstance);
                 }
                 var name = $"sample {sampleToReflect.Id} type {sampleToReflect.Type} ref: {axis}";
-                reflectedSample = new ALIS_Sample(id,sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC);
+                reflectedSample = new ALIS_Sample(id, sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC,sampleToReflect.Weight);
 
                 sampleToReflect.PossibleNeighbours[4].Add(reflectedSample);
                 sampleToReflect.PossibleNeighbours[5].Add(reflectedSample);
@@ -252,7 +274,7 @@ namespace WaveFunctionCollapse.Unity
         private void CheckDuplicates()
         {
             Dictionary<ALIS_Sample, List<ALIS_Sample>> equalsBySample = new Dictionary<ALIS_Sample, List<ALIS_Sample>>();
-            foreach (var sample in SampleLibrary.Values)
+            foreach (var sample in SampleLibrary.Values.Where(s=>s.Id!=0))
             {
                 ALIS_Sample alisSample = sample as ALIS_Sample;
                 List<ALIS_Sample> list = null;
@@ -299,6 +321,7 @@ namespace WaveFunctionCollapse.Unity
                                 }
                             }
                         }
+                        key.Weight += itemConsideredEqual.Weight;
                         SampleLibrary.Remove(itemConsideredEqual.Id);
                     }
                 }
@@ -338,7 +361,7 @@ namespace WaveFunctionCollapse.Unity
                 newInstances.Add(new Instance { DefinitionIndex = oldInstance.DefinitionIndex, Pose = newPose });
             }
             var name = $"sample {origSampleId} type {sample.Type} rot: {timesRoated * 90}";
-            var newSample = new ALIS_Sample(id,sample.OrigId, sample.Density, sample.Type, newInstances, name, _managerWFC);
+            var newSample = new ALIS_Sample(id, sample.OrigId, sample.Density, sample.Type, newInstances, name, _managerWFC, sample.Weight);
             newSample.InitialisePossibleNeighbours(newConn);
             return newSample;
         }
@@ -351,6 +374,7 @@ namespace WaveFunctionCollapse.Unity
     public class Assembly //VS
     {
         public List<Instance> Instances { get; set; }
+        public List<Tile> Tiles;
         public List<Neighbour> Neighbours { get; set; }
         public int Id;
         public int Density;
@@ -360,6 +384,9 @@ namespace WaveFunctionCollapse.Unity
         public bool ReflectZ;
         public bool Rotate;
         public List<int> MergeNeighbours;
+        public bool Mesh;
+        public float VoxelSize;
+        public Vector3 TileSize;
 
         public static Assembly Import(string fileName)
         {
@@ -368,7 +395,6 @@ namespace WaveFunctionCollapse.Unity
             {
                 return serializer.Deserialize(reader) as Assembly;
             }
-
         }
 
         List<HashSet<int>> GetNeighbours()
@@ -378,15 +404,93 @@ namespace WaveFunctionCollapse.Unity
             {
                 possibleNeighbours.Add(new HashSet<int>(Neighbours[i].Neighbours/*.Where(s=>s!= int.MaxValue)*/));
             }
-
             return possibleNeighbours;
         }
 
         public ALIS_Sample ToALIS_Sample(ManagerWFC managerWFC)
         {
             var name = $"sample {Id} type {Type} rot: 0 ";
-            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Id,Density, Type, Instances, name, managerWFC);
+            
+            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Id, Density, Type, Instances, name, managerWFC,1);
+
             return alis_Sample;
+        }
+    }
+
+    public class Tile
+    {
+        public int Index { get; set; }
+        public List<MeshExport> Renderers { get; set; }
+
+        internal int CompactIndex;
+        GameObject _tileGameObject;
+
+        void MakeGameObject(Material blockMaterial)
+        {
+            int num = CompactIndex + 1;
+            var renderMesh = Renderers.First().ToMesh($"RenderMesh{num:00}");
+            //var material = Resources.Load($"Material{num:00}") as Material;
+
+            var go = new GameObject($"Tile{num}", typeof(MeshFilter), typeof(MeshRenderer));
+            go.SetActive(true);
+            go.layer = 9;
+            go.GetComponent<MeshRenderer>().material = blockMaterial;
+
+            var filter = go.GetComponent<MeshFilter>();
+            filter.mesh = renderMesh;
+
+            var renderer = go.GetComponent<MeshRenderer>();
+            //renderer.material = material;
+
+            _tileGameObject = go;
+        }
+
+        public void Destroy()
+        {
+            GameObject.DestroyImmediate(_tileGameObject);
+            _tileGameObject = null;
+        }
+
+        public GameObject Instantiate(Pose pose,Material blockMaterial)
+        {
+            if (_tileGameObject == null)
+                MakeGameObject(blockMaterial);
+
+            var go = GameObject.Instantiate(_tileGameObject);
+            go.transform.position = pose.position;
+            go.transform.rotation = pose.rotation;
+            go.SetActive(true);
+
+            return go;
+        }
+        
+        public GameObject GetGoTile()
+        {
+            return _tileGameObject;
+        }
+    }
+
+    public class MeshExport
+    {
+        public List<Vector3> Vertices { get; set; }
+        public List<Vector2> TextureCoordinates { get; set; }
+        public List<int> Faces { get; set; }
+
+        public Mesh ToMesh(string name)
+        {
+            var mesh = new Mesh()
+            {
+                name = name,
+                vertices = Vertices.ToArray(),
+                uv = TextureCoordinates.ToArray(),
+                triangles = Faces.ToArray()
+            };
+
+            mesh.RecalculateNormals();
+            mesh.RecalculateTangents();
+            mesh.RecalculateBounds();
+
+            return mesh;
         }
     }
 

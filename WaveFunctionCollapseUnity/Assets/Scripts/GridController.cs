@@ -12,7 +12,7 @@ namespace WaveFunctionCollapse.Unity
         public static float VoxelSize;
 
         Block startBlock;
-        public static Grid3D _grid;
+        public static Grid3D Grid;
 
         bool _showPath;
         public bool ShowStructuralAnalysis { get; private set; }
@@ -25,9 +25,9 @@ namespace WaveFunctionCollapse.Unity
             Size = tileSize*wfcSize;
             VoxelSize = voxelSize;
 
-            _grid = new Grid3D(Size,VoxelSize);
+            Grid = new Grid3D(Size,VoxelSize);
 
-            _grid.IniPathFindingStrucutralAnalysis();
+            Grid.IniPathFindingStrucutralAnalysis();
         }
 
         public int OnGUI(int buttonHeight, int buttonWidth, int i, int s) //Vicente
@@ -39,18 +39,18 @@ namespace WaveFunctionCollapse.Unity
                 _showPath = false;
                 ShowStructuralAnalysis = false;
                 _showBlocks = true;
-                _grid.SwitchBlockVisibility(_showBlocks);
+                Grid.SwitchBlockVisibility(_showBlocks);
             }
             if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Structural Analysis")) 
             {
-                                _grid.SAnalysis.Analysis();
+                                Grid.SAnalysis.Analysis();
 
                 _showPath = false;
                 ShowStructuralAnalysis = true;
                 _showBlocks = false;
-                _grid.SwitchBlockVisibility(_showBlocks);
+                Grid.SwitchBlockVisibility(_showBlocks);
             }
-            _grid.SAnalysis.Deflection = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _grid.SAnalysis.Deflection, "Displacement - Force");
+            Grid.SAnalysis.Deflection = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), Grid.SAnalysis.Deflection, "Displacement - Force");
             _tempDisplacement = GUI.HorizontalSlider(new Rect(s, s * i++, buttonWidth, buttonHeight), _tempDisplacement, 0, 500);
             /*if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Show Graph"))
             {
@@ -72,11 +72,11 @@ namespace WaveFunctionCollapse.Unity
         {
             if (_showPath)
             {
-                _grid.PFinding.DrawMesh();
+                Grid.PFinding.DrawMesh();
             }
             if (ShowStructuralAnalysis)
             {
-                _grid.SAnalysis.DrawMesh(_tempDisplacement);
+                Grid.SAnalysis.DrawMesh(_tempDisplacement);
             }
         }
 
@@ -87,14 +87,14 @@ namespace WaveFunctionCollapse.Unity
             {
                 var rotation = instance.Pose.rotation.eulerAngles.ToVector3IntRound();
                 
-                var block = new Block(pattern, instance.Pose.position.ToVector3IntRound() + tileIndex * tileSize, rotation, _grid);
-                _grid.AddBlockToGrid(block,parrent);
+                var block = new Block(pattern, instance.Pose.position.ToVector3IntRound() + tileIndex * tileSize, rotation, Grid);
+                Grid.AddBlockToGrid(block,parrent);
             }
         }
 
         public void Reset()
         {
-            _grid.Reset();
+            Grid.Reset();
         }
     }
 

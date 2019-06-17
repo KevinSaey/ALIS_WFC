@@ -95,9 +95,9 @@ namespace WaveFunctionCollapse.Shared
             // for now, just select a random sample, later we'll add heuristics
 
             int heuristicSelection = UtilShared.RandomNR.Next(2);
-            heuristicSelection = 1;
-            //heuristicSelection = 1; // overwrite, delete for actual random selection
+            //heuristicSelection = 1;
             Sample selectedSample = _grid.SampleLibrary[0];
+
             if (heuristicSelection == 0)
             {
                 selectedSample = SelectRandom(lowestEntropyTiles);
@@ -114,26 +114,13 @@ namespace WaveFunctionCollapse.Shared
             //_grid.LogEntropy();
         }
 
-        Sample SelectLeastUsed(List<Sample> possibleSamples)
-        {
-            int smallestAmount = int.MaxValue;
-            Sample leastUsed = _grid.SampleLibrary[0];
-            foreach (var sample in possibleSamples)
-            {
-                int amount = _grid.SelectedSamples.Count(s => s == sample);
-                if (amount < smallestAmount)
-                {
-                    smallestAmount = amount;
-                    leastUsed = sample;
-                }
-            }
-            if (smallestAmount != int.MaxValue) return leastUsed;
-            return null;
-        }
-
-        Sample SelectRandom(List<Sample> possibleSamples)
+        Sample SelectRandomWeighted(List<Sample> possibleSamples)
         {
             Sample selectedSample;
+            float maxWeight = 0;
+
+            foreach (var sample in possibleSamples) maxWeight += sample.Weight;
+
             if (possibleSamples.Count > 1)
             {
                 int nextSampleIndex = UtilShared.RandomNR.Next(possibleSamples.Count);
@@ -144,9 +131,72 @@ namespace WaveFunctionCollapse.Shared
                 SharedLogger.Log($"Error: Only {possibleSamples.Count} possible samples, random selection failed - function SelectRandom");
                 selectedSample = possibleSamples.First();
             }
-            
+
 
             return selectedSample;
+        }
+
+        Sample SelectLeastUsed(List<Sample> possibleSamples)
+        {
+            int smallestAmount = int.MaxValue;
+            List<Sample> leastUsed = new List<Sample>();
+            foreach (var sample in possibleSamples)
+            {
+                int amount = _grid.SelectedSamples.Count(s => s == sample);
+                if (amount < smallestAmount)
+                {
+                    leastUsed.Clear();
+                    smallestAmount = amount;
+                    leastUsed.Add(sample);
+                }
+                else if (amount == smallestAmount)
+                {
+                    leastUsed.Add(sample);
+                }
+            }
+            if (leastUsed.Count == 1) return leastUsed[0];
+            else if (smallestAmount != int.MaxValue) return SelectWeightedRandom(leastUsed);
+            else
+            {
+                SharedLogger.Log($"Error: No sample selected - function SelectLeastUsed");
+                return null;
+            }
+
+
+            
+        }
+
+        Sample SelectRandom(List<Sample> possibleSamples)
+        {
+            return SelectWeightedRandom(possibleSamples);
+        }
+
+        Sample SelectWeightedRandom(List<Sample> possibleSamples)
+        {
+            if (possibleSamples.Count > 1)
+            {
+                int weight = 0;
+                for (int i = 0; i < possibleSamples.Count; i++)
+                {
+                    weight += possibleSamples[i].Weight;
+                }
+
+                int weightedRandom = UtilShared.RandomNR.Next(weight);
+
+                for (int i = possibleSamples.Count-1; i >= 0; i--)
+                {
+                    weight -= possibleSamples[i].Weight;
+                    if (weight <= weightedRandom)
+                        return possibleSamples[i];
+                }
+            }
+            else
+            {
+                SharedLogger.Log($"Error: Only {possibleSamples.Count} possible samples, random selection failed - function SelectWeightedRandom");
+                return possibleSamples.First();
+            }
+
+            return null;
         }
 
         void SetBoundryCondition(int boundrySample, bool minX, bool plusX, bool minY, bool plusY, bool minZ, bool plusZ)
@@ -168,6 +218,8 @@ namespace WaveFunctionCollapse.Shared
 
             _grid.Domains.Add(boundryDomain);
         }
+
+
 
         /*void PropogateDomains()
         {

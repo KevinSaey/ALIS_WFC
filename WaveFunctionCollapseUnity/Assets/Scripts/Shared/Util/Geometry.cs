@@ -36,29 +36,5 @@ namespace WaveFunctionCollapse.Shared //Code by VS
             return $"Vector3Int x:{X}, y:{Y}, z:{Z}";
         }
     }
-
-
-    public struct Vector2
-    {
-        public float x, y;
-    }
-
-    /*public struct Quaternion
-    {
-        public float x, y, z, w;
-    }*/
-
-    /*public struct Pose
-    {
-        public Vector3 position;
-        public Quaternion rotation;
-    }*/
-
-
-    public class Mesh
-    {
-        public List<Vector3Shared> Vertices { get; set; }
-        public List<Vector2> TextureCoordinates { get; set; }
-        public List<int> Faces { get; set; }
-    }
+ 
 }

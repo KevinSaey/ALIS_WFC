@@ -14,6 +14,7 @@ namespace WaveFunctionCollapse.Shared
     {
         public int Id { get; set; } // sample null is always an empty sample
         public List<HashSet<Sample>> PossibleNeighbours;
+        public int Weight { get; set; }
 
         public override string ToString()
         {

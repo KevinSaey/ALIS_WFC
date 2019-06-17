@@ -8,7 +8,7 @@ namespace WaveFunctionCollapse.Unity
     /// <summary>
     /// The possible types of a voxel (Empty, Connection, Block)
     /// </summary>
-    public enum VoxelType { Empty, Connection, Block };
+    public enum VoxelType { Empty = 0 , Connection = 1 , Block = 2 };
 
     /// <summary>
     /// Representation of a voxel, can be independent of the voxelgrid
@@ -110,7 +110,7 @@ namespace WaveFunctionCollapse.Unity
                 for (int z = 0; z <= 1; z++)
                     for (int x = 0; x <= 1; x++)
                     {
-                        yield return GridController._grid.Corners[Index.x + x, Index.y + y, Index.z + z];
+                        yield return GridController.Grid.Corners[Index.x + x, Index.y + y, Index.z + z];
                     }
         }
 

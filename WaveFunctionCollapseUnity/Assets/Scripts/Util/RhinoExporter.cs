@@ -14,8 +14,10 @@ namespace WaveFunctionCollapse.Unity
     {
         static List<RhinoInstance> _instancesExport = new List<RhinoInstance>();
 
-        public static bool Export(List<ALIS_Sample> SelectedSamples, Vector3Int gridDimensions, Vector3Int tileDimensions, string path, int seed)
+        public static bool Export(List<ALIS_Sample> SelectedSamples, Vector3Int gridDimensions, Vector3Int tileDimensions)
         {
+            var path = ManagerWFC.Path;
+            var seed = ManagerWFC.Seed;
             for (int i = 0; i < SelectedSamples.Count; i++)
             {
                 var sample = SelectedSamples[i];

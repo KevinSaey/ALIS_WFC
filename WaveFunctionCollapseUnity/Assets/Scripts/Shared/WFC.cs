@@ -14,6 +14,10 @@ namespace WaveFunctionCollapse.Shared
             get { return _sampleGrid.SampleLibrary; }
             set { _sampleGrid.SampleLibrary = value; }
         }
+        public float Progress
+        {
+            get { return _sampleGrid.Progress; }
+        }
 
 
         /*public List<Connection> Connections

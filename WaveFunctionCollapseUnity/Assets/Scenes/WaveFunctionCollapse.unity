@@ -206,6 +206,7 @@ MonoBehaviour:
   _reflectZ: 1
   _merge: 1
   Path: D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\
+  _blockMaterial: {fileID: 2100000, guid: 5e9409a576a2bed4484bfa6efe32867e, type: 2}
   CenterWFC: {x: 0, y: 0, z: 0}
 --- !u!4 &573255905
 Transform:
