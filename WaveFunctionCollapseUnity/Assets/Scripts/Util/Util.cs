@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using WaveFunctionCollapse.Shared;
+using System.Linq;
 
 namespace WaveFunctionCollapse.Unity
 {
@@ -77,6 +78,35 @@ namespace WaveFunctionCollapse.Unity
             if (index.y >= grid.Size.y) return false;
             if (index.z >= grid.Size.z) return false;
             return true;
+        }
+
+        //Vicente Soler Script  - a bit modified;
+        public static bool IsInside(IEnumerable<MeshCollider> colliders, Vector3 point)
+        {
+            Vector3 position = point;
+
+            Physics.queriesHitBackfaces = true;
+
+            var sortedHits = new Dictionary<Collider, int>();
+            foreach (var collider in colliders)
+                sortedHits.Add(collider, 0);
+
+            while (Physics.Raycast(new Ray(position, Vector3.forward), out RaycastHit hit))
+            {
+                var collider = hit.collider;
+
+
+                if (sortedHits.ContainsKey(collider))
+                {
+                    sortedHits[collider]++;
+                    // Debug.Log("stored hit N" + sortedHits.Count + ", position of 1" + hit.transform.position);
+                }
+
+                position = hit.point + Vector3.forward * /*(1 / Mathf.Infinity)*/ 0.00001f;
+            }
+            bool isInside = sortedHits.Any(kv => kv.Value % 2 != 0);
+
+            return isInside;
         }
     }
 

@@ -94,7 +94,7 @@ namespace WaveFunctionCollapse.Shared
             get
             {
                 float countSelectedSamples = SelectedSamples.Count(s => s.Id != 0);
-                return countSelectedSamples/(float)SelectedSamples.Count;
+                return countSelectedSamples / (float)SelectedSamples.Count;
             }
         }
 
@@ -126,15 +126,18 @@ namespace WaveFunctionCollapse.Shared
 
         public void SetSample(int index, Sample selectedSample)
         {
-            if (selectedSample.Id == 0)
+            /*if (selectedSample.Id == 0)
             {
                 SharedLogger.Log("Error: Trying to set sample 0 - function SetSample");
                 return;
-            }
+            }*/
             SelectedSamples[index] = selectedSample;
             PossibleSamples[index] = new HashSet<Sample>() { SampleLibrary[0] }; //0 is always an empty sample
+
+
             selectedSample.DrawSample(index);
-            selectedSample.Propagate(this, index);
+
+            if (selectedSample.Id != 0) selectedSample.Propagate(this, index);
 
         }
 

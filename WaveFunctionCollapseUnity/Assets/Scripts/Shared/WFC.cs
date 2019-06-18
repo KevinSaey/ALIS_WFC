@@ -83,6 +83,11 @@ namespace WaveFunctionCollapse.Shared
             _sampleGrid.Reset();
             _engine.Reset();
         }
+
+        public void SetSample(int index, Sample selectedSample)
+        {
+            _sampleGrid.SetSample(index, selectedSample);
+        }
         /*public void AddSampleConnection(int connectionID, Sample currentSample)
         {
             if (Connections.Count(c => c.ID == connectionID) == 0)

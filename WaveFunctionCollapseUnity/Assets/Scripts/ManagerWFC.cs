@@ -20,6 +20,10 @@ namespace WaveFunctionCollapse.Unity
         public static string Path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
         [SerializeField]
         Material _blockMaterial;
+        [SerializeField]
+        GUISkin _guiSkin;
+        [SerializeField]
+        GameObject _goPlot;
 
 
         Dictionary<int, Sample> _sampleLibrary = new Dictionary<int, Sample>();
@@ -31,6 +35,7 @@ namespace WaveFunctionCollapse.Unity
         bool _colorCubes = true, _imported = false, _hasMesh;
         public static int Seed = 0;
         Dictionary<int, Tile> _tiles;
+        bool _generateOne = false;
 
         public Vector3 CenterWFC;
 
@@ -60,11 +65,11 @@ namespace WaveFunctionCollapse.Unity
             _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflectX, _reflectY, _reflectZ, _merge, this);
             _sampleLibrary = _rhinoImporter.SampleLibrary;
             _hasMesh = _rhinoImporter.HasMesh;
-            if (!_hasMesh) _voxelSize = _rhinoImporter.VoxelSize;
             _tileSize = _rhinoImporter.TileSize;
 
             if (_hasMesh)
             {
+                _voxelSize = _rhinoImporter.VoxelSize;
                 _tiles = _rhinoImporter.Tiles;
             }
 
@@ -77,32 +82,78 @@ namespace WaveFunctionCollapse.Unity
             //_waveFunctionCollapse.RemoveEmptyConnections();
 
             if (!_hasMesh) _gridController = new GridController(_tileSize, _voxelSize, _WFCSize);
+
+            //SetPlotBoundaries();
         }
 
         void Start()
         {
 
+
         }
 
         void OnGUI()
         {
-            int buttonHeight = 30;
-            int buttonWidth = 150;
+            int buttonHeight = 40;
+            int buttonWidth = 180;
             int i = 1;
             int padding = 5;
             int s = buttonHeight + padding;
+            GUI.skin = _guiSkin;
 
             if (_rhino)
             {
                 //Before the Samples are imported
-                Seed = int.Parse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), Seed.ToString()));
+                Seed = int.TryParse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), Seed.ToString()), out int l) ? l : 1;
                 GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "Seed");
                 if (!_imported)
                 {
                     if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Import Rhino"))
                     {
                         RhinoAwake();
+                        _imported = true;
+                    }
+                    
+                    _reflectX = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectX, "ReflectX");
+                    _reflectY = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectY, "ReflectY");
+                    _reflectZ = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectZ, "ReflectZ");
+                    _merge = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _merge, "Merge");
+                    _rotate = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _rotate, "Rotate");
 
+                    _WFCSize.x = int.TryParse(GUI.TextField(new Rect(s, s * ++i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.x.ToString()), out int m) ? m : 1;
+                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC X");
+                    _WFCSize.y = int.TryParse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.y.ToString()), out int n) ? n : 1;
+                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC Y");
+                    _WFCSize.z = int.TryParse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.z.ToString()), out int o) ? o : 1;
+                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC Z");
+
+                }
+
+                //When the samples are imported
+                else if (_imported)
+                {
+                    // Right screen GUI
+                    // show progress bar
+                    int labelCounter = 1;
+                    if (GUI.Button(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Toggle colorcubes"))
+                    {
+                        _colorCubes = !_colorCubes;
+                        HideColorCubes(_colorCubes);
+                    }
+                    GUI.HorizontalSlider(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), _waveFunctionCollapse.Progress, 0, 1);
+
+                    //Show labels
+
+                    if (_reflectX) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Reflect X");
+                    if (_reflectY) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Reflect Y");
+                    if (_reflectZ) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Reflect Z");
+                    if (_merge) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Merge");
+                    if (_rotate) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Rotate");
+
+
+                    //leftScreen ui
+                    if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Generate"))
+                    {
                         if (_interval)
                         {
                             UtilShared.RandomNR = new System.Random(Seed);
@@ -115,46 +166,26 @@ namespace WaveFunctionCollapse.Unity
                             DrawGrid();
                         }
 
-                        _imported = true;
                     }
-
-                    _reflectX = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectX, "ReflectX");
-                    _reflectY = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectY, "ReflectY");
-                    _reflectZ = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectZ, "ReflectZ");
-                    _merge = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _merge, "Merge");
-                    _rotate = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _rotate, "Rotate");
-
-                    _WFCSize.x = int.Parse(GUI.TextField(new Rect(s, s * ++i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.x.ToString()));
-                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC X");
-                    _WFCSize.y = int.Parse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.y.ToString()));
-                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC Y");
-                    _WFCSize.z = int.Parse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.z.ToString()));
-                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC Z");
-
-                }
-
-                //When the samples are imported
-                else if (_imported)
-                {
-                    // Right screen GUI
-                    // show progress bar
-                    int labelCounter = 1;
-                    GUI.HorizontalSlider(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), _waveFunctionCollapse.Progress, 0, 1);
-
-                    //Show labels
-
-                    if (_reflectX) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Reflect X");
-                    if (_reflectY) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Reflect Y");
-                    if (_reflectZ) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Reflect Z");
-                    if (_merge) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Merge");
-                    if (_rotate) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Rotate");
-
-
-                    if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Hide colorcubes"))
+                    if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Generate 1 seed"))
                     {
-                        _colorCubes = !_colorCubes;
-                        HideColorCubes(_colorCubes);
+                        _imported = true;
+                        _generateOne = true;
+                        if (_interval)
+                        {
+                            UtilShared.RandomNR = new System.Random(Seed);
+                            _step = Step(0.5f);
+                            StartCoroutine(_step);
+                        }
+                        else
+                        {
+                            _waveFunctionCollapse.Execute();
+                            DrawGrid();
+                        }
                     }
+
+
+                    
 
                     //When the aggregation is finished
                     if (_waveFunctionCollapse == null ? false : _waveFunctionCollapse.IsAllDetermined || _waveFunctionCollapse.HasContradiction)
@@ -180,16 +211,18 @@ namespace WaveFunctionCollapse.Unity
                         {
                             VoxelExporter.ExportVoxels(_gridController);
                         }
-                        if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Import voxel grid"))
+                        /*if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Import voxel grid"))
                         {
                             VoxelImporter.ImportVoxels();
-                        }
+                        }*/
                     }
 
 
                 }
             }
         }
+
+
 
         private void Regenerate()
         {
@@ -223,9 +256,12 @@ namespace WaveFunctionCollapse.Unity
 
                 if (_waveFunctionCollapse.HasContradiction)
                 {
-                    Seed++;
-                    UtilShared.RandomNR = new System.Random(Seed);
-                    Regenerate();
+                    if (!_generateOne)
+                    {
+                        Seed++;
+                        UtilShared.RandomNR = new System.Random(Seed);
+                        Regenerate();
+                    }
                     yield break;
                 }
 
@@ -259,6 +295,23 @@ namespace WaveFunctionCollapse.Unity
             {
                 var sample = _sampleLibrary[i] as ALIS_Sample;
                 sample.SetRandomNeighbours(10, _waveFunctionCollapse);
+            }
+        }
+
+        public void SetPlotBoundaries()
+        {
+            List<MeshCollider> colliders = new List<MeshCollider>();
+            colliders.Add(_goPlot.GetComponent<MeshCollider>());
+            for (int i = 0; i < _waveFunctionCollapse.SelectedSamples.Count; i++)
+            {
+                Vector3Int index = Util.ToUnityVector3Int(_waveFunctionCollapse.GetIndexOfPossibleSample(i));
+                Vector3 position = Vector3.Scale(index, Vector3.Scale(Vector3.one * _voxelSize, _tileSize)) + ((Vector3)_tileSize - Vector3.one) * _voxelSize / 2;
+
+                if (!Util.IsInside(colliders, position))
+                {
+                    _waveFunctionCollapse.SetSample(i, _sampleLibrary[0]);
+                }
+
             }
         }
 
@@ -333,7 +386,12 @@ namespace WaveFunctionCollapse.Unity
             foreach (var instance in selectedSample.Instances)
             {
 
-                var position = instance.Pose.position + (Vector3)(tileIndex * _tileSize) * _voxelSize;
+                /*var position = instance.Pose.position - ((Vector3)_tileSize * _voxelSize / 2);
+                position += (Vector3)(tileIndex * _tileSize) * _voxelSize;*/
+
+
+                var position = (Vector3)(tileIndex * _tileSize) * _voxelSize; // tile position
+                position += instance.Pose.position * _voxelSize;
                 var rotation = instance.Pose.rotation;
                 var go = _tiles[instance.DefinitionIndex].Instantiate(new Pose(position, rotation), _blockMaterial);
                 go.transform.SetParent(goTile, true);
