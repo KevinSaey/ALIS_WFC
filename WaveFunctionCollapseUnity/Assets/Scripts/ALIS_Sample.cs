@@ -30,7 +30,7 @@ namespace WaveFunctionCollapse.Unity
             Col = new Color(Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, Random.Range(0, 255) / 255f, transparency);
         }
 
-        public ALIS_Sample(int id, int origID,int density, int type, List<Instance> instances, string name, ManagerWFC managerWFC, int weight)
+        public ALIS_Sample(int id, int origID,int density, int type, List<Instance> instances, string name, ManagerWFC managerWFC, float weight)
         {
             Id = id;
             OrigId = origID;

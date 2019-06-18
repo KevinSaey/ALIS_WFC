@@ -17,7 +17,7 @@ namespace WaveFunctionCollapse.Unity
     {
         public Dictionary<int, Sample> SampleLibrary { get; private set; }
         public Dictionary<int, Tile> Tiles;
-        public bool HasMesh=false;
+        public bool HasMesh = false;
         public float VoxelSize = 0;
         public Vector3Int TileSize;
 
@@ -98,6 +98,7 @@ namespace WaveFunctionCollapse.Unity
                     if (importedAssemblies[origSample.OrigId].Rotate)
                     {
                         List<int> newSampleIds = new List<int>();
+                        origSample.Weight /= 4;
 
                         if (origSample.Instances.Count != 0)//------------------------------
                         {
@@ -124,12 +125,17 @@ namespace WaveFunctionCollapse.Unity
                 {
                     if (key != 0)
                     {
-                        if (importedAssemblies[((ALIS_Sample)SampleLibrary[key]).OrigId].ReflectX)
-                            SampleLibrary.Add(SampleLibrary.Count, Reflect(SampleLibrary[key] as ALIS_Sample, Axis.X, anchor));
-                        if (importedAssemblies[((ALIS_Sample)SampleLibrary[key]).OrigId].ReflectY)
-                            SampleLibrary.Add(SampleLibrary.Count, Reflect(SampleLibrary[key] as ALIS_Sample, Axis.Y, anchor));
-                        if (importedAssemblies[((ALIS_Sample)SampleLibrary[key]).OrigId].ReflectZ)
-                            SampleLibrary.Add(SampleLibrary.Count, Reflect(SampleLibrary[key] as ALIS_Sample, Axis.Z, anchor));
+                        bool x = importedAssemblies[((ALIS_Sample)SampleLibrary[key]).OrigId].ReflectX;
+                        bool y = importedAssemblies[((ALIS_Sample)SampleLibrary[key]).OrigId].ReflectY;
+                        bool z = importedAssemblies[((ALIS_Sample)SampleLibrary[key]).OrigId].ReflectZ;
+
+                        if (x) SampleLibrary[key].Weight /= 2;
+                        if (y) SampleLibrary[key].Weight /= 2;
+                        if (z) SampleLibrary[key].Weight /= 2;
+
+                        if (x) SampleLibrary.Add(SampleLibrary.Count, Reflect(SampleLibrary[key] as ALIS_Sample, Axis.X, anchor));
+                        if (y) SampleLibrary.Add(SampleLibrary.Count, Reflect(SampleLibrary[key] as ALIS_Sample, Axis.Y, anchor));
+                        if (z) SampleLibrary.Add(SampleLibrary.Count, Reflect(SampleLibrary[key] as ALIS_Sample, Axis.Z, anchor));
                     }
                 }
             }
@@ -216,7 +222,7 @@ namespace WaveFunctionCollapse.Unity
                     instances.Add(newInstance);
                 }
                 var name = $"sample {sampleToReflect.Id} type {sampleToReflect.Type} ref: {axis}";
-                reflectedSample = new ALIS_Sample(id, sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC,sampleToReflect.Weight);
+                reflectedSample = new ALIS_Sample(id, sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC, sampleToReflect.Weight);
 
                 sampleToReflect.PossibleNeighbours[0].Add(reflectedSample);
                 sampleToReflect.PossibleNeighbours[1].Add(reflectedSample);
@@ -260,7 +266,7 @@ namespace WaveFunctionCollapse.Unity
                     instances.Add(newInstance);
                 }
                 var name = $"sample {sampleToReflect.Id} type {sampleToReflect.Type} ref: {axis}";
-                reflectedSample = new ALIS_Sample(id, sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC,sampleToReflect.Weight);
+                reflectedSample = new ALIS_Sample(id, sampleToReflect.OrigId, sampleToReflect.Density, sampleToReflect.Type, instances, name, _managerWFC, sampleToReflect.Weight);
 
                 sampleToReflect.PossibleNeighbours[4].Add(reflectedSample);
                 sampleToReflect.PossibleNeighbours[5].Add(reflectedSample);
@@ -274,7 +280,7 @@ namespace WaveFunctionCollapse.Unity
         private void CheckDuplicates()
         {
             Dictionary<ALIS_Sample, List<ALIS_Sample>> equalsBySample = new Dictionary<ALIS_Sample, List<ALIS_Sample>>();
-            foreach (var sample in SampleLibrary.Values.Where(s=>s.Id!=0))
+            foreach (var sample in SampleLibrary.Values.Where(s => s.Id != 0))
             {
                 ALIS_Sample alisSample = sample as ALIS_Sample;
                 List<ALIS_Sample> list = null;
@@ -410,8 +416,8 @@ namespace WaveFunctionCollapse.Unity
         public ALIS_Sample ToALIS_Sample(ManagerWFC managerWFC)
         {
             var name = $"sample {Id} type {Type} rot: 0 ";
-            
-            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Id, Density, Type, Instances, name, managerWFC,1);
+
+            ALIS_Sample alis_Sample = new ALIS_Sample(Id, Id, Density, Type, Instances, name, managerWFC, 1);
 
             return alis_Sample;
         }
@@ -451,7 +457,7 @@ namespace WaveFunctionCollapse.Unity
             _tileGameObject = null;
         }
 
-        public GameObject Instantiate(Pose pose,Material blockMaterial)
+        public GameObject Instantiate(Pose pose, Material blockMaterial)
         {
             if (_tileGameObject == null)
                 MakeGameObject(blockMaterial);
@@ -463,7 +469,7 @@ namespace WaveFunctionCollapse.Unity
 
             return go;
         }
-        
+
         public GameObject GetGoTile()
         {
             return _tileGameObject;

@@ -33,10 +33,12 @@ namespace WaveFunctionCollapse.Unity
         RhinoImporter _rhinoImporter;
         GridController _gridController;
         bool _colorCubes = true, _imported = false, _hasMesh;
-        public static int Seed = 0;
         Dictionary<int, Tile> _tiles;
         bool _generateOne = false;
+        Dictionary<int, float> _bestSeedsProgress = new Dictionary<int, float>();
+        List<int> _bestSeeds = new List<int>();
 
+        public static int Seed = 0;
         public Vector3 CenterWFC;
 
 
@@ -113,7 +115,7 @@ namespace WaveFunctionCollapse.Unity
                         RhinoAwake();
                         _imported = true;
                     }
-                    
+
                     _reflectX = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectX, "ReflectX");
                     _reflectY = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectY, "ReflectY");
                     _reflectZ = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectZ, "ReflectZ");
@@ -130,7 +132,7 @@ namespace WaveFunctionCollapse.Unity
                 }
 
                 //When the samples are imported
-                else if (_imported)
+                else if (_imported && _waveFunctionCollapse != null)
                 {
                     // Right screen GUI
                     // show progress bar
@@ -149,6 +151,14 @@ namespace WaveFunctionCollapse.Unity
                     if (_reflectZ) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Reflect Z");
                     if (_merge) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Merge");
                     if (_rotate) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Rotate");
+
+                    labelCounter++;
+                    GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Best seeds");
+                    for (int j = 0; j < _bestSeeds.Count; j++)
+                    {
+                        GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight),
+                            $"Seed {_bestSeeds[j].ToString()} progres: {(int)(_bestSeedsProgress[_bestSeeds[j]]*100)} %");
+                    }
 
 
                     //leftScreen ui
@@ -184,8 +194,6 @@ namespace WaveFunctionCollapse.Unity
                         }
                     }
 
-
-                    
 
                     //When the aggregation is finished
                     if (_waveFunctionCollapse == null ? false : _waveFunctionCollapse.IsAllDetermined || _waveFunctionCollapse.HasContradiction)
@@ -258,6 +266,7 @@ namespace WaveFunctionCollapse.Unity
                 {
                     if (!_generateOne)
                     {
+                        CheckSeed(Seed, _waveFunctionCollapse.Progress);
                         Seed++;
                         UtilShared.RandomNR = new System.Random(Seed);
                         Regenerate();
@@ -278,7 +287,7 @@ namespace WaveFunctionCollapse.Unity
 
         void Update()
         {
-            if (_imported && _rhino && !_hasMesh) _gridController.Update();
+            if (_imported && _rhino && !_hasMesh && _gridController != null) _gridController.Update();
         }
 
         public void InitialiseRandomSamples()
@@ -399,6 +408,37 @@ namespace WaveFunctionCollapse.Unity
 
                 //GameObject tile = GameObject.Instantiate(_tiles[instance.DefinitionIndex].GetGoTile(), instance.Pose.position + tileIndex * _tileSize,instance.Pose.rotation,goTile);
             }
+        }
+
+        void CheckSeed(int seed, float progressValue)
+        {
+            if (_bestSeedsProgress.Count == 0)
+            {
+                _bestSeedsProgress.Add(seed, progressValue);
+                _bestSeeds.Add(seed);
+            }
+            bool bigger = false;
+
+            for (int i = 0; i < _bestSeeds.Count; i++)
+            {
+                if (progressValue > _bestSeedsProgress[_bestSeeds[i]])
+                {
+                    bigger = true;
+                }
+            }
+
+            if (bigger)
+            {
+                _bestSeedsProgress.Add(seed, progressValue);
+                _bestSeeds.Add(seed);
+            }
+            var newDictionary = new Dictionary<int, float>();
+            foreach (var goodSeed in _bestSeeds)
+            {
+                newDictionary.Add(goodSeed, _bestSeedsProgress[goodSeed]);
+            }
+            _bestSeedsProgress = newDictionary;
+            _bestSeeds = _bestSeedsProgress.OrderByDescending(s => s.Value).ToList().GetRange(0, _bestSeedsProgress.Count < 10 ? _bestSeedsProgress.Count : 10).Select(s => s.Key).ToList();
         }
     }
 }

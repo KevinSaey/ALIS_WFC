@@ -163,7 +163,7 @@ namespace WaveFunctionCollapse.Shared
             }
 
 
-            
+
         }
 
         Sample SelectRandom(List<Sample> possibleSamples)
@@ -175,15 +175,15 @@ namespace WaveFunctionCollapse.Shared
         {
             if (possibleSamples.Count > 1)
             {
-                int weight = 0;
+                float weight = 0;
                 for (int i = 0; i < possibleSamples.Count; i++)
                 {
                     weight += possibleSamples[i].Weight;
                 }
 
-                int weightedRandom = UtilShared.RandomNR.Next(weight);
+                float weightedRandom = (float)UtilShared.RandomNR.NextDouble() * weight;
 
-                for (int i = possibleSamples.Count-1; i >= 0; i--)
+                for (int i = possibleSamples.Count - 1; i >= 0; i--)
                 {
                     weight -= possibleSamples[i].Weight;
                     if (weight <= weightedRandom)
