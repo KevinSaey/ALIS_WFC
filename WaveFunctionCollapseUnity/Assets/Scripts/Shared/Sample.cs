@@ -24,7 +24,7 @@ namespace WaveFunctionCollapse.Shared
         public Sample()
         { }
 
-        public virtual void DrawSample(int sampleIndex)
+        public virtual void DrawSample(Tile tile)
         {
         }
 
@@ -33,7 +33,7 @@ namespace WaveFunctionCollapse.Shared
             PossibleNeighbours = possibleNeighbours;
         }
 
-        public virtual void Propagate(SampleGrid grid, int currentIndex)
+        public virtual void Propagate(SampleGrid grid, Tile tile)
         {
             if (Id == 0)
             {
@@ -52,30 +52,33 @@ namespace WaveFunctionCollapse.Shared
 
             for (int j = 0; j < 6; j++)
             {
-                Vector3IntShared neighbourIndex = grid.GetIndexOfPossibleSample(currentIndex) + neighbourIndices[j];
+                Vector3IntShared neighbourIndex = tile.Index + neighbourIndices[j];
                 //SharedLogger.Log($"index {currentIndex} vector {grid.GetIndexOfPossibleSample(currentIndex).ToString()}, neighbour {neighbourIndex.ToString()} ");
 
                 if (UtilShared.CheckIndex(neighbourIndex, grid.Dimensions)) // check if the neighbour is out of bounds
                 {
-                    var indexToPropagate = grid.GetPossibleSampleByIndex(neighbourIndex);
-
-                    //crossreference lists and change neighbour
-                    HashSet<Sample> CurrentPossibleNeighbours = PossibleNeighbours[j];
-
-                    if (grid.PossibleSamples[indexToPropagate].Count != 1)
+                    var TileToPropagate = grid.GetPossibleTileByIndex(neighbourIndex);
+                    if (TileToPropagate.Enabled)
                     {
-                        //Crossreference
-                        grid.PossibleSamples[indexToPropagate].IntersectWith(CurrentPossibleNeighbours);
-                    }
+                        //crossreference lists and change neighbour
+                        HashSet<Sample> CurrentPossibleNeighbours = PossibleNeighbours[j];
 
-                    //assign sample
-                    if(grid.PossibleSamples[indexToPropagate].Count == 1)
-                    {
-                        var sample = grid.PossibleSamples[indexToPropagate].First();
-                        if (sample.Id != 0)
+                        if (TileToPropagate.PossibleSamples.Count != 1)
                         {
-                            var sampleIndex = grid.GetPossibleSampleByIndex(neighbourIndex);
-                            grid.SetSample(sampleIndex, sample);
+                            //Crossreference
+                            TileToPropagate.PossibleSamples.IntersectWith(CurrentPossibleNeighbours);
+                        }
+
+                        //assign sample
+                        if (TileToPropagate.PossibleSamples.Count == 1)
+                        {
+                            var sample = TileToPropagate.PossibleSamples.First();
+                            if (sample.Id != 0)
+                            {
+                                var sampleIndex = grid.GetPossibleSampleByIndex(neighbourIndex);
+                                grid.SetSample(TileToPropagate, sample);
+                                TileToPropagate.Set = true;
+                            }
                         }
                     }
                 }

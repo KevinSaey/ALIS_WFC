@@ -12,8 +12,7 @@ namespace WaveFunctionCollapse.Shared
     public class SampleGrid
     {
         public Vector3IntShared Dimensions { get; private set; }
-        public List<HashSet<Sample>> PossibleSamples;
-        public List<Sample> SelectedSamples;
+        public List<Tile> Tiles;
         //public List<Connection> Connections;
         public Dictionary<int, Sample> SampleLibrary;
         public List<Domain> Domains;
@@ -36,13 +35,10 @@ namespace WaveFunctionCollapse.Shared
 
         void CreatePossibleSampleGrid()
         {
-            PossibleSamples = new List<HashSet<Sample>>();
-            SelectedSamples = new List<Sample>(PossibleSamples.Count);
+            Tiles = new List<Tile>();
             for (int i = 0; i < Dimensions.Z * Dimensions.Y * Dimensions.X; i++)
             {
-                PossibleSamples.Add(new HashSet<Sample>(SampleLibrary.Values));
-
-                SelectedSamples.Add(SampleLibrary[0]);
+                Tiles.Add(new Tile (i,UtilShared.GetIndexInGrid(i,Dimensions),new HashSet<Sample>(SampleLibrary.Values)));
             }
 
 
@@ -63,12 +59,18 @@ namespace WaveFunctionCollapse.Shared
             return Dimensions.X * Dimensions.Y * index.Z + Dimensions.X * index.Y + index.X;
         }
 
+        public Tile GetPossibleTileByIndex(Vector3IntShared index)
+        {
+            int tileId = Dimensions.X* Dimensions.Y* index.Z + Dimensions.X * index.Y + index.X;
+            return Tiles[tileId];
+        }
+
 
         public Boolean IsAllDetermined
         {
             get
             {
-                return PossibleSamples.All(s => Entropy(s) == 1);
+                return Tiles.Where(s=>s.Enabled).All(s => Entropy(s.PossibleSamples) == 1);
             }
         }
 
@@ -76,9 +78,9 @@ namespace WaveFunctionCollapse.Shared
         {
             get
             {
-                for (int i = 0; i < PossibleSamples.Count; i++)
+                for (int i = 0; i < Tiles.Count; i++)
                 {
-                    if (Entropy(PossibleSamples[i]) == 0)
+                    if (Entropy(Tiles[i].PossibleSamples) == 0)
                     {
                         SharedLogger.Log($"Solution has a Contradiction in tile {i}");
                         return true;
@@ -93,8 +95,8 @@ namespace WaveFunctionCollapse.Shared
         {
             get
             {
-                float countSelectedSamples = SelectedSamples.Count(s => s.Id != 0);
-                return countSelectedSamples / (float)SelectedSamples.Count;
+                float countSelectedSamples = Tiles.Count(s => s.Set);
+                return countSelectedSamples / (float)Tiles.Count(s=>s.Enabled);
             }
         }
 
@@ -103,49 +105,49 @@ namespace WaveFunctionCollapse.Shared
             return sample.Count;
         }
 
-        public List<int> FindLowestNonZeroEntropy()
+        public List<Tile> FindLowestNonZeroEntropy()
         {
             int lowestEntropy = int.MaxValue;
-            List<int> lowestIndices = new List<int>();
-            for (int i = 0; i < PossibleSamples.Count; i++)
+            List<Tile> lowestTiles = new List<Tile>();
+            for (int i = 0; i < Tiles.Count; i++)
             {
-                int entropy = Entropy(PossibleSamples[i]);
-                if (entropy < lowestEntropy && entropy > 1)
+                if (Tiles[i].Enabled)
                 {
-                    lowestEntropy = entropy;
-                    lowestIndices = new List<int>() { i };
-                }
-                else if (entropy == lowestEntropy)
-                {
-                    lowestIndices.Add(i);
+                    int entropy = Entropy(Tiles[i].PossibleSamples);
+                    if (entropy < lowestEntropy && entropy > 1)
+                    {
+                        lowestEntropy = entropy;
+                        lowestTiles = new List<Tile>() { Tiles[i] };
+                    }
+                    else if (entropy == lowestEntropy)
+                    {
+                        lowestTiles.Add(Tiles[i]);
+                    }
                 }
             }
 
-            return lowestIndices;
+            return lowestTiles;
         }
 
-        public void SetSample(int index, Sample selectedSample)
+        public void SetSample(Tile tile, Sample selectedSample)
         {
-            /*if (selectedSample.Id == 0)
+            tile.SelectedSample = selectedSample;
+            tile.PossibleSamples = new HashSet<Sample>() { SampleLibrary[0] }; //0 is always an empty sample
+            tile.Set = true;
+
+            if (selectedSample.Id != 0)
             {
-                SharedLogger.Log("Error: Trying to set sample 0 - function SetSample");
-                return;
-            }*/
-            SelectedSamples[index] = selectedSample;
-            PossibleSamples[index] = new HashSet<Sample>() { SampleLibrary[0] }; //0 is always an empty sample
-
-
-            selectedSample.DrawSample(index);
-
-            if (selectedSample.Id != 0) selectedSample.Propagate(this, index);
+                selectedSample.DrawSample(tile);
+                selectedSample.Propagate(this, tile);
+            }
 
         }
 
         public void LogEntropy()
         {
-            for (int i = 0; i < PossibleSamples.Count; i++)
+            for (int i = 0; i < Tiles.Count; i++)
             {
-                int entropy = Entropy(PossibleSamples[i]);
+                int entropy = Entropy(Tiles[i].PossibleSamples);
                 SharedLogger.Log($"Tile: {i} entropy: {entropy}");
             }
         }
@@ -153,7 +155,7 @@ namespace WaveFunctionCollapse.Shared
         public void LogIndex()
         {
 
-            for (int i = 0; i < PossibleSamples.Count; i++)
+            for (int i = 0; i < Tiles.Count; i++)
             {
                 SharedLogger.Log($"index {i} vector {GetIndexOfPossibleSample(i).ToString()}");
             }

@@ -67,14 +67,14 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        public override void Propagate(SampleGrid grid, int index)
+        public override void Propagate(SampleGrid grid, Tile tile)
         {
-            base.Propagate(grid, index);
+            base.Propagate(grid, tile);
         }
 
-        public override void DrawSample(int sampleIndex)
+        public override void DrawSample(Tile tile)
         {
-            _managerWFC.DrawSample(sampleIndex);
+            _managerWFC.DrawSample(tile);
         }
 
 

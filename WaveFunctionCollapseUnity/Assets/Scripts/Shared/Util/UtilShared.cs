@@ -28,8 +28,8 @@ namespace WaveFunctionCollapse.Shared
 
         public static Vector3IntShared GetIndexInGrid(int i, Vector3IntShared dimensions)
         {
-            int newX=0, newY=0, newZ=0;
-            if (i<dimensions.X*dimensions.Y*dimensions.Z)
+            int newX = 0, newY = 0, newZ = 0;
+            if (i < dimensions.X * dimensions.Y * dimensions.Z)
             {
                 newZ = i / (dimensions.X * dimensions.Y);
                 i %= (dimensions.X * dimensions.Y);
@@ -44,6 +44,12 @@ namespace WaveFunctionCollapse.Shared
 
             return new Vector3IntShared { X = newX, Y = newY, Z = newZ };
 
+        }
+
+        public static void SelectRandomOutList<T>(List<T> list, out T item)
+        {
+            int index = RandomNR.Next(0, list.Count);
+            item = list[index];
         }
     }
 
@@ -61,6 +67,8 @@ namespace WaveFunctionCollapse.Shared
             CurrentLogger.Log(message);
         }
     }
+
+
 
 
 

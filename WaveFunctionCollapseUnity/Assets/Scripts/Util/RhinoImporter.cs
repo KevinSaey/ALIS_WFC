@@ -16,22 +16,37 @@ namespace WaveFunctionCollapse.Unity
     public class RhinoImporter//based on Vicente's code
     {
         public Dictionary<int, Sample> SampleLibrary { get; private set; }
-        public Dictionary<int, Tile> Tiles;
+        public Dictionary<int, ImportedTile> Tiles;
         public bool HasMesh = false;
         public float VoxelSize = 0;
         public Vector3Int TileSize;
 
-        string _path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
+        string _path;
         ManagerWFC _managerWFC;
 
         public RhinoImporter()
         {
         }
 
-        public void InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflectX, bool reflectY, bool reflectZ, bool merge, ManagerWFC managerWFC)
+        public bool InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflectX, bool reflectY, bool reflectZ, bool merge, ManagerWFC managerWFC)
         {
-            var files = LoadFiles();
             _managerWFC = managerWFC;
+            _path = managerWFC.Path;
+            
+
+            /*if(!File.Exists(_path))
+            {
+                SharedLogger.Log("Path does not exist - function InstantiateSamples");
+                return false;
+            }*/
+            var files = LoadFiles();
+            if (files.Count==0)
+            {
+                SharedLogger.Log("No files loaded - function InstantiateSamples");
+                return false;
+            }
+            
+            
             Dictionary<int, Assembly> importedAssemblies = new Dictionary<int, Assembly>();
 
             SampleLibrary = new Dictionary<int, Sample>();
@@ -46,7 +61,7 @@ namespace WaveFunctionCollapse.Unity
                     TileSize = assembly.TileSize.ToVector3IntRound();
                     if (assembly.Mesh)
                     {
-                        Tiles = new Dictionary<int, Tile>();
+                        Tiles = new Dictionary<int, ImportedTile>();
                         HasMesh = true;
                         foreach (var tile in assembly.Tiles)
                         {
@@ -142,6 +157,7 @@ namespace WaveFunctionCollapse.Unity
 
             CheckDuplicates();
             SharedLogger.Log($"{files.Count()} ALIS_samples loaded");
+            return true;
         }
 
         private void MergeSampleNeighbours(List<int> idsToMerge)
@@ -380,7 +396,7 @@ namespace WaveFunctionCollapse.Unity
     public class Assembly //VS
     {
         public List<Instance> Instances { get; set; }
-        public List<Tile> Tiles;
+        public List<ImportedTile> Tiles;
         public List<Neighbour> Neighbours { get; set; }
         public int Id;
         public int Density;
@@ -423,7 +439,7 @@ namespace WaveFunctionCollapse.Unity
         }
     }
 
-    public class Tile
+    public class ImportedTile
     {
         public int Index { get; set; }
         public List<MeshExport> Renderers { get; set; }

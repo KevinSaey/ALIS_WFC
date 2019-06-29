@@ -22,6 +22,7 @@ namespace WaveFunctionCollapse.Unity
 
         public void Log(object message)
         {
+            Util.Warning = message.ToString();
             if (message.ToString().StartsWith("Error")) Debug.LogError(message);
             else if (EnableLog) Debug.Log(message);
         }
@@ -32,6 +33,7 @@ namespace WaveFunctionCollapse.Unity
 
     public static class Util
     {
+        public static string Warning = "No warnings";
         public static Random RandomGenerator = new Random();
 
         public static Vector3Int ToUnityVector3Int(Vector3IntShared vector3IntShared) // Ask Vicente how to do this properly

@@ -37,9 +37,8 @@ namespace WaveFunctionCollapse.Unity
 
     public static class VoxelExporter
     {
-        public static bool ExportVoxels(GridController gridControl)
+        public static bool ExportVoxels(GridController gridControl,string path)
         {
-            var path = ManagerWFC.Path;
             int seed = ManagerWFC.Seed;
             if (!Directory.Exists(path))
             {

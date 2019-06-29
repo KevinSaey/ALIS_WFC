@@ -54,37 +54,20 @@ namespace WaveFunctionCollapse.Shared
             //_grid.LogEntropy();
             _counter++;
             SharedLogger.Log($"Step number {_counter}");
-            int lowestEntropyIndex;
+            Tile lowestEntropyTile;
             if (_counter == 1)
             {
+
+                UtilShared.SelectRandomOutList(_grid.Tiles.Where(s=>s.Enabled==true).ToList(), out lowestEntropyTile);
                 //start from a random sample
-                lowestEntropyIndex = UtilShared.RandomNR.Next(0, _grid.PossibleSamples.Count);
             }
             else
             {
-                lowestEntropyIndex = _grid.FindLowestNonZeroEntropy().First();
+                lowestEntropyTile = _grid.FindLowestNonZeroEntropy().First();
             }
+          
 
-            //lowestEntropyIndex = _grid.FindLowestNonZeroEntropy();
-
-
-            // One step of the algorithm:
-            // a. Pick out the lowest entropy
-
-            /*------------------------------------------------- RANDOM SAMPLE WITH LOWEST ENTROPY, Causes Contradictions
-            List<int> lowestSamples = new List<int>();
-            for (int i = 0; i < _grid.PossibleSamples.Count; i++)
-            {
-                if (_grid.Entropy(_grid.PossibleSamples[i]) == _grid.Entropy(_grid.PossibleSamples[lowestEntropyIndex]))
-                {
-                    lowestSamples.Add(i);
-                }
-            }
-
-            BitArray lowestEntropy = _grid.PossibleSamples[UtilShared.RandomNR.Next(0, lowestSamples.Count - 1)];
-            */
-
-            List<Sample> lowestEntropyTiles = _grid.PossibleSamples[lowestEntropyIndex].Where(s => s.Id != 0).ToList();
+            List<Sample> lowestEntropySamples = lowestEntropyTile.PossibleSamples.Where(s => s.Id != 0).ToList();
 
 
             // b. Apply full list of heuristics over the sample chances (what is the starting proportion of choices?)
@@ -100,18 +83,16 @@ namespace WaveFunctionCollapse.Shared
 
             if (heuristicSelection == 0)
             {
-                selectedSample = SelectRandom(lowestEntropyTiles);
+                selectedSample = SelectRandom(lowestEntropySamples);
             }
             else if (heuristicSelection == 1)
             {
-                selectedSample = SelectLeastUsed(lowestEntropyTiles);
+                selectedSample = SelectLeastUsed(lowestEntropySamples);
             }
 
             // d. Set the sample (will also propogate)
-            _grid.SetSample(lowestEntropyIndex, selectedSample);
-
-
-            //_grid.LogEntropy();
+            _grid.SetSample(lowestEntropyTile, selectedSample);
+            lowestEntropyTile.Set = true;
         }
 
         Sample SelectRandomWeighted(List<Sample> possibleSamples)
@@ -142,7 +123,7 @@ namespace WaveFunctionCollapse.Shared
             List<Sample> leastUsed = new List<Sample>();
             foreach (var sample in possibleSamples)
             {
-                int amount = _grid.SelectedSamples.Count(s => s == sample);
+                int amount = _grid.Tiles.Count(s => s.SelectedSample == sample);
                 if (amount < smallestAmount)
                 {
                     leastUsed.Clear();
@@ -203,7 +184,7 @@ namespace WaveFunctionCollapse.Shared
         {
             var boundryDomain = new Domain("Boundry", 1, new List<int> { boundrySample });
 
-            for (int i = 0; i < _grid.PossibleSamples.Count; i++)
+            for (int i = 0; i < _grid.Tiles.Count; i++)
             {
                 if (minX && _grid.GetIndexOfPossibleSample(i).X == 0) boundryDomain.AddTileIndex(i);
                 if (minY && _grid.GetIndexOfPossibleSample(i).Y == 0) boundryDomain.AddTileIndex(i);
@@ -221,16 +202,12 @@ namespace WaveFunctionCollapse.Shared
 
 
 
-        /*void PropogateDomains()
+        internal void DisableTiles(HashSet<int> TilesToDisable)
         {
-            foreach (var domain in _grid.Domains)
+            foreach (var tileIndex in TilesToDisable)
             {
-                foreach (var tileIndex in domain.TileIndices)
-                {
-                    _grid.PossibleSamples[tileIndex]=_grid.PossibleSamples[tileIndex].And(UtilShared.ToBoolArray(domain.PossibleSamples.ToList(),_grid.SampleLibrary.Count));
-                    if (domain.PossibleSamples.Count == 1) _grid.SetSample(tileIndex, domain.PossibleSamples[0]);
-                }
+                _grid.Tiles[tileIndex].Enabled = false;
             }
-        }*/
+        }
     }
 }

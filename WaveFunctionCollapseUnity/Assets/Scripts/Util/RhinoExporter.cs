@@ -14,30 +14,29 @@ namespace WaveFunctionCollapse.Unity
     {
         static List<RhinoInstance> _instancesExport = new List<RhinoInstance>();
 
-        public static bool Export(List<ALIS_Sample> SelectedSamples, Vector3Int gridDimensions, Vector3Int tileDimensions)
+        public static bool Export(List<Tile> tiles, Vector3Int gridDimensions, Vector3Int tileDimensions, float voxelSize, string path)
         {
-            var path = ManagerWFC.Path;
             var seed = ManagerWFC.Seed;
-            for (int i = 0; i < SelectedSamples.Count; i++)
+            foreach (var tile in tiles)
             {
-                var sample = SelectedSamples[i];
-                var sampleIndex = Util.ToUnityVector3Int(UtilShared.GetIndexInGrid(i, gridDimensions.ToVector3IntShared()));
-                Vector3 worldIndex = sampleIndex * tileDimensions;
+                var sample = tile.SelectedSample as ALIS_Sample;
+                Vector3 worldIndex = (Vector3)(Util.ToUnityVector3Int(tile.Index) * tileDimensions)*voxelSize;
 
-                foreach (var instance in sample.Instances)
-                {
-                    var newInstance = new RhinoInstance()
+                if (sample.Instances != null)
+                    foreach (var instance in sample.Instances)
                     {
-                        //transform to z-up
-                        Pose = new RhinoPose
+                        var newInstance = new RhinoInstance()
                         {
-                            Position = new Vector3d(worldIndex + instance.Pose.position),
-                            Rotation = new QuaternionRhino(instance.Pose.rotation)
-                        }
-                    };
+                            //transform to z-up
+                            Pose = new RhinoPose
+                            {
+                                Position = new Vector3d(worldIndex + instance.Pose.position*voxelSize),
+                                Rotation = new QuaternionRhino(instance.Pose.rotation)
+                            }
+                        };
 
-                    _instancesExport.Add(newInstance);
-                }
+                        _instancesExport.Add(newInstance);
+                    }
             }
 
             if (!Directory.Exists(path))
@@ -114,6 +113,6 @@ namespace WaveFunctionCollapse.Unity
             C = quaternion.z;
         }
     }
-    
-        
+
+
 }

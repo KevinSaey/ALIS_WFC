@@ -84,9 +84,9 @@ namespace WaveFunctionCollapse.Shared
             _engine.Reset();
         }
 
-        public void SetSample(int index, Sample selectedSample)
+        public void SetSample(Tile tile, Sample selectedSample)
         {
-            _sampleGrid.SetSample(index, selectedSample);
+            _sampleGrid.SetSample(tile, selectedSample);
         }
         /*public void AddSampleConnection(int connectionID, Sample currentSample)
         {
@@ -110,12 +110,16 @@ namespace WaveFunctionCollapse.Shared
             return _sampleGrid.GetIndexOfPossibleSample(i);
         }
 
-        public List<Sample> SelectedSamples
+        public List<Tile> Tiles
         {
             get
             {
-                return _sampleGrid.SelectedSamples;
+                return _sampleGrid.Tiles;
             }
+        }
+        public void DisableTiles(HashSet<int>tilesToDisable)
+        {
+            _engine.DisableTiles(tilesToDisable);
         }
     }
 }
