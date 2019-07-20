@@ -14,8 +14,9 @@ namespace WaveFunctionCollapse.Unity
     {
         static List<RhinoInstance> _instancesExport = new List<RhinoInstance>();
 
-        public static bool Export(List<Tile> tiles, Vector3Int gridDimensions, Vector3Int tileDimensions, float voxelSize, string path)
+        public static bool Export(List<Tile> tiles, Vector3Int gridDimensions, Vector3Int tileDimensions, float voxelSize, string path, bool mesh)
         {
+            if (!mesh) voxelSize = 1;
             var seed = ManagerWFC.Seed;
             foreach (var tile in tiles)
             {

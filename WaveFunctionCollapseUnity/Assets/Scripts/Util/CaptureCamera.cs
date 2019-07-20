@@ -8,7 +8,7 @@ public class CaptureCamera : MonoBehaviour // stolen from Vicente
     public bool EnableCapture = false;
     public float Interval = 1f;
 
-    string folder = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\ScreenCapture";
+    string folder = @"C:\Users\Kevin\Documents\WFC\ScreenCapture";
 
     void Start()
     {

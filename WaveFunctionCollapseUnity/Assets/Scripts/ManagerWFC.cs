@@ -17,7 +17,7 @@ namespace WaveFunctionCollapse.Unity
         [SerializeField]
         bool _rhino, _log, _interval, _rotate, _reflectX, _reflectY, _reflectZ, _merge;
         [SerializeField]
-        public string Path = @"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\";
+        public string Path = @"C:\Users\Kevin\Desktop\WFC\RhinoExporter\";
         [SerializeField]
         Material _blockMaterial, _transparentMaterial;
         [SerializeField]
@@ -33,7 +33,7 @@ namespace WaveFunctionCollapse.Unity
         IEnumerator _step;
         RhinoImporter _rhinoImporter;
         GridController _gridController;
-        bool _colorCubes = true, _imported = false, _hasMesh, _plot = true, _record = false;
+        bool _colorCubes = true, _imported = false, _hasMesh, _plot = false, _record = false;
         Dictionary<int, ImportedTile> _tiles;
         bool _generateOne = false;
         Dictionary<int, float> _bestSeedsProgress = new Dictionary<int, float>();
@@ -111,7 +111,8 @@ namespace WaveFunctionCollapse.Unity
             int s = buttonHeight + padding;
             GUI.skin = _guiSkin;
 
-            GUI.Label(new Rect(padding, Screen.height-(buttonHeight+padding), padding + 500, Screen.height -  padding), Util.Warning);
+            //Warnings
+            GUI.Label(new Rect(s, Screen.height-s, padding + 500, Screen.height -  s), Util.Warning);
 
 
             if (_rhino)
@@ -243,7 +244,7 @@ namespace WaveFunctionCollapse.Unity
                         }
                         if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Export to rhino"))
                         {
-                            RhinoExporter.Export(_waveFunctionCollapse.Tiles.Where(t => t.Set && t.Enabled).ToList(), _WFCSize, _tileSize,_voxelSize,Path);
+                            RhinoExporter.Export(_waveFunctionCollapse.Tiles.Where(t => t.Set && t.Enabled).ToList(), _WFCSize, _tileSize,_voxelSize,Path,_hasMesh);
                         }
 
                         if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Export to ALIS allocation"))

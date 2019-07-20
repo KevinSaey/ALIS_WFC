@@ -34,11 +34,11 @@ namespace WaveFunctionCollapse.Unity
             _path = managerWFC.Path;
             
 
-            /*if(!File.Exists(_path))
+            if(!Directory.Exists(_path))
             {
                 SharedLogger.Log("Path does not exist - function InstantiateSamples");
                 return false;
-            }*/
+            }
             var files = LoadFiles();
             if (files.Count==0)
             {

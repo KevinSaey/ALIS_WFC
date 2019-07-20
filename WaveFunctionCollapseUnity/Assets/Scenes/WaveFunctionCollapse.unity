@@ -196,16 +196,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _voxelSize: 0.4
-  _tileSize: {x: 6, y: 7, z: 6}
-  _WFCSize: {x: 4, y: 11, z: 5}
+  _tileSize: {x: 15, y: 7, z: 15}
+  _WFCSize: {x: 4, y: 6, z: 5}
   _rhino: 1
   _log: 0
   _interval: 1
   _rotate: 1
-  _reflectX: 1
-  _reflectY: 1
-  _reflectZ: 1
+  _reflectX: 0
+  _reflectY: 0
+  _reflectZ: 0
   _merge: 1
+  Path: D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\
   _blockMaterial: {fileID: 2100000, guid: 5e9409a576a2bed4484bfa6efe32867e, type: 2}
   _transparentMaterial: {fileID: 2100000, guid: dd7d27cd4b8d5b64387d88584e89a919,
     type: 2}
@@ -213,6 +214,7 @@ MonoBehaviour:
   _goPlot: {fileID: 1573348952}
   _goRecorder: {fileID: 295298313}
   CenterWFC: {x: 0, y: 0, z: 0}
+  Warnings: 
 --- !u!4 &573255905
 Transform:
   m_ObjectHideFlags: 0
