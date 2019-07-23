@@ -16,7 +16,8 @@ namespace WaveFunctionCollapse.Shared
         //public List<Connection> Connections;
         public Dictionary<int, Sample> SampleLibrary;
         public List<Domain> Domains;
-
+        public List<WFCState> States;
+        public int HistorySteps = 10;
 
 
         internal SampleGrid(Dictionary<int, Sample> sampleLibrary, int dimX, int dimY, int dimZ)
@@ -26,6 +27,7 @@ namespace WaveFunctionCollapse.Shared
             Dimensions = new Vector3IntShared { X = dimX, Y = dimY, Z = dimZ };
             SampleLibrary = sampleLibrary;
 
+            States = new List<WFCState>();
             CreatePossibleSampleGrid();
             //LogIndex();
             //LogEntropy();
@@ -139,8 +141,39 @@ namespace WaveFunctionCollapse.Shared
             {
                 selectedSample.DrawSample(tile);
                 selectedSample.Propagate(this, tile);
+                /*if (HasContradiction)
+                {
+                    RevertState();
+                }
+                else
+                {
+                    SafeState(tile, selectedSample);
+                }*/
             }
+        }
 
+        public void SafeState(Tile lastTile, Sample selectedSample)
+        {
+            if (States.Count == 0)
+            {
+                States.Add(new WFCState(Tiles, lastTile, selectedSample, 0));
+            }
+            else
+            {
+                States.Add(new WFCState(States.Last(), Tiles, lastTile, selectedSample, 0));
+            }
+            if (States.Count>HistorySteps)
+            {
+                States.RemoveAt(0);
+            }
+        }
+
+        public void RevertState()
+        {
+            var lastState = States.Last();
+            Tiles = lastState.Tiles;
+            lastState.LastUpdatedTile.PossibleSamples.Remove(lastState.SetSample);
+            States.RemoveAt(States.Count()-1);
         }
 
         public void LogEntropy()

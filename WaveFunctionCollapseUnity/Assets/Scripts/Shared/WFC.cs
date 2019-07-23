@@ -20,12 +20,6 @@ namespace WaveFunctionCollapse.Shared
         }
 
 
-        /*public List<Connection> Connections
-        {
-            get { return _sampleGrid.Connections; }
-            set { _sampleGrid.Connections = value; }
-        }*/
-
         List<IHeuristic> _heuristics;
 
         public List<IHeuristic> Heuristics

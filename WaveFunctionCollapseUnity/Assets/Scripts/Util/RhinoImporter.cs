@@ -28,7 +28,7 @@ namespace WaveFunctionCollapse.Unity
         {
         }
 
-        public bool InstantiateSamples(Vector3Int tileSize, bool rotate, bool reflectX, bool reflectY, bool reflectZ, bool merge, ManagerWFC managerWFC)
+        public bool InstantiateSamples( bool rotate, bool reflectX, bool reflectY, bool reflectZ, bool merge, ManagerWFC managerWFC)
         {
             _managerWFC = managerWFC;
             _path = managerWFC.Path;
@@ -102,7 +102,7 @@ namespace WaveFunctionCollapse.Unity
 
             if (rotate)
             {
-                var anchor = ((Vector3)tileSize - Vector3.one) / 2;
+                var anchor = ((Vector3)TileSize - Vector3.one) / 2;
                 //rotate samples
 
                 List<int> keys = SampleLibrary.Select(s => s.Key).ToList();
@@ -133,7 +133,7 @@ namespace WaveFunctionCollapse.Unity
             }
             if (reflectX || reflectY || reflectZ)
             {
-                var anchor = ((Vector3)tileSize - Vector3.one) / 2;
+                var anchor = ((Vector3)TileSize - Vector3.one) / 2;
 
                 List<int> keys = SampleLibrary.Select(s => s.Key).ToList();
                 foreach (var key in keys)

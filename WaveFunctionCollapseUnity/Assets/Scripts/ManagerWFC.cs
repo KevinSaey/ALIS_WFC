@@ -69,7 +69,7 @@ namespace WaveFunctionCollapse.Unity
         {
             bool rhinoAwakeSucces = false;
             _rhinoImporter = new RhinoImporter();
-            rhinoAwakeSucces = _rhinoImporter.InstantiateSamples(_tileSize, _rotate, _reflectX, _reflectY, _reflectZ, _merge, this);
+            rhinoAwakeSucces = _rhinoImporter.InstantiateSamples( _rotate, _reflectX, _reflectY, _reflectZ, _merge, this);
             if (rhinoAwakeSucces)
             {
                 _sampleLibrary = _rhinoImporter.SampleLibrary;

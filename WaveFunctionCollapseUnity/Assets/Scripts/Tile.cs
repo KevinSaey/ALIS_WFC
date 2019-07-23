@@ -19,5 +19,10 @@ namespace WaveFunctionCollapse.Shared
             Index = index;
             PossibleSamples = possibleSamples;
         }
+
+        public Tile Clone ()
+        {
+            return new Tile(Id, Index, new HashSet<Sample>(PossibleSamples));
+        }
     }
 }
