@@ -33,17 +33,13 @@ namespace WaveFunctionCollapse.Shared
             //LogEntropy();
         }
 
-
-
         void CreatePossibleSampleGrid()
         {
             Tiles = new List<Tile>();
             for (int i = 0; i < Dimensions.Z * Dimensions.Y * Dimensions.X; i++)
             {
-                Tiles.Add(new Tile (i,UtilShared.GetIndexInGrid(i,Dimensions),new HashSet<Sample>(SampleLibrary.Values)));
+                Tiles.Add(new Tile(i, UtilShared.GetIndexInGrid(i, Dimensions), new HashSet<Sample>(SampleLibrary.Values)));
             }
-
-
         }
 
         public void Reset()
@@ -63,7 +59,7 @@ namespace WaveFunctionCollapse.Shared
 
         public Tile GetPossibleTileByIndex(Vector3IntShared index)
         {
-            int tileId = Dimensions.X* Dimensions.Y* index.Z + Dimensions.X * index.Y + index.X;
+            int tileId = Dimensions.X * Dimensions.Y * index.Z + Dimensions.X * index.Y + index.X;
             return Tiles[tileId];
         }
 
@@ -72,7 +68,7 @@ namespace WaveFunctionCollapse.Shared
         {
             get
             {
-                return Tiles.Where(s=>s.Enabled).All(s => Entropy(s.PossibleSamples) == 1);
+                return Tiles.Where(s => s.Enabled).All(s => Entropy(s.PossibleSamples) == 1);
             }
         }
 
@@ -97,8 +93,15 @@ namespace WaveFunctionCollapse.Shared
         {
             get
             {
-                float countSelectedSamples = Tiles.Count(s => s.Set);
-                return countSelectedSamples / (float)Tiles.Count(s=>s.Enabled);
+                return (float)NrSetSamples / (float)Tiles.Count(s => s.Enabled);
+            }
+        }
+
+        public int NrSetSamples
+        {
+            get
+            {
+                return Tiles.Count(s => s.Set);
             }
         }
 
@@ -141,14 +144,17 @@ namespace WaveFunctionCollapse.Shared
             {
                 selectedSample.DrawSample(tile);
                 selectedSample.Propagate(this, tile);
-                /*if (HasContradiction)
+                if (HasContradiction)
                 {
-                    RevertState();
+                    while (HasContradiction && States.Count > 0)
+                    {
+                        RevertState();
+                    }
                 }
                 else
                 {
                     SafeState(tile, selectedSample);
-                }*/
+                }
             }
         }
 
@@ -162,7 +168,7 @@ namespace WaveFunctionCollapse.Shared
             {
                 States.Add(new WFCState(States.Last(), Tiles, lastTile, selectedSample, 0));
             }
-            if (States.Count>HistorySteps)
+            if (States.Count > HistorySteps)
             {
                 States.RemoveAt(0);
             }
@@ -173,7 +179,7 @@ namespace WaveFunctionCollapse.Shared
             var lastState = States.Last();
             Tiles = lastState.Tiles;
             lastState.LastUpdatedTile.PossibleSamples.Remove(lastState.SetSample);
-            States.RemoveAt(States.Count()-1);
+            States.RemoveAt(States.Count() - 1);
         }
 
         public void LogEntropy()

@@ -167,7 +167,7 @@ namespace WaveFunctionCollapse.Unity
         public void AddBlockToGrid(Block block, Transform parrent)
         {
             Blocks.Add(block);
-            block.DrawBlock(this,VoxelSize,parrent);
+            block.DrawBlock(this, VoxelSize, parrent);
             foreach (var vox in block.BlockVoxels)
             {
                 if (!(vox.Index.x < 0 || vox.Index.y < 0 || vox.Index.z < 0 ||
@@ -176,6 +176,19 @@ namespace WaveFunctionCollapse.Unity
                 {
                     AddVoxel(vox);
                 }
+            }
+        }
+
+        public void RemoveBlockVoxelsFromGrid(Block block)
+        {
+            foreach (var vox in block.BlockVoxels)
+            {
+                if (!(vox.Index.x < 0 || vox.Index.y < 0 || vox.Index.z < 0 ||
+                   vox.Index.x >= Size.x || vox.Index.y >= Size.y || vox.Index.z >= Size.z))
+                {
+                    GetVoxelAt(vox.Index).Type = VoxelType.Empty;
+                }
+
             }
         }
 

@@ -26,6 +26,7 @@ namespace WaveFunctionCollapse.Shared
 
         public virtual void DrawSample(Tile tile)
         {
+
         }
 
         public void InitialisePossibleNeighbours(List<HashSet<Sample>> possibleNeighbours)

@@ -68,8 +68,6 @@ namespace WaveFunctionCollapse.Unity
             return valid;
         }
 
-
-
         /// <summary>
         /// Check if the added block is connected to the main robot path (no fully functional)
         /// </summary>

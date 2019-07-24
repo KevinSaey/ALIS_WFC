@@ -80,7 +80,7 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        public void Generate(ALIS_Sample sample, Vector3Int tileIndex, Vector3Int tileSize, Transform parrent)
+        public void AddSampleToGrid(ALIS_Sample sample, Vector3Int tileIndex, Vector3Int tileSize, Transform parrent, ALIS_Tile tile)
         {
             var pattern = new PatternC();
             foreach (var instance in sample.Instances)
@@ -89,6 +89,15 @@ namespace WaveFunctionCollapse.Unity
                 
                 var block = new Block(pattern, instance.Pose.position.ToVector3IntRound() + tileIndex * tileSize, rotation, Grid);
                 Grid.AddBlockToGrid(block,parrent);
+                tile.Blocks.Add(block);
+            }
+        }
+
+        public void RemoveTileFromGrid(ALIS_Tile tile)
+        {
+            foreach (var block in tile.Blocks)
+            {
+                Grid.RemoveBlockVoxelsFromGrid(block);
             }
         }
 

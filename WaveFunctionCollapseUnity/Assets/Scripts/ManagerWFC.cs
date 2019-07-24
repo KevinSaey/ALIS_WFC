@@ -29,7 +29,7 @@ namespace WaveFunctionCollapse.Unity
 
         Dictionary<int, Sample> _sampleLibrary = new Dictionary<int, Sample>();
         WFC _waveFunctionCollapse;
-        List<GameObject> goColorCubes = new List<GameObject>();
+        List<GameObject> _goColorCubes = new List<GameObject>();
         IEnumerator _step;
         RhinoImporter _rhinoImporter;
         GridController _gridController;
@@ -39,6 +39,7 @@ namespace WaveFunctionCollapse.Unity
         Dictionary<int, float> _bestSeedsProgress = new Dictionary<int, float>();
         List<int> _bestSeeds = new List<int>();
         CaptureCamera _recorder;
+        Stack<ALIS_Tile> _generatedTiles;
 
         public static int Seed = 0;
         public Vector3 CenterWFC;
@@ -54,6 +55,7 @@ namespace WaveFunctionCollapse.Unity
             var rend = _goPlot.GetComponent<MeshRenderer>();
             rend.material = new Material(_transparentMaterial);
             CenterWFC = Vector3.Scale(_WFCSize, _tileSize) * (_voxelSize / 2);
+            _generatedTiles = new Stack<ALIS_Tile>();
         }
 
         void RandomAwake()
@@ -281,9 +283,9 @@ namespace WaveFunctionCollapse.Unity
 
         void HideColorCubes(bool flag)
         {
-            for (int i = 0; i < goColorCubes.Count; i++)
+            for (int i = 0; i < _goColorCubes.Count; i++)
             {
-                goColorCubes[i].GetComponent<MeshRenderer>().enabled = flag;
+                _goColorCubes[i].GetComponent<MeshRenderer>().enabled = flag;
             }
         }
 
@@ -291,11 +293,11 @@ namespace WaveFunctionCollapse.Unity
         {
             while (true)
             {
-
-
-                //Debug.Log("Step");
-                //DrawSamples(_waveFunctionCollapse.Step(1));
                 _waveFunctionCollapse.Step(1);
+                while(_goColorCubes.Count>_waveFunctionCollapse.NrSetSamples)
+                {
+                    DeleteLastTile();
+                }
 
                 if (_waveFunctionCollapse.HasContradiction)
                 {
@@ -365,11 +367,11 @@ namespace WaveFunctionCollapse.Unity
 
         public void ClearGameobjects()
         {
-            foreach (var go in goColorCubes)
+            foreach (var go in _goColorCubes)
             {
                 GameObject.Destroy(go);
             }
-            goColorCubes.Clear();
+            _goColorCubes.Clear();
         }
 
 
@@ -394,6 +396,7 @@ namespace WaveFunctionCollapse.Unity
         public void DrawSample(Tile tile)
         {
             var sample = tile.SelectedSample;
+            _generatedTiles.Push(new ALIS_Tile(tile));
             if (sample.Id != 0)
             {
                 ALIS_Sample selectedSample = sample as ALIS_Sample;
@@ -418,7 +421,7 @@ namespace WaveFunctionCollapse.Unity
                 {
                     if (!_hasMesh)
                     {
-                        _gridController.Generate(selectedSample, Util.ToUnityVector3Int(tile.Index), _tileSize, goTile.transform);
+                        _gridController.AddSampleToGrid(selectedSample, Util.ToUnityVector3Int(tile.Index), _tileSize, goTile.transform, _generatedTiles.Peek());
                     }
                     else
                     {
@@ -426,8 +429,16 @@ namespace WaveFunctionCollapse.Unity
                     }
                 }
 
-                goColorCubes.Add(goTile);
+                _goColorCubes.Add(goTile);
             }
+        }
+
+        public void DeleteLastTile()
+        {
+            GameObject.Destroy(_goColorCubes.Last());
+            _goColorCubes.RemoveAt(_goColorCubes.Count-1);
+            _gridController.RemoveTileFromGrid(_generatedTiles.Peek());
+            _generatedTiles.Pop();
         }
 
         public void InstantiateGOMesh(ALIS_Sample selectedSample, Vector3Int tileIndex, Transform goTile)

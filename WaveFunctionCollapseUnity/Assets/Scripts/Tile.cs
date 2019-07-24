@@ -14,15 +14,26 @@ namespace WaveFunctionCollapse.Shared
         public Sample SelectedSample;
         public int Id;
 
+        public Tile()
+        { }
+
         public Tile(int id, Vector3IntShared index, HashSet<Sample> possibleSamples)
         {
+            Id = id;
             Index = index;
             PossibleSamples = possibleSamples;
         }
 
+        public Tile(int id, Vector3IntShared index, HashSet<Sample> possibleSamples, bool set)
+        {
+            Index = index;
+            PossibleSamples = possibleSamples;
+            Set = set;
+        }
+
         public Tile Clone ()
         {
-            return new Tile(Id, Index, new HashSet<Sample>(PossibleSamples));
+            return new Tile(Id, Index, new HashSet<Sample>(PossibleSamples),Set);
         }
     }
 }
