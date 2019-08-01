@@ -13,7 +13,7 @@ namespace WaveFunctionCollapse.Unity
     {
         public static ExportVoxelGrid ImportVoxels()
         {
-            int seed = 160;
+            int seed = 0;
             string _path = $@"D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\Export\Export_Voxels_Seed{seed}.xml";
             var importedGrid = ExportVoxelGrid.Import(_path);
 
@@ -54,7 +54,7 @@ namespace WaveFunctionCollapse.Unity
                 {
                     for (int z = 0; z < GridController.Size.z; z++)
                     {
-                        exportVoxels.Add(new ExportVoxel(GridController.Grid.Voxels[x, y, z].Index, (int)GridController.Grid.Voxels[x, y, z].Type));
+                        exportVoxels.Add(new ExportVoxel(GridController.Grid.Voxels[x, y, z].Index, GridController.Grid.Voxels[x, y, z].Type == VoxelType.Block?1:0));
                     }
                 }
             }
@@ -67,15 +67,16 @@ namespace WaveFunctionCollapse.Unity
 
     public class ExportVoxelGrid
     {
-        public List<ExportVoxel> ExportVoxels;
         public Vector3Int GridDimension;
+        public List<ExportVoxel> ExportVoxels;
+        
 
         public static void Export(List<ExportVoxel> exportVoxels, Vector3Int gridDimension, string fileName)
         {
             var exportVoxelGrid = new ExportVoxelGrid()
             {
-                ExportVoxels = exportVoxels,
-                GridDimension = gridDimension
+                GridDimension = gridDimension,
+                ExportVoxels = exportVoxels
             };
 
             var serializer = new XmlSerializer(typeof(ExportVoxelGrid));

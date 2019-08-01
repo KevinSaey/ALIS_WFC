@@ -40,6 +40,7 @@ namespace WaveFunctionCollapse.Unity
         List<int> _bestSeeds = new List<int>();
         CaptureCamera _recorder;
         Stack<ALIS_Tile> _generatedTiles;
+        int _historySteps = 5;
 
         public static int Seed = 0;
         public Vector3 CenterWFC;
@@ -93,6 +94,7 @@ namespace WaveFunctionCollapse.Unity
                 //_waveFunctionCollapse.RemoveEmptyConnections();
 
                 if (!_hasMesh) _gridController = new GridController(_tileSize, _voxelSize, _WFCSize);
+                _waveFunctionCollapse.HistorySteps = _historySteps;
             }
 
             //SetPlotBoundaries();
@@ -156,6 +158,9 @@ namespace WaveFunctionCollapse.Unity
                     GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC Y");
                     _WFCSize.z = int.TryParse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.z.ToString()), out int o) ? o : 1;
                     GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC Z");
+                    i++;
+                    _historySteps = int.TryParse(GUI.TextField(new Rect(s, s * ++i, buttonWidth / 2 - padding, buttonHeight), _historySteps.ToString()), out int p) ? p : 1;
+                    GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "History steps");
 
                 }
 
@@ -258,13 +263,9 @@ namespace WaveFunctionCollapse.Unity
                             VoxelImporter.ImportVoxels();
                         }*/
                     }
-
-
                 }
             }
         }
-
-
 
         private void Regenerate()
         {
@@ -278,7 +279,6 @@ namespace WaveFunctionCollapse.Unity
             _step = Step(0.1f);
             SetPlotBoundaries();
             StartCoroutine(_step);
-
         }
 
         void HideColorCubes(bool flag)
@@ -320,7 +320,6 @@ namespace WaveFunctionCollapse.Unity
                 yield return new WaitForSeconds(time);
             }
         }
-
 
         void Update()
         {

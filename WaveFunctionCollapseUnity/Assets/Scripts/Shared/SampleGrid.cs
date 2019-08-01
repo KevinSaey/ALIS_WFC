@@ -17,7 +17,7 @@ namespace WaveFunctionCollapse.Shared
         public Dictionary<int, Sample> SampleLibrary;
         public List<Domain> Domains;
         public List<WFCState> States;
-        public int HistorySteps = 10;
+        public int HistorySteps = 5;
 
 
         internal SampleGrid(Dictionary<int, Sample> sampleLibrary, int dimX, int dimY, int dimZ)
@@ -44,6 +44,7 @@ namespace WaveFunctionCollapse.Shared
 
         public void Reset()
         {
+            States.Clear();
             CreatePossibleSampleGrid();
         }
 
@@ -177,9 +178,10 @@ namespace WaveFunctionCollapse.Shared
         public void RevertState()
         {
             var lastState = States.Last();
+            var lastIndex = lastState.LastUpdatedTile.Id;
+            lastState.Tiles.First(s => s.Id == lastIndex).PossibleSamples.Remove(lastState.SetSample);
             Tiles = lastState.Tiles;
-            lastState.LastUpdatedTile.PossibleSamples.Remove(lastState.SetSample);
-            States.RemoveAt(States.Count() - 1);
+            States.Remove(States.Last());
         }
 
         public void LogEntropy()

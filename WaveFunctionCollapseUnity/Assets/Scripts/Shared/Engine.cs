@@ -66,7 +66,6 @@ namespace WaveFunctionCollapse.Shared
                 lowestEntropyTile = _grid.FindLowestNonZeroEntropy().First();
             }
           
-
             List<Sample> lowestEntropySamples = lowestEntropyTile.PossibleSamples.Where(s => s.Id != 0).ToList();
 
 
@@ -113,7 +112,6 @@ namespace WaveFunctionCollapse.Shared
                 selectedSample = possibleSamples.First();
             }
 
-
             return selectedSample;
         }
 
@@ -142,9 +140,6 @@ namespace WaveFunctionCollapse.Shared
                 SharedLogger.Log($"Error: No sample selected - function SelectLeastUsed");
                 return null;
             }
-
-
-
         }
 
         Sample SelectRandom(List<Sample> possibleSamples)
@@ -199,8 +194,6 @@ namespace WaveFunctionCollapse.Shared
 
             _grid.Domains.Add(boundryDomain);
         }
-
-
 
         internal void DisableTiles(HashSet<int> TilesToDisable)
         {

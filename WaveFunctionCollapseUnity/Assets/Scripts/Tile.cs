@@ -26,6 +26,7 @@ namespace WaveFunctionCollapse.Shared
 
         public Tile(int id, Vector3IntShared index, HashSet<Sample> possibleSamples, bool set)
         {
+            Id = id;
             Index = index;
             PossibleSamples = possibleSamples;
             Set = set;

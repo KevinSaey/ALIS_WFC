@@ -22,6 +22,11 @@ namespace WaveFunctionCollapse.Shared
         {
             get { return _sampleGrid.NrSetSamples; }
         }
+        public int HistorySteps
+        {
+            get { return _sampleGrid.HistorySteps; }
+            set { _sampleGrid.HistorySteps = value; }
+        }
 
 
         List<IHeuristic> _heuristics;
