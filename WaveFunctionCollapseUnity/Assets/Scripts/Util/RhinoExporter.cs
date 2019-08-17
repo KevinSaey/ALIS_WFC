@@ -45,7 +45,7 @@ namespace WaveFunctionCollapse.Unity
                 SharedLogger.Log("Error: Path doesn't exist - function: Export");
                 return false;
             }
-            string filename = $@"{path}\Export\ExportSeed{seed}.xml";
+            string filename = $@"{path}\RhinoExporter\Export\ExportSeed{seed}.xml";
 
             ExportAssembly.Export(_instancesExport, filename);
             return true;

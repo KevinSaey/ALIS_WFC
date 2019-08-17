@@ -8,16 +8,18 @@ public class MainCamera : MonoBehaviour
     GameObject goController;
 
     Vector3 _target;
+    ManagerWFC _wfcManager;
 
     void Start()
     {
-        var managerWFC = goController.GetComponent<ManagerWFC>();
-        _target = managerWFC.CenterWFC;
+        _wfcManager = goController.GetComponent<ManagerWFC>();
+        _target = _wfcManager.CenterWFC;
         //this.transform.position = Vector3.up * _target.z;
     }
 
     void Update()
     {
+        _target = _wfcManager.CenterWFC;
         const float rotateSpeed = 4.0f;
         const float panSpeed = 0.4f;
 
@@ -26,8 +28,9 @@ public class MainCamera : MonoBehaviour
 
         if (pan)
         {
-            float right = 0;// -Input.GetAxis("Mouse X") * panSpeed;
+            float right = -Input.GetAxis("Mouse X") * panSpeed;
             float up = -Input.GetAxis("Mouse Y") * panSpeed;
+
 
             var vector = transform.rotation * new Vector3(right, up, 0);
             transform.position += vector;

@@ -24,17 +24,19 @@ namespace WaveFunctionCollapse.Shared
             PossibleSamples = possibleSamples;
         }
 
-        public Tile(int id, Vector3IntShared index, HashSet<Sample> possibleSamples, bool set)
+        public Tile(int id, Vector3IntShared index, HashSet<Sample> possibleSamples, Sample selectedSample, bool set, bool enabled)
         {
             Id = id;
             Index = index;
             PossibleSamples = possibleSamples;
+            SelectedSample = selectedSample;
             Set = set;
+            Enabled = enabled;
         }
 
         public Tile Clone ()
         {
-            return new Tile(Id, Index, new HashSet<Sample>(PossibleSamples),Set);
+            return new Tile(Id, Index, new HashSet<Sample>(PossibleSamples),SelectedSample,Set,Enabled);
         }
     }
 }

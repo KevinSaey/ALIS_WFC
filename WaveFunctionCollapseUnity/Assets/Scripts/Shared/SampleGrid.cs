@@ -17,8 +17,16 @@ namespace WaveFunctionCollapse.Shared
         public Dictionary<int, Sample> SampleLibrary;
         public List<Domain> Domains;
         public List<WFCState> States;
-        public int HistorySteps = 5;
-
+        public int HistorySteps = 10;
+        public int Bottom
+        {
+            get
+            {
+                var lowestTile = Tiles.First(s => s.Set == true);
+                int bottom = lowestTile.Index.Y;
+                return bottom;
+            }
+        }
 
         internal SampleGrid(Dictionary<int, Sample> sampleLibrary, int dimX, int dimY, int dimZ)
         {
@@ -213,5 +221,7 @@ namespace WaveFunctionCollapse.Shared
             if (index == int.MaxValue) SharedLogger.Log($"Requested sample id:{sampleId} is not valid - function GetIndexFromSampleID");
             return index;
         }
+
+        
     }
 }

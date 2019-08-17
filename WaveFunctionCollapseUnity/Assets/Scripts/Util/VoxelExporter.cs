@@ -45,7 +45,7 @@ namespace WaveFunctionCollapse.Unity
                 SharedLogger.Log("Error: Path doesn't exist - function: Export");
                 return false;
             }
-            string filename = $@"{path}\Export\Export_Voxels_Seed{seed}.xml";
+            string filename = $@"{path}\RhinoExporter\Export\Export_Voxels_Seed{seed}.xml";
 
             List<ExportVoxel> exportVoxels = new List<ExportVoxel>();
             for (int x = 0; x < GridController.Size.x; x++)
@@ -99,7 +99,7 @@ namespace WaveFunctionCollapse.Unity
     public class ExportVoxel
     {
         public Vector3Int Index;
-        public int Type;
+        public int VoxelType;
 
         public ExportVoxel()
         {
@@ -108,7 +108,7 @@ namespace WaveFunctionCollapse.Unity
         public ExportVoxel(Vector3Int index, int type)
         {
             Index = index;
-            Type = type;
+            VoxelType = type;
         }
     }
 

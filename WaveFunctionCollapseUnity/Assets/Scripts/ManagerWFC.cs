@@ -17,8 +17,6 @@ namespace WaveFunctionCollapse.Unity
         [SerializeField]
         bool _rhino, _log, _interval, _rotate, _reflectX, _reflectY, _reflectZ, _merge;
         [SerializeField]
-        public string Path = @"C:\Users\Kevin\Desktop\WFC\RhinoExporter\";
-        [SerializeField]
         Material _blockMaterial, _transparentMaterial;
         [SerializeField]
         GUISkin _guiSkin;
@@ -26,11 +24,13 @@ namespace WaveFunctionCollapse.Unity
         GameObject _goPlot;
         [SerializeField]
         GameObject _goRecorder;
+        [SerializeField]
+        Texture2D _alisLogo;
 
         Dictionary<int, Sample> _sampleLibrary = new Dictionary<int, Sample>();
         WFC _waveFunctionCollapse;
         List<GameObject> _goColorCubes = new List<GameObject>();
-        IEnumerator _step;
+        IEnumerator _step, _regenerate;
         RhinoImporter _rhinoImporter;
         GridController _gridController;
         bool _colorCubes = true, _imported = false, _hasMesh, _plot = false, _record = false;
@@ -41,10 +41,15 @@ namespace WaveFunctionCollapse.Unity
         CaptureCamera _recorder;
         Stack<ALIS_Tile> _generatedTiles;
         int _historySteps = 5;
+        Dictionary<int, float> _generationTime = new Dictionary<int, float>();
+        float _runtime = 0f;
+        float _generationStartTime = 0f;
 
         public static int Seed = 0;
         public Vector3 CenterWFC;
         public string Warnings;
+        public string Path = @"C:\Users\Kevin\Desktop\WFC";
+
 
 
         void Awake()
@@ -72,7 +77,7 @@ namespace WaveFunctionCollapse.Unity
         {
             bool rhinoAwakeSucces = false;
             _rhinoImporter = new RhinoImporter();
-            rhinoAwakeSucces = _rhinoImporter.InstantiateSamples( _rotate, _reflectX, _reflectY, _reflectZ, _merge, this);
+            rhinoAwakeSucces = _rhinoImporter.InstantiateSamples(_rotate, _reflectX, _reflectY, _reflectZ, _merge, this);
             if (rhinoAwakeSucces)
             {
                 _sampleLibrary = _rhinoImporter.SampleLibrary;
@@ -95,7 +100,11 @@ namespace WaveFunctionCollapse.Unity
 
                 if (!_hasMesh) _gridController = new GridController(_tileSize, _voxelSize, _WFCSize);
                 _waveFunctionCollapse.HistorySteps = _historySteps;
+
+                CenterWFC = Vector3.Scale(_WFCSize , _tileSize) * _voxelSize / 2;
             }
+
+
 
             //SetPlotBoundaries();
             return rhinoAwakeSucces;
@@ -108,7 +117,7 @@ namespace WaveFunctionCollapse.Unity
 
         void OnGUI()
         {
-            int buttonHeight = 40;
+            int buttonHeight = 35;
             int buttonWidth = 180;
             int i = 1;
             int padding = 5;
@@ -116,7 +125,11 @@ namespace WaveFunctionCollapse.Unity
             GUI.skin = _guiSkin;
 
             //Warnings
-            GUI.Label(new Rect(s, Screen.height-s, padding + 500, Screen.height -  s), Util.Warning);
+            GUI.DrawTexture(new Rect(s, padding, buttonWidth, buttonWidth),_alisLogo,ScaleMode.ScaleToFit);
+            i += 4;
+            GUI.Label(new Rect(s, Screen.height - s, padding + 500, Screen.height - s), Util.Warning);
+
+            GUI.Box(new Rect(0, 0, buttonWidth + 4*padding + buttonHeight, Screen.height),"");
 
 
             if (_rhino)
@@ -125,19 +138,21 @@ namespace WaveFunctionCollapse.Unity
 
                 //Before the Samples are imported
                 Seed = int.TryParse(GUI.TextField(new Rect(s, s * i, buttonWidth / 2 - padding, buttonHeight), Seed.ToString()), out int l) ? l : 1;
-               
+
                 GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "Seed");
 
-                
+
 
                 _record = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _record, "Record");
                 _recorder.EnableCapture = _record;
 
                 if (!_imported)
                 {
+                    var rect = new Rect(s, s * i++, buttonWidth, buttonHeight);
                     if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Import Rhino"))
                     {
                         _imported = RhinoAwake();
+                        _recorder.SetPath(Path);
                     }
 
                     _reflectX = GUI.Toggle(new Rect(s, s * i++, buttonWidth, buttonHeight), _reflectX, "ReflectX");
@@ -150,7 +165,7 @@ namespace WaveFunctionCollapse.Unity
                     var render = _goPlot.GetComponent<MeshRenderer>();
                     render.enabled = _plot;
 
-                    
+
 
                     _WFCSize.x = int.TryParse(GUI.TextField(new Rect(s, s * ++i, buttonWidth / 2 - padding, buttonHeight), _WFCSize.x.ToString()), out int m) ? m : 1;
                     GUI.Label(new Rect(s + buttonWidth / 2, s * i++, buttonWidth / 2 - padding, buttonHeight), "WFC X");
@@ -175,6 +190,7 @@ namespace WaveFunctionCollapse.Unity
                         _colorCubes = !_colorCubes;
                         HideColorCubes(_colorCubes);
                     }
+                    labelCounter++;
                     GUI.HorizontalSlider(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), _waveFunctionCollapse.Progress, 0, 1);
 
                     //Show labels
@@ -186,6 +202,10 @@ namespace WaveFunctionCollapse.Unity
                     if (_reflectZ) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Reflect Z");
                     if (_merge) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Merge");
                     if (_rotate) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Rotate");
+                    labelCounter++;
+
+                    if (_generationTime.Count > 0)
+                        GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), $"Last generation time: {_generationTime.Last().Value}");
 
                     labelCounter++;
                     GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Best seeds");
@@ -195,12 +215,17 @@ namespace WaveFunctionCollapse.Unity
                             $"Seed {_bestSeeds[j].ToString()} progres: {(int)(_bestSeedsProgress[_bestSeeds[j]] * 100)} %");
                     }
 
+                    if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Reset weights"))
+                    {
+                        ResetWeight();
+                        SharedLogger.Log($"{_sampleLibrary.Count} samples Weights reset");
+                    }
 
                     //leftScreen ui
                     if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Generate"))
                     {
                         SetPlotBoundaries();
-
+                        _regenerate = Regenerate();
                         if (_interval)
                         {
                             UtilShared.RandomNR = new System.Random(Seed);
@@ -245,18 +270,18 @@ namespace WaveFunctionCollapse.Unity
                             {
                                 if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Regenerate"))
                                 {
-                                    Regenerate();
+                                    StartCoroutine(Regenerate());
                                 }
                             }
                         }
                         if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Export to rhino"))
                         {
-                            RhinoExporter.Export(_waveFunctionCollapse.Tiles.Where(t => t.Set && t.Enabled).ToList(), _WFCSize, _tileSize,_voxelSize,Path,_hasMesh);
+                            RhinoExporter.Export(_waveFunctionCollapse.Tiles.Where(t => t.Set && t.Enabled).ToList(), _WFCSize, _tileSize, _voxelSize, Path, _hasMesh);
                         }
 
                         if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Export to ALIS allocation"))
                         {
-                            VoxelExporter.ExportVoxels(_gridController,Path);
+                            VoxelExporter.ExportVoxels(_gridController, Path);
                         }
                         /*if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Import voxel grid"))
                         {
@@ -267,9 +292,12 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
-        private void Regenerate()
+        IEnumerator Regenerate()
         {
+            EndGeneration();
             StopCoroutine(_step);
+            yield return new WaitForSeconds(0.1f);
+
             ClearGameobjects();
             _waveFunctionCollapse.Reset();
             if (!_hasMesh)
@@ -279,6 +307,7 @@ namespace WaveFunctionCollapse.Unity
             _step = Step(0.1f);
             SetPlotBoundaries();
             StartCoroutine(_step);
+            yield break;
         }
 
         void HideColorCubes(bool flag)
@@ -291,28 +320,32 @@ namespace WaveFunctionCollapse.Unity
 
         IEnumerator Step(float time)
         {
+            _generationStartTime = _runtime;
             while (true)
             {
                 _waveFunctionCollapse.Step(1);
-                while(_goColorCubes.Count>_waveFunctionCollapse.NrSetSamples)
+                while (_goColorCubes.Count > _waveFunctionCollapse.NrSetSamples)
                 {
                     DeleteLastTile();
                 }
 
                 if (_waveFunctionCollapse.HasContradiction)
                 {
+                    StartCoroutine(Regenerate());
                     if (!_generateOne)
                     {
                         CheckSeed(Seed, _waveFunctionCollapse.Progress);
                         Seed++;
                         UtilShared.RandomNR = new System.Random(Seed);
-                        Regenerate();
+
                     }
+
                     yield break;
                 }
 
                 if (_waveFunctionCollapse.IsAllDetermined)
                 {
+                    EndGeneration();
                     //DrawGrid();
                     yield break;
                     //StopCoroutine(_step);
@@ -321,8 +354,22 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
+        void EndGeneration()
+        {
+            _recorder.CaptureOneShot();
+            if (_generationTime.ContainsKey(Seed))
+            {
+                _generationTime[Seed] = _runtime - _generationStartTime;
+            }
+            else
+            {
+                _generationTime.Add(Seed, _runtime - _generationStartTime);
+            }
+        }
+
         void Update()
         {
+            _runtime = Time.realtimeSinceStartup;
             if (_imported && _rhino && !_hasMesh && _gridController != null) _gridController.Update();
         }
 
@@ -435,7 +482,7 @@ namespace WaveFunctionCollapse.Unity
         public void DeleteLastTile()
         {
             GameObject.Destroy(_goColorCubes.Last());
-            _goColorCubes.RemoveAt(_goColorCubes.Count-1);
+            _goColorCubes.RemoveAt(_goColorCubes.Count - 1);
             _gridController.RemoveTileFromGrid(_generatedTiles.Peek());
             _generatedTiles.Pop();
         }
@@ -457,6 +504,14 @@ namespace WaveFunctionCollapse.Unity
 
 
                 //GameObject tile = GameObject.Instantiate(_tiles[instance.DefinitionIndex].GetGoTile(), instance.Pose.position + tileIndex * _tileSize,instance.Pose.rotation,goTile);
+            }
+        }
+
+        void ResetWeight()
+        {
+            foreach (var sample in _sampleLibrary)
+            {
+                sample.Value.Weight = 1;
             }
         }
 
@@ -490,5 +545,7 @@ namespace WaveFunctionCollapse.Unity
             _bestSeedsProgress = newDictionary;
             _bestSeeds = _bestSeedsProgress.OrderByDescending(s => s.Value).ToList().GetRange(0, _bestSeedsProgress.Count < 10 ? _bestSeedsProgress.Count : 10).Select(s => s.Key).ToList();
         }
+
+        
     }
 }

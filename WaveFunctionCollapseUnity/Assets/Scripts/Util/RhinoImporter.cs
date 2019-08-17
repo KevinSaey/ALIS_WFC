@@ -31,7 +31,7 @@ namespace WaveFunctionCollapse.Unity
         public bool InstantiateSamples( bool rotate, bool reflectX, bool reflectY, bool reflectZ, bool merge, ManagerWFC managerWFC)
         {
             _managerWFC = managerWFC;
-            _path = managerWFC.Path;
+            _path = managerWFC.Path + @"\RhinoExporter\";
             
 
             if(!Directory.Exists(_path))

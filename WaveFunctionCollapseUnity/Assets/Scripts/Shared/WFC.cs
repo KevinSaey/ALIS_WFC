@@ -52,6 +52,14 @@ namespace WaveFunctionCollapse.Shared
             }
         }
 
+        public int Bottom
+        {
+            get
+            {
+                return _sampleGrid.Bottom;
+            }
+        }
+
         SampleGrid _sampleGrid;
         Engine _engine;
 

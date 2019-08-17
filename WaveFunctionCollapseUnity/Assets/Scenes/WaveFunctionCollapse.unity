@@ -94,8 +94,8 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
     m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -151,6 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnableCapture: 0
   Interval: 1
+  Counter: 0
 --- !u!4 &295298315
 Transform:
   m_ObjectHideFlags: 0
@@ -206,15 +207,16 @@ MonoBehaviour:
   _reflectY: 0
   _reflectZ: 0
   _merge: 1
-  Path: D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity\RhinoExporter\
   _blockMaterial: {fileID: 2100000, guid: 5e9409a576a2bed4484bfa6efe32867e, type: 2}
   _transparentMaterial: {fileID: 2100000, guid: dd7d27cd4b8d5b64387d88584e89a919,
     type: 2}
-  _guiSkin: {fileID: 11400000, guid: b416393f69d3a9746a12a7de80ab636a, type: 2}
+  _guiSkin: {fileID: 11400000, guid: b7a07883a20277f46aa6c5dedaf64787, type: 2}
   _goPlot: {fileID: 1573348952}
   _goRecorder: {fileID: 295298313}
+  _alisLogo: {fileID: 2800000, guid: ee282b5c5abc2184f815766e7c2f4b26, type: 3}
   CenterWFC: {x: 0, y: 0, z: 0}
   Warnings: 
+  Path: D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity
 --- !u!4 &573255905
 Transform:
   m_ObjectHideFlags: 0
@@ -621,7 +623,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -840,7 +842,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!64 &1791035564
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -872,7 +874,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 5d0d67e2d102a9e4283b2110e348bdfe, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -880,6 +882,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
