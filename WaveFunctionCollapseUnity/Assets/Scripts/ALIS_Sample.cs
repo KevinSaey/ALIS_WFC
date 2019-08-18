@@ -43,7 +43,6 @@ namespace WaveFunctionCollapse.Unity
             Weight = weight;
         }
 
-
         /*public void AddConnectionsToWFC(WFC<ALIS_Sample> wfc)
         {
             foreach (var connection in PossibleConnections.SelectMany(s => s).Distinct())
@@ -76,10 +75,5 @@ namespace WaveFunctionCollapse.Unity
         {
             _managerWFC.DrawSample(tile);
         }
-
-
-
     }
-
-
 }

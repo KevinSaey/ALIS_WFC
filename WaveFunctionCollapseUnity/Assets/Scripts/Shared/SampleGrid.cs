@@ -22,9 +22,16 @@ namespace WaveFunctionCollapse.Shared
         {
             get
             {
-                var lowestTile = Tiles.First(s => s.Set == true);
-                int bottom = lowestTile.Index.Y;
-                return bottom;
+                if (Tiles.Any(s => s.Set))
+                {
+                    var lowestTile = Tiles.First(s => s.Set == true);
+                    int bottom = lowestTile.Index.Y;
+                    return bottom;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
