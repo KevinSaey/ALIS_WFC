@@ -218,6 +218,7 @@ MonoBehaviour:
   CenterWFC: {x: 0, y: 0, z: 0}
   Warnings: 
   Path: D:\Unity\School\ALIS_WFC\WaveFunctionCollapseUnity
+  RotateCam: 1
 --- !u!4 &573255905
 Transform:
   m_ObjectHideFlags: 0
@@ -503,7 +504,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0be19310c10baa74ca7145ba62af7668, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goController: {fileID: 573255903}
+  _goController: {fileID: 0}
 --- !u!1 &1390614135
 GameObject:
   m_ObjectHideFlags: 0
@@ -536,7 +537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0be19310c10baa74ca7145ba62af7668, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goController: {fileID: 573255903}
+  _goController: {fileID: 573255903}
 --- !u!114 &1390614137
 MonoBehaviour:
   m_ObjectHideFlags: 0

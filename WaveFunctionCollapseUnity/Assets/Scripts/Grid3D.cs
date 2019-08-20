@@ -312,7 +312,7 @@ namespace WaveFunctionCollapse.Unity
         /// <param name="vis">True = visible, false = hideden</param>
         public void SwitchBlockVisibility(bool vis)
         {
-            Blocks.ForEach(b => b.goBlockParent.SetActive(vis));
+            Blocks.ForEach(b =>  b.goBlockParent?.SetActive(vis));
         }
     }
 }

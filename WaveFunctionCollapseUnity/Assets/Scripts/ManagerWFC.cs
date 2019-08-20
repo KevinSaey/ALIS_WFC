@@ -51,6 +51,7 @@ namespace WaveFunctionCollapse.Unity
         public Vector3 CenterWFC;
         public string Warnings;
         public string Path = @"C:\Users\Kevin\Desktop\WFC";
+        public bool RotateCam = true;
 
 
 
@@ -58,17 +59,11 @@ namespace WaveFunctionCollapse.Unity
         {
             SharedLogger.CurrentLogger = new UnityLog(_log);
             _recorder = _goRecorder.GetComponent<CaptureCamera>();
-            /*if (_rhino) RhinoAwake();
-            else RandomAwake();*/
-            /*
-            var rend = _goPlot.GetComponent<MeshRenderer>();
-            rend.material = new Material(_transparentMaterial);
-            */
-            CenterWFC = Vector3.Scale(_WFCSize, _tileSize) * (_voxelSize / 2);
+            
             _generatedTiles = new Stack<ALIS_Tile>();
 
             ManagerPlot.CreateGoPlot(new Material(_transparentMaterial));
-            
+            CenterWFC = ManagerPlot.CentrePlot(_currentPlot);
         }
 
         void RandomAwake()
@@ -104,6 +99,7 @@ namespace WaveFunctionCollapse.Unity
 
             _WFCSize = ManagerPlot.GetWFCSize(_currentPlot, _voxelSize, _tileSize);
             //SetPlotBoundaries();
+            
             return rhinoAwakeSucces;
         }
 
@@ -126,7 +122,7 @@ namespace WaveFunctionCollapse.Unity
         void OnGUI()
         {
             int buttonHeight = 35;
-            int buttonWidth = 200;
+            int buttonWidth = 210;
             int i = 1;
             int padding = 5;
             int s = buttonHeight + padding;
@@ -142,6 +138,7 @@ namespace WaveFunctionCollapse.Unity
 
             //Warnings
             GUI.Label(new Rect(s, Screen.height - s, padding + 500, Screen.height - s), Util.Warning);
+            RotateCam = GUI.Toggle(new Rect(s, Screen.height - s, buttonWidth, buttonHeight), RotateCam, "Rotate camera");
 
             if (_rhino)
             {
@@ -200,7 +197,6 @@ namespace WaveFunctionCollapse.Unity
                 //When the samples are imported
                 else if (_imported && _waveFunctionCollapse != null)
                 {
-                    
                     // Right screen GUI
                     // show progress bar
                     int labelCounter = 1;
@@ -209,12 +205,10 @@ namespace WaveFunctionCollapse.Unity
                         _colorCubes = !_colorCubes;
                         HideColorCubes(_colorCubes);
                     }
+                    
                     labelCounter++;
 
-
-
                     //Show labels
-
                     GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), $"WFC dimension X: {_WFCSize.x} Y: {_WFCSize.y} Z: {_WFCSize.z}");
 
                     if (_reflectX) GUI.Label(new Rect(Screen.width - buttonWidth - s, s * labelCounter++, buttonWidth, buttonHeight), "Reflect X");
@@ -260,7 +254,6 @@ namespace WaveFunctionCollapse.Unity
                             _waveFunctionCollapse.Execute();
                             DrawGrid();
                         }
-
                     }
                     if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Generate 1 seed"))
                     {
@@ -280,7 +273,6 @@ namespace WaveFunctionCollapse.Unity
                             DrawGrid();
                         }
                     }
-
 
                     //When the aggregation is finished
                     if (_waveFunctionCollapse == null ? false : _waveFunctionCollapse.IsAllDetermined || _waveFunctionCollapse.HasContradiction)
@@ -306,13 +298,6 @@ namespace WaveFunctionCollapse.Unity
                         {
                             VoxelExporter.ExportVoxels(_gridController, Path);
                         }
-                        /*if (GUI.Button(new Rect(s, s * i++, buttonWidth, buttonHeight), "Import voxel grid"))
-                        {
-                            VoxelImporter.ImportVoxels();
-                        }*/
-
-                        //Progressbar
-
                     }
                 }
             }
@@ -445,6 +430,7 @@ namespace WaveFunctionCollapse.Unity
             if (_currentPlot == ManagerPlot.NrOfPlots) _currentPlot = 0;
             ManagerPlot.NextPlot(_currentPlot);
             _WFCSize = ManagerPlot.GetWFCSize(_currentPlot, _voxelSize, _tileSize);
+            CenterWFC = ManagerPlot.CentrePlot(_currentPlot);
         }
 
         public void ClearGameobjects()
@@ -502,7 +488,6 @@ namespace WaveFunctionCollapse.Unity
                         InstantiateGOMesh(selectedSample, Util.ToUnityVector3Int(tile.Index), goTile.transform);
                     }
                 }
-
                 _goColorCubes.Add(goTile);
             }
         }

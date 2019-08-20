@@ -20,6 +20,20 @@ namespace WaveFunctionCollapse.Unity
             }
         }
 
+        public static bool PlotsLoaded
+        {
+            get
+            {
+                return _plotMeshes.Count > 0;
+            }
+        }
+
+        public static Vector3 CentrePlot(int currentPlot)
+        {
+            if (PlotsLoaded) return _plotMeshes[currentPlot].bounds.center;
+            else return Vector3.zero;
+        }
+
 
         public static void CreateGoPlot(Material mat)
         {
@@ -36,12 +50,12 @@ namespace WaveFunctionCollapse.Unity
 
         }
 
-        public static Vector3Int GetWFCSize( int currentPlot, float voxelSize, Vector3 tileSize)
+        public static Vector3Int GetWFCSize(int currentPlot, float voxelSize, Vector3 tileSize)
         {
             var mesh = _plotMeshes[currentPlot];
             var plotBounds = mesh.bounds;
             Vector3Int wfcSize = new Vector3Int();
-            wfcSize.x =Mathf.RoundToInt(plotBounds.size.x / (tileSize.x * voxelSize));
+            wfcSize.x = Mathf.RoundToInt(plotBounds.size.x / (tileSize.x * voxelSize));
             wfcSize.y = Mathf.RoundToInt(plotBounds.size.y / (tileSize.y * voxelSize));
             wfcSize.z = Mathf.RoundToInt(plotBounds.size.z / (tileSize.z * voxelSize));
             return wfcSize;

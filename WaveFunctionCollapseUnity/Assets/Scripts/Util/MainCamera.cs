@@ -5,14 +5,21 @@ using WaveFunctionCollapse.Unity;
 public class MainCamera : MonoBehaviour
 {
     [SerializeField]
-    GameObject goController;
+    GameObject _goController;
 
     Vector3 _target;
     ManagerWFC _wfcManager;
+    bool _autoRotate
+    {
+        get
+        {
+            return _wfcManager.RotateCam;
+        }
+    }
 
     void Start()
     {
-        _wfcManager = goController.GetComponent<ManagerWFC>();
+        _wfcManager = _goController.GetComponent<ManagerWFC>();
         _target = _wfcManager.CenterWFC;
         //this.transform.position = Vector3.up * _target.z;
     }
@@ -43,6 +50,12 @@ public class MainCamera : MonoBehaviour
 
             transform.RotateAround(_target, Vector3.up, yaw);
             transform.RotateAround(_target, transform.rotation * Vector3.right, pitch);
+        }
+        else if(_autoRotate)
+        {
+            float yaw = rotateSpeed * Time.deltaTime*0.2f;
+
+            transform.RotateAround(_target, Vector3.up, yaw);
         }
 
         float zoom = Input.GetAxis("Mouse ScrollWheel");
