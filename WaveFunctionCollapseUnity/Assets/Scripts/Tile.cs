@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace WaveFunctionCollapse.Shared
 {
-    public class Tile
+    public class Tile: ICloneable<Tile>
     {
         public bool Enabled = true;
         public bool Set = false;
@@ -34,7 +34,7 @@ namespace WaveFunctionCollapse.Shared
             Enabled = enabled;
         }
 
-        public Tile Clone ()
+        public Tile Clone()
         {
             return new Tile(Id, Index, new HashSet<Sample>(PossibleSamples),SelectedSample,Set,Enabled);
         }

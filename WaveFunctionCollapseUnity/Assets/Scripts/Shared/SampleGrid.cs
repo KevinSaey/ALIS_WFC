@@ -80,7 +80,7 @@ namespace WaveFunctionCollapse.Shared
         }
 
 
-        public Boolean IsAllDetermined
+        public bool IsAllDetermined
         {
             get
             {
@@ -88,7 +88,7 @@ namespace WaveFunctionCollapse.Shared
             }
         }
 
-        public Boolean HasContradiction
+        public bool HasContradiction
         {
             get
             {
@@ -169,12 +169,12 @@ namespace WaveFunctionCollapse.Shared
                 }
                 else
                 {
-                    SafeState(tile, selectedSample);
+                    SaveState(tile, selectedSample);
                 }
             }
         }
 
-        public void SafeState(Tile lastTile, Sample selectedSample)
+        public void SaveState(Tile lastTile, Sample selectedSample)
         {
             if (States.Count == 0)
             {
@@ -192,11 +192,12 @@ namespace WaveFunctionCollapse.Shared
 
         public void RevertState()
         {
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// to do
             var lastState = States.Last();
-            var lastIndex = lastState.LastUpdatedTile.Id;
-            lastState.Tiles.First(s => s.Id == lastIndex).PossibleSamples.Remove(lastState.SetSample);
+            var lastIndex = lastState.LastUpdatedTile.Id;//
+            lastState.Tiles.First(s => s.Id == lastIndex).PossibleSamples.Remove(lastState.SetSample);//
             Tiles = lastState.Tiles;
-            States.Remove(States.Last());
+            States.Remove(lastState);
         }
 
         public void LogEntropy()
@@ -229,6 +230,6 @@ namespace WaveFunctionCollapse.Shared
             return index;
         }
 
-        
+
     }
 }

@@ -58,7 +58,7 @@ namespace WaveFunctionCollapse.Shared
             if (_counter == 1)
             {
 
-                UtilShared.SelectRandomOutList(_grid.Tiles.Where(s=>s.Enabled==true).ToList(), out lowestEntropyTile);
+                UtilShared.SelectRandomOutList(_grid.Tiles.Where(s=>s.Enabled==true && s.Index.Y == 0).ToList(), out lowestEntropyTile);
                 //start from a random sample
             }
             else

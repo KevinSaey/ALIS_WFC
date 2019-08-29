@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using WaveFunctionCollapse.Shared;
+using System.Threading.Tasks;
 
 namespace WaveFunctionCollapse.Unity
 {
@@ -12,6 +10,8 @@ namespace WaveFunctionCollapse.Unity
         static List<Mesh> _plotMeshes = new List<Mesh>();
         public static GameObject GoPlot = new GameObject("goPlot");
         public static bool _convex = false;
+        static bool _outlineDirty = false;
+        static bool _showPlot = true;
         public static int NrOfPlots
         {
             get
@@ -37,16 +37,27 @@ namespace WaveFunctionCollapse.Unity
 
         public static void CreateGoPlot(Material mat)
         {
+            mat.color = new Color(0, 0, 0, 0);
             LoadMeshes();
             mat.mainTexture = null;
             var meshFilter = GoPlot.AddComponent<MeshFilter>();
             meshFilter.mesh = _plotMeshes[0];
-            var meshRender = GoPlot.AddComponent<MeshRenderer>();
-            meshRender.material = mat;
-            meshRender.enabled = false;
             var meshCollider = GoPlot.AddComponent<MeshCollider>();
             meshCollider.convex = _convex;
             meshCollider.sharedMesh = meshFilter.mesh;
+
+            if (_showPlot)
+            {
+                var meshRender = GoPlot.AddComponent<MeshRenderer>();
+                meshRender.material = mat;
+                meshRender.enabled = false;
+
+                var outline = GoPlot.AddComponent<Outline>();
+                outline.OutlineMode = Outline.Mode.OutlineAll;
+                outline.OutlineColor = new Color(0, 0, 0, 1);
+                outline.OutlineWidth = 3;
+            }
+
 
         }
 
@@ -69,8 +80,24 @@ namespace WaveFunctionCollapse.Unity
 
         public static void TogglePlot(bool toggle)
         {
-            var render = GoPlot.GetComponent<MeshRenderer>();
-            render.enabled = toggle;
+            if (_showPlot)
+            {
+                var render = GoPlot.GetComponent<MeshRenderer>();
+                render.enabled = toggle;
+            }
+        }
+
+        public static void Update()
+        {
+            if (_outlineDirty)
+            {
+                var outline = GoPlot.AddComponent<Outline>();
+                outline.OutlineMode = Outline.Mode.OutlineAll;
+                outline.OutlineColor = new Color(0, 0, 0, 1);
+                outline.OutlineWidth = 3;
+
+                _outlineDirty = false;
+            }
         }
 
         public static void NextPlot(int nextPlot)
@@ -80,6 +107,10 @@ namespace WaveFunctionCollapse.Unity
             var meshCollider = GoPlot.GetComponent<MeshCollider>();
             meshCollider.convex = _convex;
             meshCollider.sharedMesh = meshFilter.mesh;
+
+            var outline = GoPlot.GetComponent<Outline>();
+            GameObject.Destroy(outline);
+            _outlineDirty = true;
         }
     }
 }

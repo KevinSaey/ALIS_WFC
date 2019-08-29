@@ -4,6 +4,7 @@ using UnityEngine;
 using WaveFunctionCollapse.Shared;
 using System.Linq;
 
+
 namespace WaveFunctionCollapse.Unity
 {
     public class ManagerWFC : MonoBehaviour
@@ -28,6 +29,9 @@ namespace WaveFunctionCollapse.Unity
         Texture2D _alisLogo;
         [SerializeField]
         GameObject _goFloor;
+        [SerializeField]
+        bool _moveFloor = false;
+
 
         Dictionary<int, Sample> _sampleLibrary = new Dictionary<int, Sample>();
         WFC _waveFunctionCollapse;
@@ -382,7 +386,7 @@ namespace WaveFunctionCollapse.Unity
         {
             _runtime = Time.realtimeSinceStartup;
             if (_imported && _rhino && !_hasMesh && _gridController != null) _gridController.Update();
-
+            ManagerPlot.Update();
             SetFloorToBottom();
         }
 
@@ -553,7 +557,7 @@ namespace WaveFunctionCollapse.Unity
 
         void SetFloorToBottom()
         {
-            if (_imported&& _waveFunctionCollapse != null)
+            if (_moveFloor && _imported&& _waveFunctionCollapse != null)
             {
                 var bottomPosition = Vector3.up * (_waveFunctionCollapse.Bottom * _tileSize.y * _voxelSize - _voxelSize / 2);
                 _goFloor.transform.position = bottomPosition;

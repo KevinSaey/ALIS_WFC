@@ -13,7 +13,7 @@ namespace WaveFunctionCollapse.Unity
     /// <summary>
     /// Import a assembly pattern generated in grasshopper
     /// </summary>
-    public class RhinoImporter//based on Vicente's code
+    public class RhinoImporter//slightly based on Vicente's code
     {
         public Dictionary<int, Sample> SampleLibrary { get; private set; }
         public Dictionary<int, ImportedTile> Tiles;

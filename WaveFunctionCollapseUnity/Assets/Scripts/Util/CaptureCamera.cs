@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CaptureCamera : MonoBehaviour // stolen from Vicente
 {
-
+    
     public bool EnableCapture = false;
     public float Interval = 1f;
     public int Counter = 0;
